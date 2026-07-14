@@ -1,0 +1,12 @@
+export const REGION_COUNTRIES = {
+  AMER: ['US','CA','MX','BR','AR','CL','CO','PE','VE','EC','BO','PY','UY','GT','HN','SV','NI','CR','PA','DO','CU','HT','JM','TT','GY','SR','BZ','GL'],
+  EMEA: ['GB','IE','FR','DE','ES','PT','IT','NL','BE','LU','CH','AT','SE','NO','DK','FI','IS','PL','CZ','SK','HU','RO','BG','GR','HR','SI','RS','BA','MK','AL','ME','XK','EE','LV','LT','UA','BY','MD','RU','TR','CY','MT','ZA','EG','NG','KE','MA','DZ','TN','LY','SA','AE','IL','QA','KW','BH','OM','JO','LB','IQ','IR','GH','ET','TZ','UG','AO','MZ','ZM','ZW','SN','CI','CM'],
+  APJ: ['CN','JP','KR','IN','AU','NZ','SG','MY','TH','VN','ID','PH','TW','HK','PK','BD','LK','NP','MM','KH','LA','MN','BN','MO','FJ','PG','KZ','UZ','AF'],
+};
+
+export const REGION_ACC = { AMER: 78, EMEA: 66, APJ: 48 };
+
+export const COUNTRY_REGION = Object.keys(REGION_COUNTRIES).reduce((acc, region) => {
+  REGION_COUNTRIES[region].forEach((code) => { acc[code] = region; });
+  return acc;
+}, {});
