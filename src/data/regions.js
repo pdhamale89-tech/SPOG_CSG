@@ -10,3 +10,21 @@ export const COUNTRY_REGION = Object.keys(REGION_COUNTRIES).reduce((acc, region)
   REGION_COUNTRIES[region].forEach((code) => { acc[code] = region; });
   return acc;
 }, {});
+
+function hashCode(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+// Deterministic per-country accuracy derived from its region's baseline (no live country-level feed yet).
+export const COUNTRY_ACC = Object.keys(COUNTRY_REGION).reduce((acc, code) => {
+  const base = REGION_ACC[COUNTRY_REGION[code]];
+  const variance = (hashCode(code) % 21) - 10; // -10..+10
+  acc[code] = Math.max(30, Math.min(96, base + variance));
+  return acc;
+}, {});
+
+export const REGION_ANCHOR = { AMER: 'US', EMEA: 'GB', APJ: 'CN' };
+
+export const MAJOR_COUNTRIES = ['US', 'CA', 'MX', 'BR', 'AR', 'GB', 'DE', 'FR', 'ES', 'IT', 'RU', 'CN', 'JP', 'IN', 'AU', 'ZA', 'SA', 'KR', 'ID', 'NG'];

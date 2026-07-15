@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
@@ -13,6 +13,7 @@ import {
 
 export default function ForecastOverview() {
   const { theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan, openApproval, openPartnerRca } = useApp();
+  const [geoView, setGeoView] = useState('region');
 
   const kpi = D[curPeriod][curRegion].kpi;
 
@@ -49,9 +50,15 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">🌍 Country &amp; Region Forecast Accuracy <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography." /></div>
+          <div className="card-title">🌍 Country &amp; Region Forecast Accuracy <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Country/Region to change map granularity; % labels shown directly on the map." /></div>
+          <div className="card-dd">
+            <div className="plan-sel">
+              <button className={'plan-btn' + (geoView === 'country' ? ' active' : '')} onClick={() => setGeoView('country')}>Country</button>
+              <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} onClick={() => setGeoView('region')}>Region</button>
+            </div>
+          </div>
         </div>
-        <WorldMap theme={theme} />
+        <WorldMap theme={theme} mode={geoView} />
         <div className="geo-grid">
           <div className="geo-card" style={{ background: 'rgba(16,185,129,.1)', border: '1px solid var(--accent-green)' }}><div className="geo-label" style={{ color: 'var(--accent-green)' }}>AMER</div><div className="geo-value">78%</div></div>
           <div className="geo-card" style={{ background: 'rgba(245,158,11,.1)', border: '1px solid var(--accent-orange)' }}><div className="geo-label" style={{ color: 'var(--accent-orange)' }}>EMEA</div><div className="geo-value">66%</div></div>
