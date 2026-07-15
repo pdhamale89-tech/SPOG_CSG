@@ -26,3 +26,18 @@ export const COUNTRY_ACC = Object.keys(COUNTRY_REGION).reduce((acc, code) => {
 }, {});
 
 export const MAJOR_COUNTRIES = ['US', 'CA', 'MX', 'BR', 'AR', 'GB', 'DE', 'FR', 'ES', 'IT', 'RU', 'CN', 'JP', 'IN', 'AU', 'ZA', 'SA', 'KR', 'ID', 'NG'];
+
+// Single source of truth for the accuracy color tiers shown on the geo map legend.
+export function accTier(val) {
+  if (val >= 90) return 'excellent';
+  if (val >= 80) return 'good';
+  if (val >= 70) return 'fair';
+  return 'critical';
+}
+
+export const TIER_STYLE = {
+  excellent: { border: 'var(--accent-green)', label: 'var(--accent-green)', bg: 'rgba(16,185,129,.1)' },
+  good: { border: 'var(--accent-blue)', label: 'var(--accent-blue)', bg: 'rgba(59,130,246,.1)' },
+  fair: { border: 'var(--accent-orange)', label: 'var(--accent-orange)', bg: 'rgba(245,158,11,.1)' },
+  critical: { border: 'var(--accent-red)', label: 'var(--accent-red)', bg: 'rgba(239,68,68,.1)' },
+};

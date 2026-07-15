@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
+import { REGION_ACC, accTier, TIER_STYLE } from '../../data/regions';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import ChartCanvas from '../charts/ChartCanvas';
@@ -60,9 +61,15 @@ export default function ForecastOverview() {
         </div>
         <WorldMap theme={theme} mode={geoView} />
         <div className="geo-grid">
-          <div className="geo-card" style={{ background: 'rgba(16,185,129,.1)', border: '1px solid var(--accent-green)' }}><div className="geo-label" style={{ color: 'var(--accent-green)' }}>AMER</div><div className="geo-value">78%</div></div>
-          <div className="geo-card" style={{ background: 'rgba(245,158,11,.1)', border: '1px solid var(--accent-orange)' }}><div className="geo-label" style={{ color: 'var(--accent-orange)' }}>EMEA</div><div className="geo-value">66%</div></div>
-          <div className="geo-card" style={{ background: 'rgba(239,68,68,.1)', border: '1px solid var(--accent-red)' }}><div className="geo-label" style={{ color: 'var(--accent-red)' }}>APJ</div><div className="geo-value">48%</div></div>
+          {Object.keys(REGION_ACC).map((reg) => {
+            const s = TIER_STYLE[accTier(REGION_ACC[reg])];
+            return (
+              <div key={reg} className="geo-card" style={{ background: s.bg, border: `1px solid ${s.border}` }}>
+                <div className="geo-label" style={{ color: s.label }}>{reg}</div>
+                <div className="geo-value">{REGION_ACC[reg]}%</div>
+              </div>
+            );
+          })}
           <div className="geo-card" style={{ background: 'rgba(139,92,246,.1)', border: '1px solid var(--accent-purple)' }}><div className="geo-label" style={{ color: 'var(--accent-purple)' }}>GLOBAL</div><div className="geo-value">63%</div></div>
         </div>
       </div>
