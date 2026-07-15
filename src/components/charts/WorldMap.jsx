@@ -2,13 +2,17 @@ import { useEffect, useRef } from 'react';
 import jsVectorMap from 'jsvectormap';
 import 'jsvectormap/dist/maps/world.js';
 import 'jsvectormap/dist/jsvectormap.min.css';
-import { COUNTRY_REGION, REGION_ACC, COUNTRY_ACC, REGION_ANCHOR, MAJOR_COUNTRIES } from '../../data/regions';
+import { COUNTRY_REGION, REGION_ACC, COUNTRY_ACC, MAJOR_COUNTRIES } from '../../data/regions';
 import { getColors } from '../../theme/colors';
 
-function tierColor(val, c) {
-  if (val >= 75) return c.accentGreen;
-  if (val >= 60) return c.accentOrange;
-  return c.accentRed;
+// Hand-picked on-land coordinates so region labels land in a recognizable spot
+// instead of at an arbitrary country's bounding-box center.
+const REGION_LABEL_COORDS = { AMER: [32, -97], EMEA: [50, 10], APJ: [19, 100] };
+
+function tierKey(val) {
+  if (val >= 75) return 'high';
+  if (val >= 60) return 'mid';
+  return 'low';
 }
 
 export default function WorldMap({ theme, mode = 'region' }) {
@@ -23,17 +27,20 @@ export default function WorldMap({ theme, mode = 'region' }) {
     const neutralFill = c.bgFilter;
     const borderCol = c.border;
     const isCountry = mode === 'country';
-
-    const seriesValues = isCountry
-      ? Object.keys(COUNTRY_ACC).reduce((acc, code) => {
-        acc[code] = tierColor(COUNTRY_ACC[code], c);
-        return acc;
-      }, {})
-      : COUNTRY_REGION;
+    const tierScale = { high: c.accentGreen, mid: c.accentOrange, low: c.accentRed };
 
     const seriesConfig = isCountry
-      ? { attribute: 'fill', values: seriesValues }
-      : { attribute: 'fill', scale: { AMER: c.accentGreen, EMEA: c.accentOrange, APJ: c.accentRed }, values: seriesValues };
+      ? {
+        attribute: 'fill',
+        scale: tierScale,
+        values: Object.keys(COUNTRY_ACC).reduce((acc, code) => {
+          acc[code] = tierKey(COUNTRY_ACC[code]);
+          return acc;
+        }, {}),
+      }
+      : { attribute: 'fill', scale: { AMER: c.accentGreen, EMEA: c.accentOrange, APJ: c.accentRed }, values: COUNTRY_REGION };
+
+    const labelHalo = { fill: '#fff', stroke: 'rgba(0,0,0,.6)', strokeWidth: 2, paintOrder: 'stroke', fontWeight: 700 };
 
     mapRef.current = new jsVectorMap({
       selector: '#worldMap',
@@ -42,26 +49,37 @@ export default function WorldMap({ theme, mode = 'region' }) {
       zoomOnScroll: false,
       draggable: true,
       regionsSelectable: false,
+      markersSelectable: false,
       backgroundColor: 'transparent',
       regionStyle: {
         initial: { fill: neutralFill, stroke: borderCol, strokeWidth: 0.5 },
         hover: { fillOpacity: 0.85, cursor: 'pointer' },
       },
+      markerStyle: {
+        initial: { r: 0, fill: 'transparent', stroke: 'transparent' },
+        hover: { r: 0, fill: 'transparent', stroke: 'transparent', cursor: 'default' },
+      },
       series: { regions: [seriesConfig] },
+      markers: isCountry ? [] : Object.keys(REGION_LABEL_COORDS).map((reg) => ({ name: reg, coords: REGION_LABEL_COORDS[reg] })),
       labels: {
-        regions: {
-          render(code) {
-            if (isCountry) {
+        regions: isCountry
+          ? {
+            render(code) {
               return MAJOR_COUNTRIES.includes(code) && COUNTRY_ACC[code] != null ? `${COUNTRY_ACC[code]}%` : '';
-            }
-            const reg = COUNTRY_REGION[code];
-            return reg && REGION_ANCHOR[reg] === code ? `${reg} ${REGION_ACC[reg]}%` : '';
+            },
+          }
+          : undefined,
+        markers: isCountry
+          ? undefined
+          : {
+            render(markerConfig) {
+              const reg = markerConfig.name;
+              return `${reg} ${REGION_ACC[reg]}%`;
+            },
           },
-        },
       },
-      regionLabelStyle: {
-        initial: { fill: '#fff', stroke: 'rgba(0,0,0,.6)', 'stroke-width': 2, 'paint-order': 'stroke', 'font-size': isCountry ? 8 : 10, 'font-weight': 700 },
-      },
+      regionLabelStyle: { initial: { ...labelHalo, fontSize: 8 } },
+      markerLabelStyle: { initial: { ...labelHalo, fontSize: 11 } },
       onRegionTooltipShow(event, tooltip, code) {
         if (isCountry) {
           const val = COUNTRY_ACC[code];

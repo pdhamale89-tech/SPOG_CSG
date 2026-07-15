@@ -25,6 +25,4 @@ export const COUNTRY_ACC = Object.keys(COUNTRY_REGION).reduce((acc, code) => {
   return acc;
 }, {});
 
-export const REGION_ANCHOR = { AMER: 'US', EMEA: 'GB', APJ: 'CN' };
-
 export const MAJOR_COUNTRIES = ['US', 'CA', 'MX', 'BR', 'AR', 'GB', 'DE', 'FR', 'ES', 'IT', 'RU', 'CN', 'JP', 'IN', 'AU', 'ZA', 'SA', 'KR', 'ID', 'NG'];

@@ -128,7 +128,7 @@ export default function ForecastOverview() {
               </select>
             </div>
           </div>
-          <div className="chart-container" style={{ height: '140px' }}><ChartCanvas config={c5Config} /></div>
+          <div className="chart-container" style={{ height: '190px' }}><ChartCanvas config={c5Config} /></div>
           <div className="dbosp-metrics">
             <div className="dbosp-metric-card">
               <div className="dbosp-metric-label">Accuracy</div>
