@@ -31,9 +31,14 @@ export function AppProvider({ children }) {
 
   const [toast, setToast] = useState({ show: false, msg: '', cls: '' });
   const [detailModal, setDetailModal] = useState({ open: false, title: '', body: '' });
-  const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low' });
+  const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low', prefillRootCause: '' });
   const [forwardModal, setForwardModal] = useState({ open: false, step: 1, forRca: false });
   const [partnerRcaModal, setPartnerRcaModal] = useState({ open: false, idx: 0 });
+  // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
+  // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
+  // so this is what lets the UI show "Actioned" after a submit instead of the toast being the
+  // only trace it happened.
+  const [actionLog, setActionLog] = useState({});
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -88,14 +93,28 @@ export function AppProvider({ children }) {
     setTimeout(() => setToast((t) => ({ ...t, show: false })), 3500);
   }, []);
 
-  const openApproval = useCallback((id, area, priority) => {
-    setApprovalModal({ open: true, id, area, priority });
+  const openApproval = useCallback(({ id, area, priority = 'Medium', prefillRootCause = '' }) => {
+    setApprovalModal({ open: true, id, area, priority, prefillRootCause });
   }, []);
   const closeApproval = useCallback(() => setApprovalModal((m) => ({ ...m, open: false })), []);
-  const handleApproval = useCallback((decision) => {
+  const logAction = useCallback((id, record) => {
+    setActionLog((prev) => ({ ...prev, [id]: record }));
+  }, []);
+  // Returns false (and keeps the modal open) when an approval is missing required fields,
+  // so the caller knows not to close the modal.
+  const handleApproval = useCallback((decision, fields = {}) => {
+    if (decision === 'approved' && (!fields.rootCause || !fields.correctiveAction?.trim())) {
+      showToast('Root cause & corrective action are required to approve', 'toast-error');
+      return false;
+    }
+    logAction(approvalModal.id, {
+      type: 'clca', decision, area: approvalModal.area, priority: approvalModal.priority,
+      ...fields, timestamp: new Date().toLocaleString(),
+    });
     setApprovalModal((m) => ({ ...m, open: false }));
-    showToast(decision === 'approved' ? '✓ Approved' : '✕ Rejected', decision === 'approved' ? 'toast-success' : 'toast-error');
-  }, [showToast]);
+    showToast(decision === 'approved' ? '✓ CLCA Approved & Logged' : '✕ Rejected', decision === 'approved' ? 'toast-success' : 'toast-error');
+    return true;
+  }, [showToast, logAction, approvalModal.id, approvalModal.area, approvalModal.priority]);
 
   const handleRCAApproval = useCallback((decision) => {
     showToast(decision === 'approved' ? '✓ Approved' : '✕ Rejected', decision === 'approved' ? 'toast-success' : 'toast-error');
@@ -143,12 +162,13 @@ export function AppProvider({ children }) {
     handleRCAApproval,
     forwardModal, openForward, closeForward, submitForward,
     partnerRcaModal, openPartnerRca, closePartnerRca,
+    actionLog, logAction,
   }), [theme, toggleTheme, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor, curHistPlan, drill,
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
-    partnerRcaModal, openPartnerRca, closePartnerRca]);
+    partnerRcaModal, openPartnerRca, closePartnerRca, actionLog, logAction]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

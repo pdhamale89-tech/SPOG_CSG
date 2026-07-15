@@ -16,8 +16,16 @@ import {
   partnerInsight, histTrendInsight,
 } from '../../utils/insights';
 
+const QUEUE_ROWS = [
+  { id: 'Q-001', name: 'Enterprise Voice T1', region: 'AMER', forecast: 12400, actual: 12100 },
+  { id: 'Q-027', name: 'Commercial Voice T2', region: 'APJ', forecast: 15600, actual: 9200 },
+];
+
 export default function ForecastOverview() {
-  const { theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan, openApproval, openPartnerRca } = useApp();
+  const {
+    theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan,
+    openApproval, openPartnerRca, actionLog,
+  } = useApp();
   const [geoView, setGeoView] = useState('region');
 
   const kpi = D[curPeriod][curRegion].kpi;
@@ -184,18 +192,25 @@ export default function ForecastOverview() {
         <div className="card-header"><div className="card-title">Queue Performance <InfoBtn tip="<strong>Purpose</strong>Queue-level data." /></div></div>
         <div className="tw">
           <table>
-            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Forecast</th><th>Actual</th><th>Acc%</th><th>Status</th><th>CLCA</th></tr></thead>
+            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Forecast</th><th>Actual</th><th>Acc%</th><th>Status</th><th>RCA/CLCA</th></tr></thead>
             <tbody>
-              <tr>
-                <td>Q-001</td><td>Enterprise Voice T1</td><td>AMER</td><td>12,400</td><td>12,100</td><td>97.6%</td>
-                <td><span className="dot dot-g"></span></td>
-                <td><button className="btn-a" onClick={() => openApproval('CA-001', 'Q-001', 'Low')}>CLCA</button></td>
-              </tr>
-              <tr>
-                <td>Q-027</td><td>Commercial Voice T2</td><td>APJ</td><td>15,600</td><td>9,200</td><td>59.0%</td>
-                <td><span className="dot dot-r"></span></td>
-                <td><button className="btn-a" onClick={() => openApproval('CA-003', 'Q-027', 'High')}>CLCA</button></td>
-              </tr>
+              {QUEUE_ROWS.map((q) => {
+                const accRaw = (q.actual / q.forecast) * 100;
+                const tier = accRaw >= 95 ? 'g' : accRaw >= 80 ? 'o' : 'r';
+                const priority = accRaw >= 95 ? 'Low' : accRaw >= 80 ? 'Medium' : 'High';
+                const actioned = actionLog[q.id];
+                return (
+                  <tr key={q.id}>
+                    <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
+                    <td>{q.forecast.toLocaleString()}</td><td>{q.actual.toLocaleString()}</td><td>{accRaw.toFixed(1)}%</td>
+                    <td><span className={'dot dot-' + tier}></span></td>
+                    <td>
+                      <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>
+                      {actioned && <span className="action-badge" title={`Actioned ${actioned.timestamp}`}>✓</span>}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
