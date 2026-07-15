@@ -6,10 +6,15 @@ import RegionSelect from '../common/RegionSelect';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
+import InsightBox from '../common/InsightBox';
 import {
   buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig, buildDmsConfig,
   buildPartnerConfig, buildHistTrendConfig,
 } from '../charts/chartConfigs';
+import {
+  geoMapInsight, callVolumeInsight, channelMixInsight, dbOspInsight, dmsInsight,
+  partnerInsight, histTrendInsight,
+} from '../../utils/insights';
 
 export default function ForecastOverview() {
   const { theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan, openApproval, openPartnerRca } = useApp();
@@ -24,12 +29,19 @@ export default function ForecastOverview() {
   const regionNPartner = chartRegionFor('nPartner');
   const regionNHist = chartRegionFor('nHist');
 
-  const c1Config = useMemo(() => buildCallVolumeConfig(D[curPeriod][regionC1], theme), [curPeriod, regionC1, theme]);
-  const h1Config = useMemo(() => buildChannelMixConfig(D[curPeriod][regionH1], theme), [curPeriod, regionH1, theme]);
-  const c5Config = useMemo(() => buildDbOspVolumeConfig(D[curPeriod][regionC5], theme), [curPeriod, regionC5, theme]);
-  const nDmsConfig = useMemo(() => buildDmsConfig(D[curPeriod][regionNDms], theme), [curPeriod, regionNDms, theme]);
-  const nPartnerConfig = useMemo(() => buildPartnerConfig(D[curPeriod][regionNPartner], theme), [curPeriod, regionNPartner, theme]);
-  const nHistConfig = useMemo(() => buildHistTrendConfig(D[curPeriod][regionNHist], theme, curHistPlan), [curPeriod, regionNHist, theme, curHistPlan]);
+  const dC1 = D[curPeriod][regionC1];
+  const dH1 = D[curPeriod][regionH1];
+  const dC5 = D[curPeriod][regionC5];
+  const dNDms = D[curPeriod][regionNDms];
+  const dNPartner = D[curPeriod][regionNPartner];
+  const dNHist = D[curPeriod][regionNHist];
+
+  const c1Config = useMemo(() => buildCallVolumeConfig(dC1, theme), [dC1, theme]);
+  const h1Config = useMemo(() => buildChannelMixConfig(dH1, theme), [dH1, theme]);
+  const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
+  const nDmsConfig = useMemo(() => buildDmsConfig(dNDms, theme), [dNDms, theme]);
+  const nPartnerConfig = useMemo(() => buildPartnerConfig(dNPartner, theme), [dNPartner, theme]);
+  const nHistConfig = useMemo(() => buildHistTrendConfig(dNHist, theme, curHistPlan), [dNHist, theme, curHistPlan]);
 
   return (
     <div className="tab-panel active">
@@ -59,6 +71,7 @@ export default function ForecastOverview() {
           </div>
         </div>
         <WorldMap theme={theme} mode={geoView} />
+        <InsightBox text={geoMapInsight()} />
       </div>
 
       <div className="s-grid full">
@@ -68,6 +81,7 @@ export default function ForecastOverview() {
             <div className="card-dd"><RegionSelect value={regionC1} onChange={(v) => setChartRegion('c1', v)} /></div>
           </div>
           <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={c1Config} /></div>
+          <InsightBox text={callVolumeInsight(dC1)} />
         </div>
       </div>
 
@@ -84,6 +98,7 @@ export default function ForecastOverview() {
           </div>
         </div>
         <div className="chart-container" style={{ height: '240px' }}><ChartCanvas config={nHistConfig} /></div>
+        <InsightBox text={histTrendInsight(dNHist, curHistPlan)} />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
@@ -112,6 +127,7 @@ export default function ForecastOverview() {
             </div>
           </div>
           <div className="chart-container"><ChartCanvas config={h1Config} /></div>
+          <InsightBox text={channelMixInsight(dH1)} />
         </div>
         <div className="card">
           <div className="card-header">
@@ -123,6 +139,7 @@ export default function ForecastOverview() {
             </div>
           </div>
           <div className="chart-container" style={{ height: '190px' }}><ChartCanvas config={c5Config} /></div>
+          <InsightBox text={dbOspInsight(dC5)} />
           <div className="dbosp-metrics">
             <div className="dbosp-metric-card">
               <div className="dbosp-metric-label">Accuracy</div>
@@ -151,6 +168,7 @@ export default function ForecastOverview() {
           <div className="chart-container" style={{ height: '210px' }}>
             <ChartCanvas config={nPartnerConfig} onClick={(evt, els) => { if (els.length) openPartnerRca(els[0].index); }} />
           </div>
+          <InsightBox text={partnerInsight(dNPartner)} />
         </div>
         <div className="card">
           <div className="card-header">
@@ -158,6 +176,7 @@ export default function ForecastOverview() {
             <div className="card-dd"><RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} /></div>
           </div>
           <div className="chart-container" style={{ height: '210px' }}><ChartCanvas config={nDmsConfig} /></div>
+          <InsightBox text={dmsInsight(dNDms)} />
         </div>
       </div>
 

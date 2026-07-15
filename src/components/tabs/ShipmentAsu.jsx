@@ -4,11 +4,17 @@ import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import ChartCanvas from '../charts/ChartCanvas';
+import InsightBox from '../common/InsightBox';
 import {
   buildShipUppConfig, buildShipDrillConfig, buildShipmentTrendStaticConfig, buildSegmentSoldConfig,
   buildProductTrendConfig, buildShipmentGrowthConfig, buildAsuTrendConfig, buildAsuCpasuConfig,
   buildTagRoutedConfig, buildExpiryConfig, buildAsuAcqExitConfig, buildAsuLifecycleConfig,
 } from '../charts/chartConfigs';
+import {
+  shipUppInsight, shipDrillInsight, shipmentTrendInsight, segmentSoldInsight, productTrendInsight,
+  shipmentGrowthInsight, asuTrendInsight, asuCpasuInsight, tagRoutedInsight, expiryInsight,
+  asuAcqExitInsight, asuLifecycleInsight,
+} from '../../utils/insights';
 
 const TIERS = ['All', 'Pro', 'Premium', 'Basic'];
 const OFFERINGS = ['pro', 'premium', 'basic', 'oop'];
@@ -36,8 +42,10 @@ export default function ShipmentAsu() {
   const s5Config = useMemo(() => buildShipmentGrowthConfig(theme), [theme]);
   const a1Config = useMemo(() => buildAsuTrendConfig(theme), [theme]);
   const a2Config = useMemo(() => buildAsuCpasuConfig(theme), [theme]);
-  const nTagConfig = useMemo(() => buildTagRoutedConfig(D[curPeriod][regionNTag], theme), [curPeriod, regionNTag, theme]);
-  const nExpiryConfig = useMemo(() => buildExpiryConfig(D[curPeriod][regionNExpiry], theme), [curPeriod, regionNExpiry, theme]);
+  const dNTag = D[curPeriod][regionNTag];
+  const dNExpiry = D[curPeriod][regionNExpiry];
+  const nTagConfig = useMemo(() => buildTagRoutedConfig(dNTag, theme), [dNTag, theme]);
+  const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
   const a3Config = useMemo(() => buildAsuAcqExitConfig(theme), [theme]);
   const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
 
@@ -81,6 +89,7 @@ export default function ShipmentAsu() {
           <div className="card-dd"><RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} /></div>
         </div>
         <div className="chart-container" style={{ height: '260px' }}><ChartCanvas config={shipUppConfig} /></div>
+        <InsightBox text={shipUppInsight(regionShipUpp)} />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
@@ -113,6 +122,7 @@ export default function ShipmentAsu() {
             <button key={s} className="btn-a" onClick={() => drillToSeg(drill.offering, s)}>{cap(s)}</button>
           ))}
         </div>
+        <InsightBox text={shipDrillInsight(regionShipDrill, drill.level, drill.offering)} />
       </div>
 
       <div className="s-grid">
@@ -122,10 +132,12 @@ export default function ShipmentAsu() {
             <div className="card-dd"><RegionSelect value={regionS1} onChange={(v) => setChartRegion('s1', v)} /></div>
           </div>
           <div className="chart-container"><ChartCanvas config={s1Config} /></div>
+          <InsightBox text={shipmentTrendInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Segment Sold <InfoBtn tip="<strong>Purpose</strong>Segment growth." /></div></div>
           <div className="chart-container"><ChartCanvas config={s2Config} /></div>
+          <InsightBox text={segmentSoldInsight()} />
         </div>
       </div>
 
@@ -141,6 +153,7 @@ export default function ShipmentAsu() {
             </div>
           </div>
           <div className="chart-container"><ChartCanvas config={s3Config} /></div>
+          <InsightBox text={productTrendInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Adherence <InfoBtn tip="<strong>Purpose</strong>Plan adherence." /></div></div>
@@ -160,6 +173,7 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header"><div className="card-title">Shipment Growth <InfoBtn tip="<strong>Purpose</strong>Growth by region." /></div></div>
           <div className="chart-container"><ChartCanvas config={s5Config} /></div>
+          <InsightBox text={shipmentGrowthInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">⚠ Risk Assessment <InfoBtn tip="<strong>Purpose</strong>Regional risk scores." /></div></div>
@@ -201,10 +215,12 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Trend <InfoBtn tip="<strong>Purpose</strong>ASU vs plan." /></div></div>
           <div className="chart-container"><ChartCanvas config={a1Config} /></div>
+          <InsightBox text={asuTrendInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">ASU vs CPASU <InfoBtn tip="<strong>Purpose</strong>ASU/CPASU." /></div></div>
           <div className="chart-container"><ChartCanvas config={a2Config} /></div>
+          <InsightBox text={asuCpasuInsight()} />
         </div>
       </div>
 
@@ -215,6 +231,7 @@ export default function ShipmentAsu() {
             <div className="card-dd"><RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} /></div>
           </div>
           <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={nTagConfig} /></div>
+          <InsightBox text={tagRoutedInsight(dNTag)} />
         </div>
       </div>
 
@@ -225,6 +242,7 @@ export default function ShipmentAsu() {
             <div className="card-dd"><RegionSelect value={regionNExpiry} onChange={(v) => setChartRegion('nExpiry', v)} /></div>
           </div>
           <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={nExpiryConfig} /></div>
+          <InsightBox text={expiryInsight(dNExpiry)} />
         </div>
       </div>
 
@@ -232,10 +250,12 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Acq vs Exit <InfoBtn tip="<strong>Purpose</strong>Net ASU growth." /></div></div>
           <div className="chart-container"><ChartCanvas config={a3Config} /></div>
+          <InsightBox text={asuAcqExitInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Lifecycle <InfoBtn tip="<strong>Purpose</strong>Activation to renewal." /></div></div>
           <div className="chart-container"><ChartCanvas config={a4Config} /></div>
+          <InsightBox text={asuLifecycleInsight()} />
         </div>
       </div>
     </div>

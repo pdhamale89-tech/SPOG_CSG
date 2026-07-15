@@ -3,7 +3,9 @@ import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import ChartCanvas from '../charts/ChartCanvas';
+import InsightBox from '../common/InsightBox';
 import { buildCapacityTrendConfig } from '../charts/chartConfigs';
+import { capacityInsight } from '../../utils/insights';
 
 export default function CapacityOverview() {
   const { theme, curPeriod, curRegion } = useApp();
@@ -28,6 +30,7 @@ export default function CapacityOverview() {
         <div className="card">
           <div className="card-header"><div className="card-title">Capacity Trend <InfoBtn tip="<strong>Purpose</strong>Capacity vs demand." /></div></div>
           <div className="chart-container"><ChartCanvas config={cp1Config} /></div>
+          <InsightBox text={capacityInsight(d)} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Utilization <InfoBtn tip="<strong>Purpose</strong>Regional utilization." /></div></div>

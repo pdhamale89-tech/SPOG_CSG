@@ -4,7 +4,9 @@ import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import Gauge from '../charts/Gauge';
+import InsightBox from '../common/InsightBox';
 import { buildBiasConfig, buildStabilityConfig, buildDriftConfig } from '../charts/chartConfigs';
+import { biasInsight, stabilityInsight, driftInsight } from '../../utils/insights';
 
 export default function ForecastHealth() {
   const { theme, curPeriod, curRegion } = useApp();
@@ -54,10 +56,12 @@ export default function ForecastHealth() {
         <div className="card">
           <div className="card-header"><div className="card-title">Bias Detection <InfoBtn tip="<strong>Purpose</strong>Over/under forecast." /></div></div>
           <div className="chart-container"><ChartCanvas config={biasConfig} /></div>
+          <InsightBox text={biasInsight(d)} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Stability <InfoBtn tip="<strong>Purpose</strong>Forecast consistency." /></div></div>
           <div className="chart-container"><ChartCanvas config={stabilityConfig} /></div>
+          <InsightBox text={stabilityInsight(d)} />
         </div>
       </div>
 
@@ -65,6 +69,7 @@ export default function ForecastHealth() {
         <div className="card">
           <div className="card-header"><div className="card-title">Drift <InfoBtn tip="<strong>Purpose</strong>Model degradation." /></div></div>
           <div className="chart-container"><ChartCanvas config={driftConfig} /></div>
+          <InsightBox text={driftInsight(d)} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Risk Heat Map <InfoBtn tip="<strong>Purpose</strong>Regional risk matrix." /></div></div>
