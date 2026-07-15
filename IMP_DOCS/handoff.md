@@ -15,14 +15,16 @@ Last updated: after initial GitHub push + Pages deploy setup.
 - `vite.config.js` has `base: '/SPOG_CSG/'` set for GitHub Pages project-site hosting.
 - `.github/workflows/deploy.yml` builds and deploys `dist/` to GitHub Pages automatically on every push to `main`.
 
-## What's still manual (one-time only)
+## Deploy status: IN PROGRESS — live site not yet working
 
-GitHub Pages needs its **Source** set to "GitHub Actions" once, in the repo's web UI:
+First deploy attempt failed with `Failed to create deployment (status: 404)... Ensure GitHub Pages has been enabled`. This is the standard error `actions/deploy-pages` throws when the repo's Pages **Source** is still "Deploy from a branch" instead of "GitHub Actions" — until that's switched, the workflow's build step succeeds but the deploy step 404s, and the live URL just serves the raw (unbuilt) `index.html` from the branch, which is why the page is blank (`<script src="/src/main.jsx">` is unparsed JSX with a wrong path — nothing renders).
 
-1. Open the repo on github.com → **Settings** tab → **Pages** (left sidebar).
-2. Under "Build and deployment" → "Source", choose **GitHub Actions**.
+Steps to actually fix:
+1. On github.com → repo → **Settings** → **Pages** → under "Build and deployment" → "Source" → pick **GitHub Actions**.
+2. Push any new commit (changing the Source setting alone does not redeploy the already-failed run) — this re-triggers `.github/workflows/deploy.yml`.
+3. Confirm the new run's `deploy` job succeeds (not just `build`), and re-check https://pdhamale89-tech.github.io/SPOG_CSG/ actually serves the built `dist/index.html` (it will reference `/SPOG_CSG/assets/...`, not `/src/main.jsx`).
 
-This can't be done from the command line without an authenticated `gh` CLI (not installed in this environment). After this one click, every future `git push` to `main` deploys automatically — no more manual steps.
+This can't be scripted end-to-end from the command line without an authenticated `gh` CLI (not installed in this environment) — the Source toggle specifically requires the GitHub web UI. Everything else (push, workflow, verifying via the public Actions API) can be done from the CLI.
 
 ## Known gaps / things a future session should know
 

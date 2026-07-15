@@ -35,3 +35,12 @@ Further follow-up (mid-turn): push after each update, and keep these docs groupe
 - Created `IMP_DOCS/` with this file plus `handoff.md`, `tech_spec.md`, `design_choice.md`.
 - Ran `git init`, committed, set `main` as default branch, added the `origin` remote, and pushed.
 - Flagged the one remaining manual step that can't be scripted without an authenticated `gh` CLI: setting the repo's Pages "Source" to **GitHub Actions** once in the GitHub web UI (Settings → Pages). After that one click, every future push deploys automatically.
+
+### 5. "its not pushed" — push retry
+First `git push -u origin main` attempt hung (Windows Git Credential Manager needed an interactive browser sign-in the sandboxed shell couldn't complete) and was killed after timeout. User re-pasted the same init/push script. Repo/commit/remote were already correctly set up from step 4, so only the push itself needed retrying — ran it again in the background and it succeeded on the second attempt (credentials had been cached from the first, aborted attempt).
+
+### 6. "its full white nothing is showing fix it"
+Diagnosed via the public GitHub Actions API (no auth needed for a public repo's read endpoints): the `Deploy to GitHub Pages` workflow's `build` job succeeded, but the `deploy` job failed. Fetching the live URL directly confirmed the site was serving the raw, unbuilt `index.html` (`<script src="/src/main.jsx">`, a `/favicon.svg` root reference) — proof Pages was deploying from a branch, not from the Actions artifact. Explained the fix (Settings → Pages → Source → "GitHub Actions") and gave a direct link to re-run the failed job.
+
+### 7. "getting below error" (pasted deploy-pages log) → "its push i think on github but unable to any thing on the live link"
+User pasted the actual failure: `Failed to create deployment (status: 404)... Ensure GitHub Pages has been enabled`, confirming the Source-setting diagnosis exactly. Re-checked the Actions API and the live URL afterward — still the same failed run and still serving raw source, meaning flipping the Source dropdown (if done) does **not** retroactively fix an already-failed run; a fresh push is required to trigger a new deployment attempt. Updated `handoff.md` with the precise root cause and fix sequence, then pushed a docs-only commit to trigger a fresh workflow run and confirmed the result (see `handoff.md` for the live status at time of writing).
