@@ -211,21 +211,29 @@ export default function ForecastOverview() {
             )}
           </div>
           <ChartCanvas config={nDmsConfig} height="210px" />
-          <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-            {dmsDrill.level === 'overall' ? (
-              <>
-                <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Country</span>
-                {DMS_COUNTRIES.map((c) => (
-                  <button key={c} className="btn-a" onClick={() => setDmsDrill({ level: 'country', country: c, offering: '' })}>{c}</button>
-                ))}
-                <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginLeft: '6px' }}>Offering</span>
-                {DMS_OFFERINGS.map((o) => (
-                  <button key={o} className="btn-a" onClick={() => setDmsDrill({ level: 'offering', country: '', offering: o })}>{cap(o)}</button>
-                ))}
-              </>
-            ) : (
-              <button className="btn-a" onClick={dmsDrillReset}>← Back to Overall</button>
-            )}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <select
+              className="f-sel"
+              value={dmsDrill.level === 'country' ? dmsDrill.country : 'All'}
+              onChange={(e) => {
+                const v = e.target.value;
+                setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'country', country: v, offering: '' });
+              }}
+            >
+              <option value="All">All Countries</option>
+              {DMS_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <select
+              className="f-sel"
+              value={dmsDrill.level === 'offering' ? dmsDrill.offering : 'All'}
+              onChange={(e) => {
+                const v = e.target.value;
+                setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'offering', country: '', offering: v });
+              }}
+            >
+              <option value="All">All Offerings</option>
+              {DMS_OFFERINGS.map((o) => <option key={o} value={o}>{cap(o)}</option>)}
+            </select>
           </div>
           <InsightBox text={dmsInsight(nDmsData)} />
         </div>
