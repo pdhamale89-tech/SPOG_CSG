@@ -148,7 +148,7 @@ export default function ForecastOverview() {
               <RegionSelect value={regionH1} onChange={(v) => setChartRegion('h1', v)} />
             </div>
           </div>
-          <ChartCanvas config={h1Config} />
+          <ChartCanvas config={h1Config} height="290px" />
           <InsightBox text={channelMixInsight(dH1)} />
         </div>
         <div className="card">
