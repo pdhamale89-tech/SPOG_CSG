@@ -443,8 +443,36 @@ export function buildAsuLifecycleConfig(theme) {
   };
 }
 
-export function buildCapacityTrendConfig(d, theme) {
+// ===== Capacity — Workforce Planning =====
+
+export function buildCapVolumeConfig(d, theme) {
   const S = baseScales(theme);
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Jul DB', data: d.julDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
+        { label: 'Jul OSP', data: d.julOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
+        { label: 'Aug DB', data: d.augDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
+        { label: 'Aug OSP', data: d.augOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { x: S.x, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildCapVolumeTrendConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
@@ -452,12 +480,319 @@ export function buildCapacityTrendConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Available', data: d.capAv, borderColor: '#10b981', tension: 0.4, fill: false },
-        { label: 'Allocated', data: d.capAl, borderColor: '#3b82f6', tension: 0.4, fill: false },
-        { label: 'Demand', data: d.capDm, borderColor: '#ef4444', borderDash: [5, 3], tension: 0.4, fill: false },
+        { label: 'Jul Total Vol', data: d.julTotal, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
+        { label: 'Aug Total Vol', data: d.augTotal, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
+        { label: 'Demand Fcst', data: d.demandFcst, borderColor: '#10b981', borderDash: [6, 3], tension: 0.3, pointRadius: 2, borderWidth: 2, fill: false, datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildCapHcConfig(d, theme) {
+  const S = baseScales(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Aug HC Avg', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
+        { label: 'Aug HC Exit', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
+        { label: 'Jul Total HC', data: d.julTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+        { label: 'Aug Total HC', data: d.augTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+  };
+}
+
+export function buildCapExcessConfig(d, theme) {
+  const S = baseScales(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Jul Excess HC', data: d.julExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
+        { label: 'Aug Excess HC', data: d.augExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
+        { label: 'Jul LOA Exit', data: d.julLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+        { label: 'Aug LOA Exit', data: d.augLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+        { label: 'Jul Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+  };
+}
+
+export function buildCapHiringConfig(d, theme) {
+  const S = baseScales(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Jul (Old)', data: d.julOld, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
+        { label: 'Aug (New)', data: d.augNew, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
+        { label: 'Jul Total', data: d.julOld, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: 'Aug Total', data: d.augNew, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+  };
+}
+
+export function buildCapHiringBreakdownConfig(d, theme) {
+  const S = baseScales(theme);
+  const LP = legendPos(theme);
+  const { textPrimary: tp, bgCard: bg } = getColors(theme);
+  const stackDL = { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: tp, font: { size: 8, weight: 'bold' }, textStrokeColor: bg, textStrokeWidth: 2 };
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Jul Approved', data: d.julApproved, backgroundColor: 'rgba(59,130,246,.45)', stack: 'jul', borderRadius: 2 },
+        { label: 'Jul UR Hiring', data: d.julUrHiring, backgroundColor: 'rgba(59,130,246,.85)', stack: 'jul', borderRadius: 2 },
+        { label: 'Jul Non-Approved', data: d.julNonApproved, backgroundColor: 'rgba(245,158,11,.8)', stack: 'jul', borderRadius: 2 },
+        { label: 'Aug UR Hiring', data: d.augUrHiring, backgroundColor: 'rgba(139,92,246,.85)', stack: 'aug', borderRadius: 2 },
+        { label: 'Jul Overall', data: d.julOverall, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: 'Aug Overall', data: d.augOverall, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: stackDL } },
+  };
+}
+
+export function buildCapCapOspConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const LP = legendPos(theme);
+  const pctDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Cap% Old', data: d.capPctOld, backgroundColor: 'rgba(59,130,246,.3)', yAxisID: 'y', borderRadius: 3 },
+        { label: 'Cap% New', data: d.capPctNew, backgroundColor: 'rgba(59,130,246,.8)', yAxisID: 'y', borderRadius: 3 },
+        { label: 'OSP% Old', data: d.ospPctOld, type: 'line', borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, yAxisID: 'y1' },
+        { label: 'OSP% New', data: d.ospPctNew, type: 'line', borderColor: '#10b981', pointRadius: 4, tension: 0.3, borderWidth: 2.5, yAxisID: 'y1' },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: {
+        y: { beginAtZero: true, max: 200, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, title: { display: true, text: 'Capacity %', color: tc, font: { size: 9 } } },
+        y1: { position: 'right', beginAtZero: true, max: 100, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, title: { display: true, text: 'OSP Mix %', color: tc, font: { size: 9 } } },
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: pctDL },
+    },
+  };
+}
+
+export function buildCapExitConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Jul L1 Exit', data: d.julL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
+        { label: 'Aug L1 Exit', data: d.augL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' },
+        { label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: {
+        y: { beginAtZero: true, ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildCapPopConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'DB Vol PoP%', data: d.dbVolPop, borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false },
+        { label: 'OSP Vol PoP%', data: d.ospVolPop, borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false },
+        { label: 'Total Vol PoP%', data: d.totalVolPop, borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false },
+        { label: 'HC Avg PoP%', data: d.hcAvgPop, borderColor: '#8b5cf6', borderDash: [5, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+        { label: 'HC Exit PoP%', data: d.hcExitPop, borderColor: '#06b6d4', borderDash: [5, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc } } },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildCapHiringPopConfig(d, theme) {
+  const S = baseScales(theme);
+  const { textPrimary: tp, bgCard: bg } = getColors(theme);
+  const negDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'bottom', offset: 4, textStrokeColor: bg, textStrokeWidth: 3 };
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        {
+          label: 'Hiring PoP Δ',
+          data: d.hiringPopDelta,
+          backgroundColor: d.hiringPopDelta.map((v) => (Math.abs(v) > 50 ? 'rgba(239,68,68,.8)' : 'rgba(245,158,11,.75)')),
+          borderRadius: 3,
+        },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: { display: false }, datalabels: negDL } },
+  };
+}
+
+export function buildCapPlannerGapConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  const palette = ['#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6'];
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: d.planners.map((p, i) => ({ label: p.name, data: p.data, borderColor: palette[i % palette.length], tension: 0.3, pointRadius: 4, borderWidth: 2.5, fill: false })),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildCapTopGapsConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const leftDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'left', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => fK(v) };
+  return {
+    type: 'bar',
+    data: { labels: d.labels, datasets: [{ label: 'FY27Q3 Gap', data: d.gaps, backgroundColor: 'rgba(239,68,68,.75)', borderRadius: 3 }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { x: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } }, y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } } },
+      plugins: { legend: { display: false }, datalabels: leftDL },
+    },
+  };
+}
+
+export function buildCapOfferingGapConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const LP = legendPos(theme);
+  const condDL = { display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== 0, color: tp, font: { size: 8, weight: 'bold' }, anchor: 'end', align: 'top', textStrokeColor: bg, textStrokeWidth: 2 };
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Pro', data: d.pro, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 2 },
+        { label: 'Premium', data: d.premium, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 2 },
+        { label: 'OOP', data: d.oop, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 2 },
+        { label: 'Basic', data: d.basic, backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 2 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { stacked: true, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } }, x: { stacked: true, ticks: { color: tc, font: { size: 9 } }, grid: { display: false } } },
+      plugins: { legend: LP, datalabels: condDL },
+    },
+  };
+}
+
+export function buildCapPlannerSubtotalsConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const LP = legendPos(theme);
+  const condDL = { display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== 0, color: tp, font: { size: 8, weight: 'bold' }, textStrokeColor: bg, textStrokeWidth: 2 };
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'FY27 Total', data: d.fy27Total, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 2 },
+        { label: 'FY28 Q1', data: d.fy28Q1, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 2 },
+        { label: 'FY28 Q2', data: d.fy28Q2, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 2 },
+      ],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } }, y: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } } },
+      plugins: { legend: LP, datalabels: condDL },
+    },
+  };
+}
+
+export function buildCapWeeklyGapConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Total Gap', data: d.totalGap, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,.08)', fill: true, tension: 0.3, pointRadius: 5, borderWidth: 3, yAxisID: 'y' },
+        { label: 'CommClient OOP', data: d.commClientOop, borderColor: '#3b82f6', tension: 0.3, pointRadius: 2, borderWidth: 1.5, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Core Email', data: d.coreEmail, borderColor: '#f59e0b', tension: 0.3, pointRadius: 2, borderWidth: 1.5, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Tech Cons CNX', data: d.techConsCnx, borderColor: '#8b5cf6', tension: 0.3, pointRadius: 2, borderWidth: 1.5, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Tech Cons Email', data: d.techConsEmail, borderColor: '#06b6d4', tension: 0.3, pointRadius: 2, borderWidth: 1.5, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Commercial', data: d.commercial, borderColor: '#10b981', tension: 0.3, pointRadius: 2, borderWidth: 1.5, yAxisID: 'y1', datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc }, title: { display: true, text: 'Total Gap', color: tc, font: { size: 9 } } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, title: { display: true, text: 'Queue Gap', color: tc, font: { size: 9 } } },
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
   };
 }
 

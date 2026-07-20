@@ -81,13 +81,77 @@ export function driftInsight(d) {
   return `Model drift nearly tripled from an ${series[0]}% baseline to a peak of ${series[peakIdx]}% in ${labelAt(d.labels, peakIdx)} before easing to ${last(series)}%.`;
 }
 
-// --- Capacity Overview ---
+// --- Capacity — Workforce Planning ---
 
-export function capacityInsight(d) {
-  const gaps = d.capDm.map((dm, i) => dm - d.capAl[i]);
-  const gapIdx = maxIdx(gaps);
-  const allPositive = gaps.every((g) => g > 0);
-  return `Demand has outpaced allocated capacity in ${allPositive ? 'every period' : `${gaps.filter((g) => g > 0).length} of ${gaps.length} periods`}, peaking at a ${gaps[gapIdx].toLocaleString()}-hour gap in ${labelAt(d.labels, gapIdx)}; available capacity grew from ${first(d.capAv).toLocaleString()} to ${last(d.capAv).toLocaleString()} over the same span.`;
+export function capVolumeInsight(d) {
+  const julTotal = d.julDb.map((v, i) => v + d.julOsp[i]);
+  const augTotal = d.augDb.map((v, i) => v + d.augOsp[i]);
+  return `Aug projection volume runs ${round((1 - sum(augTotal) / sum(julTotal)) * 100)}% below the Jul plan across ${d.labels.length} quarters, with OSP carrying the majority of both DB/OSP splits.`;
+}
+
+export function capVolumeTrendInsight(d) {
+  return `Total volume fell from ${fK(first(d.julTotal))} to ${fK(last(d.augTotal))} between the Jul and Aug projections, tracking closely against the ${fK(last(d.demandFcst))} demand forecast.`;
+}
+
+export function capHcInsight(d) {
+  return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.julTotalHc)} (Jul) to ${last(d.augTotalHc)} (Aug) over the same span.`;
+}
+
+export function capExcessInsight(d) {
+  return `Excess headcount eased from ${first(d.julExcessHc)} to ${last(d.augExcessHc)} across plans, with LOA exits narrowing from ${first(d.julLoaExit)} to ${last(d.augLoaExit)}.`;
+}
+
+export function capHiringInsight(d) {
+  const zeroQtrs = d.augNew.filter((v) => v === 0).length;
+  return `Aug hiring dropped to zero in ${zeroQtrs} of ${d.augNew.length} quarters versus the Jul plan, which never fell below ${Math.min(...d.julOld)} approved hires.`;
+}
+
+export function capHiringBreakdownInsight(d) {
+  return `Jul hiring leaned on ${sum(d.julNonApproved)} non-approved requisitions versus ${sum(d.julApproved)} approved, while Aug hiring of ${sum(d.augUrHiring)} was entirely UR-driven.`;
+}
+
+export function capCapOspInsight(d) {
+  const validOsp = d.ospPctNew.filter((v) => v != null);
+  return `Capacity% rose from ${first(d.capPctOld)}% to a peak of ${Math.max(...d.capPctNew)}% under the new plan, as OSP mix climbed to ${Math.max(...validOsp)}%.`;
+}
+
+export function capExitInsight(d) {
+  return `L1 exit headcount fell from ${d.julL1Exit[0].toLocaleString()} (Jul) to ${last(d.augL1Exit)} (Aug), a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
+}
+
+export function capPopInsight(d) {
+  const valid = d.totalVolPop.filter((v) => v != null);
+  return `Total volume PoP% has stayed negative every quarter it's tracked, averaging ${round(avg(valid))}%, while HC Avg PoP% held steady near ${round(avg(d.hcAvgPop))}%.`;
+}
+
+export function capHiringPopInsight(d) {
+  const worstIdx = minIdx(d.hiringPopDelta);
+  return `Hiring PoP swung as low as ${d.hiringPopDelta[worstIdx]} in ${labelAt(d.labels, worstIdx)}, the sharpest quarter-over-quarter pullback in the series.`;
+}
+
+export function capPlannerGapInsight(d) {
+  const totals = d.planners.map((p) => sum(p.data));
+  const worstIdx = minIdx(totals);
+  return `${d.planners[worstIdx].name} carries the largest cumulative gap at ${fK(totals[worstIdx])} across the period, ahead of ${d.planners.length - 1} other planners tracked.`;
+}
+
+export function capTopGapsInsight(d) {
+  return `${d.labels[0]} leads all queues with a ${fK(d.gaps[0])} gap this quarter, more than double the tenth-ranked queue at ${fK(d.gaps[d.gaps.length - 1])}.`;
+}
+
+export function capOfferingGapInsight(d) {
+  return `Pro carries the bulk of the offering gap at ${sum(d.pro)} across all quarters, dwarfing Premium (${sum(d.premium)}), OOP (${sum(d.oop)}) and Basic (${sum(d.basic)}) combined.`;
+}
+
+export function capPlannerSubtotalsInsight(d) {
+  const totalFy27 = sum(d.fy27Total);
+  const totalFy28 = sum(d.fy28Q1) + sum(d.fy28Q2);
+  return `FY27 queue gaps total ${totalFy27} across these planners, with FY28 H1 already tracking ${totalFy28}; NA PON's -10 gap recurs as the largest single entry in FY27, FY28 Q1 and FY28 Q2.`;
+}
+
+export function capWeeklyGapInsight(d) {
+  const worstIdx = minIdx(d.totalGap);
+  return `Total weekly gap worsened to ${fK(d.totalGap[worstIdx])} in ${labelAt(d.labels, worstIdx)}, with Core Email and CommClient OOP the largest recurring contributors.`;
 }
 
 // --- Shipment / ASU ---
