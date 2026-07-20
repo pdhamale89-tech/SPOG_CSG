@@ -23,7 +23,6 @@ export default function CalendarFiscal() {
   return (
     <div className="tab-panel active">
       <div className="fc-wrap">
-        <div className="fc-title">Dell Technologies</div>
         <div className="fc-subtitle">Fiscal Year 2027</div>
         <div className="fc-daterange">(January 31, 2026 - January 29, 2027)</div>
         <div className="fc-grid">
