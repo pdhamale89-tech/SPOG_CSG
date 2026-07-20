@@ -192,8 +192,32 @@ export default function ForecastOverview() {
         </div>
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories. Drill into a country or offering below." /></div>
-            <div className="card-dd"><RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} /></div>
+            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories. Drill into a country or offering." /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} />
+              <select
+                className="f-sel"
+                value={dmsDrill.level === 'country' ? dmsDrill.country : 'All'}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'country', country: v, offering: '' });
+                }}
+              >
+                <option value="All">All Countries</option>
+                {DMS_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <select
+                className="f-sel"
+                value={dmsDrill.level === 'offering' ? dmsDrill.offering : 'All'}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'offering', country: '', offering: v });
+                }}
+              >
+                <option value="All">All Offerings</option>
+                {DMS_OFFERINGS.map((o) => <option key={o} value={o}>{cap(o)}</option>)}
+              </select>
+            </div>
           </div>
           <div className="drill-bc">
             {dmsDrill.level === 'overall' && <span className="current">Overall</span>}
@@ -211,30 +235,6 @@ export default function ForecastOverview() {
             )}
           </div>
           <ChartCanvas config={nDmsConfig} height="210px" />
-          <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <select
-              className="f-sel"
-              value={dmsDrill.level === 'country' ? dmsDrill.country : 'All'}
-              onChange={(e) => {
-                const v = e.target.value;
-                setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'country', country: v, offering: '' });
-              }}
-            >
-              <option value="All">All Countries</option>
-              {DMS_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <select
-              className="f-sel"
-              value={dmsDrill.level === 'offering' ? dmsDrill.offering : 'All'}
-              onChange={(e) => {
-                const v = e.target.value;
-                setDmsDrill(v === 'All' ? { level: 'overall', country: '', offering: '' } : { level: 'offering', country: '', offering: v });
-              }}
-            >
-              <option value="All">All Offerings</option>
-              {DMS_OFFERINGS.map((o) => <option key={o} value={o}>{cap(o)}</option>)}
-            </select>
-          </div>
           <InsightBox text={dmsInsight(nDmsData)} />
         </div>
       </div>
