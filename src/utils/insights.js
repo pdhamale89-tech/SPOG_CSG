@@ -26,7 +26,7 @@ export function geoMapInsight() {
 export function callVolumeInsight(d) {
   const att = d.handled.map((h, i) => round((h / d.offered[i]) * 100));
   const abIdx = maxIdx(d.abandon);
-  return `Attainment averaged ${round(avg(att))}% across the period; abandonment peaked at ${d.abandon[abIdx]}% in ${labelAt(d.labels, abIdx)} as offered volume reached ${fK(d.offered[abIdx])}.`;
+  return `Offered% averaged ${round(avg(att))}% across the period; abandonment peaked at ${d.abandon[abIdx]}% in ${labelAt(d.labels, abIdx)} as offered volume reached ${fK(d.offered[abIdx])}.`;
 }
 
 export function channelMixInsight(d) {

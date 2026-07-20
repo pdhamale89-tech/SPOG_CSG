@@ -1,3 +1,7 @@
-export default function InfoBtn({ tip }) {
-  return <span className="info-btn" data-tip={tip}>i</span>;
+import { useApp } from '../../context/AppContext';
+
+export default function InfoBtn({ tip, source = 'SPOG Data Warehouse' }) {
+  const { lastUpdated } = useApp();
+  const fullTip = `${tip}<strong>Data Source</strong>${source}<strong>Last Refreshed</strong>${lastUpdated}`;
+  return <span className="info-btn" data-tip={fullTip}>i</span>;
 }

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { formatIST } from '../utils/dateUtils';
 
 const AppContext = createContext(null);
 
@@ -22,6 +23,10 @@ export function AppProvider({ children }) {
   const [currentTab, setCurrentTabState] = useState('forecast-overview');
   const [openSubMenu, setOpenSubMenu] = useState('f-sub');
   const [breadcrumb, setBreadcrumb] = useState('Forecast › Overview');
+
+  // Snapshot of when this dashboard session loaded, shown in the topbar and info popups.
+  // No backend exists yet, so "last refreshed" is the page load time rather than a real data-pull time.
+  const [lastUpdated] = useState(() => formatIST(new Date()));
 
   const [curRegion, setCurRegion] = useState('Global');
   const [curPeriod, setCurPeriod] = useState('monthly');
@@ -148,7 +153,7 @@ export function AppProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    theme, toggleTheme,
+    theme, toggleTheme, lastUpdated,
     currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, setCurRegion, curPeriod, setCurPeriod,
     chartRegions, setChartRegion, chartRegionFor,
@@ -163,7 +168,7 @@ export function AppProvider({ children }) {
     forwardModal, openForward, closeForward, submitForward,
     partnerRcaModal, openPartnerRca, closePartnerRca,
     actionLog, logAction,
-  }), [theme, toggleTheme, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
+  }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor, curHistPlan, drill,
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,

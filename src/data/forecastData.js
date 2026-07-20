@@ -41,6 +41,22 @@ export const drillData = {
 
 export const drillLabels = ['M01','M02','M03','M04','M05','M06','M07','M08','M09','M10','M11','M12','M01','M02','M03','M04'];
 
+// DMS Scorecard drill-down: disposition mix (Unassisted/Augmented/Assisted, must sum to 100
+// each month) broken out by country and by offering, drilled into from the region-level view.
+export const dmsDrillData = {
+  country: {
+    US: { dmsUn: [46,47,48,49,50,51,51,52], dmsAu: [25,25,24,24,23,23,23,22], dmsAs: [29,28,28,27,27,26,26,26] },
+    UK: { dmsUn: [40,41,42,43,44,45,45,46], dmsAu: [27,27,26,26,25,25,25,24], dmsAs: [33,32,32,31,31,30,30,30] },
+    India: { dmsUn: [36,37,38,39,40,41,41,42], dmsAu: [29,29,28,28,27,27,27,26], dmsAs: [35,34,34,33,33,32,32,32] },
+  },
+  offering: {
+    pro: { dmsUn: [48,49,50,51,52,53,53,54], dmsAu: [24,24,23,23,22,22,22,21], dmsAs: [28,27,27,26,26,25,25,25] },
+    premium: { dmsUn: [42,43,44,45,46,47,47,48], dmsAu: [26,26,25,25,24,24,24,24], dmsAs: [32,31,31,30,30,29,29,28] },
+    basic: { dmsUn: [34,35,36,37,38,39,39,40], dmsAu: [29,29,28,28,27,27,27,26], dmsAs: [37,36,36,35,35,34,34,34] },
+    oop: { dmsUn: [30,31,32,33,34,35,35,36], dmsAu: [31,31,30,30,29,29,29,28], dmsAs: [39,38,38,37,37,36,36,36] },
+  },
+};
+
 const globalMonthly = {
   labels: M8,
   offered: [112000,118000,108000,125000,120000,132000,128000,138000],

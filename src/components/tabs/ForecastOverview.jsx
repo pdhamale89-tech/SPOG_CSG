@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { D } from '../../data/forecastData';
+import { D, M8, dmsDrillData } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import ChartCanvas from '../charts/ChartCanvas';
@@ -21,12 +21,17 @@ const QUEUE_ROWS = [
   { id: 'Q-027', name: 'Commercial Voice T2', region: 'APJ', forecast: 15600, actual: 9200 },
 ];
 
+const DMS_COUNTRIES = Object.keys(dmsDrillData.country);
+const DMS_OFFERINGS = Object.keys(dmsDrillData.offering);
+const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
+
 export default function ForecastOverview() {
   const {
     theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan,
     openApproval, openPartnerRca, actionLog,
   } = useApp();
   const [geoView, setGeoView] = useState('region');
+  const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
 
   const kpi = D[curPeriod][curRegion].kpi;
 
@@ -47,9 +52,18 @@ export default function ForecastOverview() {
   const c1Config = useMemo(() => buildCallVolumeConfig(dC1, theme), [dC1, theme]);
   const h1Config = useMemo(() => buildChannelMixConfig(dH1, theme), [dH1, theme]);
   const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
-  const nDmsConfig = useMemo(() => buildDmsConfig(dNDms, theme), [dNDms, theme]);
+  const nDmsData = useMemo(() => {
+    if (dmsDrill.level === 'country') return { labels: M8, ...dmsDrillData.country[dmsDrill.country] };
+    if (dmsDrill.level === 'offering') return { labels: M8, ...dmsDrillData.offering[dmsDrill.offering] };
+    return dNDms;
+  }, [dmsDrill, dNDms]);
+  const nDmsConfig = useMemo(() => buildDmsConfig(nDmsData, theme), [nDmsData, theme]);
   const nPartnerConfig = useMemo(() => buildPartnerConfig(dNPartner, theme), [dNPartner, theme]);
   const nHistConfig = useMemo(() => buildHistTrendConfig(dNHist, theme, curHistPlan), [dNHist, theme, curHistPlan]);
+
+  function dmsDrillReset() {
+    setDmsDrill({ level: 'overall', country: '', offering: '' });
+  }
 
   return (
     <div className="tab-panel active">
@@ -178,11 +192,42 @@ export default function ForecastOverview() {
         </div>
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories." /></div>
+            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories. Drill into a country or offering below." /></div>
             <div className="card-dd"><RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} /></div>
           </div>
+          <div className="drill-bc">
+            {dmsDrill.level === 'overall' && <span className="current">Overall</span>}
+            {dmsDrill.level === 'country' && (
+              <>
+                <span onClick={dmsDrillReset}>Overall</span><span className="sep">›</span>
+                <span className="current">{dmsDrill.country}</span>
+              </>
+            )}
+            {dmsDrill.level === 'offering' && (
+              <>
+                <span onClick={dmsDrillReset}>Overall</span><span className="sep">›</span>
+                <span className="current">{cap(dmsDrill.offering)}</span>
+              </>
+            )}
+          </div>
           <ChartCanvas config={nDmsConfig} height="210px" />
-          <InsightBox text={dmsInsight(dNDms)} />
+          <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {dmsDrill.level === 'overall' ? (
+              <>
+                <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Country</span>
+                {DMS_COUNTRIES.map((c) => (
+                  <button key={c} className="btn-a" onClick={() => setDmsDrill({ level: 'country', country: c, offering: '' })}>{c}</button>
+                ))}
+                <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginLeft: '6px' }}>Offering</span>
+                {DMS_OFFERINGS.map((o) => (
+                  <button key={o} className="btn-a" onClick={() => setDmsDrill({ level: 'offering', country: '', offering: o })}>{cap(o)}</button>
+                ))}
+              </>
+            ) : (
+              <button className="btn-a" onClick={dmsDrillReset}>← Back to Overall</button>
+            )}
+          </div>
+          <InsightBox text={dmsInsight(nDmsData)} />
         </div>
       </div>
 

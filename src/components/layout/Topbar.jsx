@@ -1,7 +1,7 @@
 import { useApp } from '../../context/AppContext';
 
 export default function Topbar() {
-  const { breadcrumb, theme, toggleTheme } = useApp();
+  const { breadcrumb, theme, toggleTheme, lastUpdated } = useApp();
   return (
     <div className="topbar">
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -15,6 +15,7 @@ export default function Topbar() {
           <div className="tog-track"><div className="tog-thumb"></div></div>
         </label>
         <span className="tog-lbl">🌙</span>
+        <span className="last-updated">Last Updated: {lastUpdated}</span>
       </div>
     </div>
   );
