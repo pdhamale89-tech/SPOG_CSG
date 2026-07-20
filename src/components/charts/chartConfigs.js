@@ -12,7 +12,12 @@ function baseScales(theme) {
 }
 function legendPos(theme) {
   const { textSecondary: tc } = getColors(theme);
-  return { position: 'bottom', align: 'center', labels: { color: tc, font: { size: 9 }, usePointStyle: true, pointStyle: 'circle', padding: 5 } };
+  return {
+    position: 'bottom',
+    align: 'center',
+    maxHeight: 32,
+    labels: { color: tc, font: { size: 9 }, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, boxHeight: 8, padding: 5 },
+  };
 }
 function dataLabelsDefault(theme) {
   const { textPrimary: tp, bgCard: bg } = getColors(theme);
