@@ -29,7 +29,7 @@ export default function CapacityOverview() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">Capacity Trend <InfoBtn tip="<strong>Purpose</strong>Capacity vs demand." /></div></div>
-          <div className="chart-container"><ChartCanvas config={cp1Config} /></div>
+          <ChartCanvas config={cp1Config} />
           <InsightBox text={capacityInsight(d)} />
         </div>
         <div className="card">

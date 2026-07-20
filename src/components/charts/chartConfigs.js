@@ -15,9 +15,20 @@ function legendPos(theme) {
   return { position: 'bottom', align: 'center', labels: { color: tc, font: { size: 9 }, usePointStyle: true, pointStyle: 'circle', padding: 5 } };
 }
 function dataLabelsDefault(theme) {
-  const { textSecondary: tc } = getColors(theme);
-  return { display: true, color: tc, font: { size: 7, weight: 'bold' }, anchor: 'end', align: 'top', formatter: (v) => (v >= 1000 ? fK(v) : v) };
+  const { textPrimary: tp, bgCard: bg } = getColors(theme);
+  return {
+    display: true,
+    color: tp,
+    font: { size: 9, weight: 'bold' },
+    anchor: 'end',
+    align: 'top',
+    offset: 4,
+    textStrokeColor: bg,
+    textStrokeWidth: 3,
+    formatter: (v) => (v >= 1000 ? fK(v) : v),
+  };
 }
+const TOP_LABEL_LAYOUT = { padding: { top: 16 } };
 
 export function buildCallVolumeConfig(d, theme) {
   const S = baseScales(theme);
@@ -38,6 +49,7 @@ export function buildCallVolumeConfig(d, theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#ef4444', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
       plugins: { legend: LP, datalabels: DL },
     },
@@ -87,6 +99,7 @@ export function buildDbOspVolumeConfig(d, theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       scales: { x: S.x, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
       plugins: { legend: LP, datalabels: DL },
     },
@@ -163,7 +176,7 @@ export function buildHistTrendConfig(d, theme, curHistPlan) {
         { label: 'Linear', data: d.linTr, borderColor: '#9ca3af', borderDash: [4, 4], tension: 0, borderWidth: 1.5, pointRadius: 0, fill: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
@@ -180,7 +193,7 @@ export function buildShipmentTrendStaticConfig(theme) {
         { label: 'AOP', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
@@ -253,6 +266,7 @@ export function buildShipUppConfig(region, theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       interaction: { mode: 'index', intersect: false },
       scales: {
         x: { ticks: { color: tc, font: { size: 7 }, maxRotation: 45 }, grid: { color: gc } },
@@ -282,6 +296,7 @@ export function buildShipDrillConfig(region, level, offering, theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       interaction: { mode: 'index', intersect: false },
       scales: { x: { ticks: { color: tc, font: { size: 8 } }, grid: { color: gc } }, y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } } },
       plugins: { legend: LP, datalabels: DL },
@@ -315,7 +330,7 @@ export function buildSegmentSoldConfig(theme) {
 }
 
 export function buildProductTrendConfig(theme) {
-  const { textSecondary: tc } = getColors(theme);
+  const { textSecondary: tc, textPrimary: tp, bgCard: bg } = getColors(theme);
   return {
     type: 'bar',
     data: {
@@ -329,9 +344,10 @@ export function buildProductTrendConfig(theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       plugins: {
         legend: { position: 'bottom', labels: { color: tc, font: { size: 9 } } },
-        datalabels: { display: true, color: tc, font: { size: 7 }, anchor: 'end', align: 'top' },
+        datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3 },
       },
     },
   };
@@ -339,7 +355,7 @@ export function buildProductTrendConfig(theme) {
 
 export function buildShipmentGrowthConfig(theme) {
   const S = baseScales(theme);
-  const { textSecondary: tc } = getColors(theme);
+  const { textPrimary: tp } = getColors(theme);
   return {
     type: 'bar',
     data: { labels: ['AMER', 'EMEA', 'APJ'], datasets: [{ data: [42, 28, 30], backgroundColor: ['rgba(59,130,246,.7)', 'rgba(245,158,11,.7)', 'rgba(16,185,129,.7)'], borderRadius: 4 }] },
@@ -347,8 +363,9 @@ export function buildShipmentGrowthConfig(theme) {
       responsive: true,
       maintainAspectRatio: false,
       indexAxis: 'y',
+      layout: { padding: { right: 24 } },
       scales: S,
-      plugins: { legend: { display: false }, datalabels: { display: true, color: tc, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', formatter: (v) => v + '%' } },
+      plugins: { legend: { display: false }, datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', formatter: (v) => v + '%' } },
     },
   };
 }
@@ -366,7 +383,7 @@ export function buildAsuTrendConfig(theme) {
         { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
@@ -383,7 +400,7 @@ export function buildAsuCpasuConfig(theme) {
         { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
@@ -400,13 +417,13 @@ export function buildAsuAcqExitConfig(theme) {
         { label: 'Exit', data: [-12,-14,-10,-13,-15,-11,-14,-13], backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 2 },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
 export function buildAsuLifecycleConfig(theme) {
   const S = baseScales(theme);
-  const { textSecondary: tc } = getColors(theme);
+  const { textPrimary: tp } = getColors(theme);
   return {
     type: 'bar',
     data: { labels: ['Activated', 'Active', 'Retained', 'Renewed'], datasets: [{ data: [280,1200,950,820], backgroundColor: ['rgba(59,130,246,.7)', 'rgba(16,185,129,.7)', 'rgba(139,92,246,.7)', 'rgba(245,158,11,.7)'], borderRadius: 5 }] },
@@ -414,8 +431,9 @@ export function buildAsuLifecycleConfig(theme) {
       responsive: true,
       maintainAspectRatio: false,
       indexAxis: 'y',
+      layout: { padding: { right: 24 } },
       scales: S,
-      plugins: { legend: { display: false }, datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'right', formatter: (v) => v + 'K' } },
+      plugins: { legend: { display: false }, datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'right', formatter: (v) => v + 'K' } },
     },
   };
 }
@@ -434,7 +452,7 @@ export function buildCapacityTrendConfig(d, theme) {
         { label: 'Demand', data: d.capDm, borderColor: '#ef4444', borderDash: [5, 3], tension: 0.4, fill: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 

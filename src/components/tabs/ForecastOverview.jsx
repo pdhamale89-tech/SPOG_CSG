@@ -88,7 +88,7 @@ export default function ForecastOverview() {
             <div className="card-title">Call Volume Trend <InfoBtn tip="<strong>Purpose</strong>Workload vs handle rate with Abandonment% and Attainment%." /></div>
             <div className="card-dd"><RegionSelect value={regionC1} onChange={(v) => setChartRegion('c1', v)} /></div>
           </div>
-          <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={c1Config} /></div>
+          <ChartCanvas config={c1Config} height="220px" />
           <InsightBox text={callVolumeInsight(dC1)} />
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function ForecastOverview() {
             <RegionSelect value={regionNHist} onChange={(v) => setChartRegion('nHist', v)} style={{ marginLeft: '4px' }} />
           </div>
         </div>
-        <div className="chart-container" style={{ height: '240px' }}><ChartCanvas config={nHistConfig} /></div>
+        <ChartCanvas config={nHistConfig} height="240px" />
         <InsightBox text={histTrendInsight(dNHist, curHistPlan)} />
       </div>
 
@@ -134,7 +134,7 @@ export default function ForecastOverview() {
               <RegionSelect value={regionH1} onChange={(v) => setChartRegion('h1', v)} />
             </div>
           </div>
-          <div className="chart-container"><ChartCanvas config={h1Config} /></div>
+          <ChartCanvas config={h1Config} />
           <InsightBox text={channelMixInsight(dH1)} />
         </div>
         <div className="card">
@@ -146,7 +146,7 @@ export default function ForecastOverview() {
               </select>
             </div>
           </div>
-          <div className="chart-container" style={{ height: '190px' }}><ChartCanvas config={c5Config} /></div>
+          <ChartCanvas config={c5Config} height="190px" />
           <InsightBox text={dbOspInsight(dC5)} />
           <div className="dbosp-metrics">
             <div className="dbosp-metric-card">
@@ -173,9 +173,7 @@ export default function ForecastOverview() {
             <div className="card-title">📊 Partner Minimum <InfoBtn tip="<strong>Purpose</strong>Actual vs Forecast with % threshold. Click bar for RCA." /></div>
             <div className="card-dd"><RegionSelect value={regionNPartner} onChange={(v) => setChartRegion('nPartner', v)} /></div>
           </div>
-          <div className="chart-container" style={{ height: '210px' }}>
-            <ChartCanvas config={nPartnerConfig} onClick={(evt, els) => { if (els.length) openPartnerRca(els[0].index); }} />
-          </div>
+          <ChartCanvas config={nPartnerConfig} height="210px" onClick={(evt, els) => { if (els.length) openPartnerRca(els[0].index); }} />
           <InsightBox text={partnerInsight(dNPartner)} />
         </div>
         <div className="card">
@@ -183,7 +181,7 @@ export default function ForecastOverview() {
             <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories." /></div>
             <div className="card-dd"><RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} /></div>
           </div>
-          <div className="chart-container" style={{ height: '210px' }}><ChartCanvas config={nDmsConfig} /></div>
+          <ChartCanvas config={nDmsConfig} height="210px" />
           <InsightBox text={dmsInsight(dNDms)} />
         </div>
       </div>

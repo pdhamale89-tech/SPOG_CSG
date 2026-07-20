@@ -88,7 +88,7 @@ export default function ShipmentAsu() {
           <div className="card-title">📦 Ship vs Projections/UPP <InfoBtn tip="<strong>Purpose</strong>Actual vs projections with UPP lines." /></div>
           <div className="card-dd"><RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} /></div>
         </div>
-        <div className="chart-container" style={{ height: '260px' }}><ChartCanvas config={shipUppConfig} /></div>
+        <ChartCanvas config={shipUppConfig} height="260px" />
         <InsightBox text={shipUppInsight(regionShipUpp)} />
       </div>
 
@@ -113,7 +113,7 @@ export default function ShipmentAsu() {
             </>
           )}
         </div>
-        <div className="chart-container" style={{ height: '240px' }}><ChartCanvas config={shipDrillConfig} /></div>
+        <ChartCanvas config={shipDrillConfig} height="240px" />
         <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap' }}>
           {drill.level === 'overall' && OFFERINGS.map((o) => (
             <button key={o} className="btn-a" onClick={() => drillTo(o)}>{o === 'oop' ? 'OOP' : cap(o)}</button>
@@ -131,12 +131,12 @@ export default function ShipmentAsu() {
             <div className="card-title">Shipment Trend <InfoBtn tip="<strong>Purpose</strong>Track shipment vs plan." /></div>
             <div className="card-dd"><RegionSelect value={regionS1} onChange={(v) => setChartRegion('s1', v)} /></div>
           </div>
-          <div className="chart-container"><ChartCanvas config={s1Config} /></div>
+          <ChartCanvas config={s1Config} />
           <InsightBox text={shipmentTrendInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Segment Sold <InfoBtn tip="<strong>Purpose</strong>Segment growth." /></div></div>
-          <div className="chart-container"><ChartCanvas config={s2Config} /></div>
+          <ChartCanvas config={s2Config} />
           <InsightBox text={segmentSoldInsight()} />
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function ShipmentAsu() {
               </select>
             </div>
           </div>
-          <div className="chart-container"><ChartCanvas config={s3Config} /></div>
+          <ChartCanvas config={s3Config} />
           <InsightBox text={productTrendInsight()} />
         </div>
         <div className="card">
@@ -172,7 +172,7 @@ export default function ShipmentAsu() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">Shipment Growth <InfoBtn tip="<strong>Purpose</strong>Growth by region." /></div></div>
-          <div className="chart-container"><ChartCanvas config={s5Config} /></div>
+          <ChartCanvas config={s5Config} />
           <InsightBox text={shipmentGrowthInsight()} />
         </div>
         <div className="card">
@@ -214,12 +214,12 @@ export default function ShipmentAsu() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Trend <InfoBtn tip="<strong>Purpose</strong>ASU vs plan." /></div></div>
-          <div className="chart-container"><ChartCanvas config={a1Config} /></div>
+          <ChartCanvas config={a1Config} />
           <InsightBox text={asuTrendInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">ASU vs CPASU <InfoBtn tip="<strong>Purpose</strong>ASU/CPASU." /></div></div>
-          <div className="chart-container"><ChartCanvas config={a2Config} /></div>
+          <ChartCanvas config={a2Config} />
           <InsightBox text={asuCpasuInsight()} />
         </div>
       </div>
@@ -230,7 +230,7 @@ export default function ShipmentAsu() {
             <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Volume by case origin." /></div>
             <div className="card-dd"><RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} /></div>
           </div>
-          <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={nTagConfig} /></div>
+          <ChartCanvas config={nTagConfig} height="220px" />
           <InsightBox text={tagRoutedInsight(dNTag)} />
         </div>
       </div>
@@ -241,7 +241,7 @@ export default function ShipmentAsu() {
             <div className="card-title">📅 Weekly Expiring <InfoBtn tip="<strong>Purpose</strong>Expiry projections." /></div>
             <div className="card-dd"><RegionSelect value={regionNExpiry} onChange={(v) => setChartRegion('nExpiry', v)} /></div>
           </div>
-          <div className="chart-container" style={{ height: '220px' }}><ChartCanvas config={nExpiryConfig} /></div>
+          <ChartCanvas config={nExpiryConfig} height="220px" />
           <InsightBox text={expiryInsight(dNExpiry)} />
         </div>
       </div>
@@ -249,12 +249,12 @@ export default function ShipmentAsu() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Acq vs Exit <InfoBtn tip="<strong>Purpose</strong>Net ASU growth." /></div></div>
-          <div className="chart-container"><ChartCanvas config={a3Config} /></div>
+          <ChartCanvas config={a3Config} />
           <InsightBox text={asuAcqExitInsight()} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Lifecycle <InfoBtn tip="<strong>Purpose</strong>Activation to renewal." /></div></div>
-          <div className="chart-container"><ChartCanvas config={a4Config} /></div>
+          <ChartCanvas config={a4Config} />
           <InsightBox text={asuLifecycleInsight()} />
         </div>
       </div>

@@ -55,12 +55,12 @@ export default function ForecastHealth() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">Bias Detection <InfoBtn tip="<strong>Purpose</strong>Over/under forecast." /></div></div>
-          <div className="chart-container"><ChartCanvas config={biasConfig} /></div>
+          <ChartCanvas config={biasConfig} />
           <InsightBox text={biasInsight(d)} />
         </div>
         <div className="card">
           <div className="card-header"><div className="card-title">Stability <InfoBtn tip="<strong>Purpose</strong>Forecast consistency." /></div></div>
-          <div className="chart-container"><ChartCanvas config={stabilityConfig} /></div>
+          <ChartCanvas config={stabilityConfig} />
           <InsightBox text={stabilityInsight(d)} />
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function ForecastHealth() {
       <div className="s-grid">
         <div className="card">
           <div className="card-header"><div className="card-title">Drift <InfoBtn tip="<strong>Purpose</strong>Model degradation." /></div></div>
-          <div className="chart-container"><ChartCanvas config={driftConfig} /></div>
+          <ChartCanvas config={driftConfig} />
           <InsightBox text={driftInsight(d)} />
         </div>
         <div className="card">
