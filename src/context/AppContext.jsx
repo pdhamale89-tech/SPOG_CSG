@@ -31,6 +31,7 @@ export function AppProvider({ children }) {
   const [curRegion, setCurRegion] = useState('Global');
   const [curPeriod, setCurPeriod] = useState('monthly');
   const [chartRegions, setChartRegions] = useState({});
+  const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
   const [drill, setDrill] = useState({ level: 'overall', offering: '', segment: '' });
 
@@ -84,6 +85,12 @@ export function AppProvider({ children }) {
 
   const chartRegionFor = useCallback((id) => chartRegions[id] || curRegion, [chartRegions, curRegion]);
 
+  const setChartCountry = useCallback((id, country) => {
+    setChartCountries((prev) => ({ ...prev, [id]: country }));
+  }, []);
+
+  const chartCountryFor = useCallback((id) => chartCountries[id] || 'All', [chartCountries]);
+
   const applyFilters = useCallback((region) => {
     setCurRegion(region);
   }, []);
@@ -91,6 +98,7 @@ export function AppProvider({ children }) {
   const clearFilters = useCallback(() => {
     setCurRegion('Global');
     setChartRegions({});
+    setChartCountries({});
   }, []);
 
   const showToast = useCallback((msg, cls) => {
@@ -157,6 +165,7 @@ export function AppProvider({ children }) {
     currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, setCurRegion, curPeriod, setCurPeriod,
     chartRegions, setChartRegion, chartRegionFor,
+    chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
     drill, setDrill,
     showFilters, showRCA,
@@ -169,7 +178,8 @@ export function AppProvider({ children }) {
     partnerRcaModal, openPartnerRca, closePartnerRca,
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
-    curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor, curHistPlan, drill,
+    curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor,
+    chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,

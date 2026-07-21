@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { D, M8, dmsDrillData } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
+import CountrySelect from '../common/CountrySelect';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
@@ -27,8 +28,8 @@ const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function ForecastOverview() {
   const {
-    theme, curPeriod, curRegion, chartRegionFor, setChartRegion, curHistPlan, setCurHistPlan,
-    openApproval, openPartnerRca, actionLog,
+    theme, curPeriod, curRegion, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry,
+    curHistPlan, setCurHistPlan, openApproval, openPartnerRca, actionLog,
   } = useApp();
   const [geoView, setGeoView] = useState('region');
   const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
@@ -100,7 +101,10 @@ export default function ForecastOverview() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">Call Volume Trend <InfoBtn tip="<strong>Purpose</strong>Workload vs handle rate with Abandonment% and Attainment%." /></div>
-            <div className="card-dd"><RegionSelect value={regionC1} onChange={(v) => setChartRegion('c1', v)} /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionC1} onChange={(v) => setChartRegion('c1', v)} />
+              <CountrySelect value={chartCountryFor('c1')} onChange={(v) => setChartCountry('c1', v)} />
+            </div>
           </div>
           <ChartCanvas config={c1Config} height="220px" />
           <InsightBox text={callVolumeInsight(dC1)} />
@@ -117,6 +121,7 @@ export default function ForecastOverview() {
               <button className={'plan-btn' + (curHistPlan === 'plan3' ? ' active' : '')} onClick={() => setCurHistPlan('plan3')}>FY27 Aug Pro</button>
             </div>
             <RegionSelect value={regionNHist} onChange={(v) => setChartRegion('nHist', v)} style={{ marginLeft: '4px' }} />
+            <CountrySelect value={chartCountryFor('nHist')} onChange={(v) => setChartCountry('nHist', v)} />
           </div>
         </div>
         <ChartCanvas config={nHistConfig} height="240px" />
@@ -146,6 +151,7 @@ export default function ForecastOverview() {
                 <option value="All">All</option><option value="Pro">Pro</option><option value="Premium">Premium</option><option value="Basic">Basic</option><option value="PON">PON</option>
               </select>
               <RegionSelect value={regionH1} onChange={(v) => setChartRegion('h1', v)} />
+              <CountrySelect value={chartCountryFor('h1')} onChange={(v) => setChartCountry('h1', v)} />
             </div>
           </div>
           <ChartCanvas config={h1Config} height="290px" />
@@ -185,7 +191,10 @@ export default function ForecastOverview() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">📊 Partner Minimum <InfoBtn tip="<strong>Purpose</strong>Actual vs Forecast with % threshold. Click bar for RCA." /></div>
-            <div className="card-dd"><RegionSelect value={regionNPartner} onChange={(v) => setChartRegion('nPartner', v)} /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionNPartner} onChange={(v) => setChartRegion('nPartner', v)} />
+              <CountrySelect value={chartCountryFor('nPartner')} onChange={(v) => setChartCountry('nPartner', v)} />
+            </div>
           </div>
           <ChartCanvas config={nPartnerConfig} height="210px" onClick={(evt, els) => { if (els.length) openPartnerRca(els[0].index); }} />
           <InsightBox text={partnerInsight(dNPartner)} />

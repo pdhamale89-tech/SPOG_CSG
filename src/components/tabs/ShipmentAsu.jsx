@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
+import CountrySelect from '../common/CountrySelect';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -22,7 +23,7 @@ const SEGMENTS = ['consumer', 'commercial', 'enterprise'];
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function ShipmentAsu() {
-  const { theme, curPeriod, chartRegionFor, setChartRegion, drill, setDrill } = useApp();
+  const { theme, curPeriod, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
   const [tier, setTier] = useState('All');
   const [prodView, setProdView] = useState('top5');
 
@@ -86,7 +87,10 @@ export default function ShipmentAsu() {
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
           <div className="card-title">📦 Ship vs Projections/UPP <InfoBtn tip="<strong>Purpose</strong>Actual vs projections with UPP lines." /></div>
-          <div className="card-dd"><RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} /></div>
+          <div className="card-dd">
+            <RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} />
+            <CountrySelect value={chartCountryFor('shipUpp')} onChange={(v) => setChartCountry('shipUpp', v)} />
+          </div>
         </div>
         <ChartCanvas config={shipUppConfig} height="260px" />
         <InsightBox text={shipUppInsight(regionShipUpp)} />
@@ -95,7 +99,10 @@ export default function ShipmentAsu() {
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
           <div className="card-title">📈 Ship Drill Down <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
-          <div className="card-dd"><RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} /></div>
+          <div className="card-dd">
+            <RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} />
+            <CountrySelect value={chartCountryFor('shipDrill')} onChange={(v) => setChartCountry('shipDrill', v)} />
+          </div>
         </div>
         <div className="drill-bc">
           {drill.level === 'overall' && <span className="current">Overall Shipment</span>}
@@ -129,7 +136,10 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">Shipment Trend <InfoBtn tip="<strong>Purpose</strong>Track shipment vs plan." /></div>
-            <div className="card-dd"><RegionSelect value={regionS1} onChange={(v) => setChartRegion('s1', v)} /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionS1} onChange={(v) => setChartRegion('s1', v)} />
+              <CountrySelect value={chartCountryFor('s1')} onChange={(v) => setChartCountry('s1', v)} />
+            </div>
           </div>
           <ChartCanvas config={s1Config} />
           <InsightBox text={shipmentTrendInsight()} />
@@ -228,7 +238,10 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Volume by case origin." /></div>
-            <div className="card-dd"><RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
+              <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
+            </div>
           </div>
           <ChartCanvas config={nTagConfig} height="220px" />
           <InsightBox text={tagRoutedInsight(dNTag)} />
@@ -239,7 +252,10 @@ export default function ShipmentAsu() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">📅 Weekly Expiring <InfoBtn tip="<strong>Purpose</strong>Expiry projections." /></div>
-            <div className="card-dd"><RegionSelect value={regionNExpiry} onChange={(v) => setChartRegion('nExpiry', v)} /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionNExpiry} onChange={(v) => setChartRegion('nExpiry', v)} />
+              <CountrySelect value={chartCountryFor('nExpiry')} onChange={(v) => setChartCountry('nExpiry', v)} />
+            </div>
           </div>
           <ChartCanvas config={nExpiryConfig} height="220px" />
           <InsightBox text={expiryInsight(dNExpiry)} />
