@@ -71,17 +71,6 @@ export default function ForecastOverview() {
     setDmsDrill({ level: 'overall', country: '', offering: '' });
   }
 
-  const h1Cases = useMemo(() => {
-    const i = dH1.labels.length - 1;
-    const total = dH1.offered[i];
-    return [
-      { label: 'Voice Cases', value: Math.round((total * dH1.voice[i]) / 100) },
-      { label: 'Chat Cases', value: Math.round((total * dH1.chat[i]) / 100) },
-      { label: 'Email Cases', value: Math.round((total * dH1.email[i]) / 100) },
-      { label: 'Social Cases', value: Math.round((total * dH1.social[i]) / 100) },
-    ];
-  }, [dH1]);
-
   return (
     <div className="tab-panel active">
       <div className="ai-story">
@@ -194,14 +183,6 @@ export default function ForecastOverview() {
           </div>
           <ChartCanvas config={h1Config} height="290px" />
           <InsightBox text={channelMixInsight(dH1)} />
-          <div className="mini-row">
-            {h1Cases.map((c) => (
-              <div className="mini-stat" key={c.label}>
-                <div className="mini-stat-lbl">{c.label}</div>
-                <div className="mini-stat-val tone-b">{c.value.toLocaleString()}</div>
-              </div>
-            ))}
-          </div>
         </div>
         <div className="card">
           <div className="card-header">

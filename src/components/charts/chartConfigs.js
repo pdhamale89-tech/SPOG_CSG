@@ -95,15 +95,18 @@ export function buildCallVolumeConfig(d, theme) {
 export function buildChannelMixConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
+  const i = d.labels.length - 1;
+  const total = d.offered[i];
+  const cases = (pct) => fK(Math.round((total * pct[i]) / 100));
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Voice', data: d.voice, backgroundColor: '#3b82f6' },
-        { label: 'Chat', data: d.chat, backgroundColor: '#10b981' },
-        { label: 'Email', data: d.email, backgroundColor: '#f59e0b' },
-        { label: 'Social', data: d.social, backgroundColor: '#8b5cf6' },
+        { label: `Voice · ${cases(d.voice)} cases`, data: d.voice, backgroundColor: '#3b82f6' },
+        { label: `Chat · ${cases(d.chat)} cases`, data: d.chat, backgroundColor: '#10b981' },
+        { label: `Email · ${cases(d.email)} cases`, data: d.email, backgroundColor: '#f59e0b' },
+        { label: `Social · ${cases(d.social)} cases`, data: d.social, backgroundColor: '#8b5cf6' },
       ],
     },
     options: {
