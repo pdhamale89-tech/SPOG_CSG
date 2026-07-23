@@ -178,7 +178,6 @@ export function buildHistTrendConfig(d, theme, curHistPlan) {
         { label: 'FY2027', data: d.fy27act, borderColor: '#7c3aed', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false },
         { label: planLabel, data: pd, borderColor: '#06b6d4', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false },
         { label: 'ML Forecast', data: d.mlfc, borderColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false },
-        { label: 'Linear', data: d.linTr, borderColor: '#9ca3af', borderDash: [4, 4], tension: 0, borderWidth: 1.5, pointRadius: 0, fill: false },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },

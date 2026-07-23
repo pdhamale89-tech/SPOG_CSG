@@ -33,6 +33,7 @@ export default function ForecastOverview() {
   } = useApp();
   const [geoView, setGeoView] = useState('region');
   const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
+  const [h1Queue, setH1Queue] = useState('All Queues');
 
   const kpi = D[curPeriod][curRegion].kpi;
 
@@ -152,6 +153,10 @@ export default function ForecastOverview() {
               </select>
               <RegionSelect value={regionH1} onChange={(v) => setChartRegion('h1', v)} />
               <CountrySelect value={chartCountryFor('h1')} onChange={(v) => setChartCountry('h1', v)} />
+              <select className="f-sel" value={h1Queue} onChange={(e) => setH1Queue(e.target.value)}>
+                <option>All Queues</option>
+                {QUEUE_ROWS.map((q) => <option key={q.id}>{q.name}</option>)}
+              </select>
             </div>
           </div>
           <ChartCanvas config={h1Config} height="290px" />

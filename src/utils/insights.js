@@ -57,7 +57,7 @@ export function histTrendInsight(d, curHistPlan) {
   const pd = d[curHistPlan] || d.plan1;
   const gapAvg = round(avg(pd.map((v, i) => v - d.mlfc[i])));
   const dir = gapAvg >= 0 ? 'above' : 'below';
-  return `The ${planLabel} plan runs ${Math.abs(gapAvg)} units ${dir} the ML forecast on average, while the linear trend keeps declining from ${first(d.linTr)} to ${last(d.linTr)}.`;
+  return `The ${planLabel} plan runs ${Math.abs(gapAvg)} units ${dir} the ML forecast on average, versus FY2027 actuals of ${first(d.fy27act)} to ${last(d.fy27act)} over the same period.`;
 }
 
 // --- Forecast Health ---
