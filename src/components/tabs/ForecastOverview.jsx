@@ -9,11 +9,11 @@ import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
 import InsightBox from '../common/InsightBox';
 import {
-  buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig, buildDmsConfig,
-  buildPartnerConfig, buildHistTrendConfig,
+  buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
+  buildDmsConfig, buildPartnerConfig, buildHistTrendConfig,
 } from '../charts/chartConfigs';
 import {
-  geoMapInsight, callVolumeInsight, channelMixInsight, dbOspInsight, dmsInsight,
+  geoMapInsight, planOfferedInsight, callVolumeInsight, channelMixInsight, dbOspInsight, dmsInsight,
   partnerInsight, histTrendInsight,
 } from '../../utils/insights';
 
@@ -34,9 +34,11 @@ export default function ForecastOverview() {
   const [geoView, setGeoView] = useState('region');
   const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
   const [h1Queue, setH1Queue] = useState('All Queues');
+  const [h1ForecastQueue, setH1ForecastQueue] = useState('All Queues');
 
   const kpi = D[curPeriod][curRegion].kpi;
 
+  const regionC0 = chartRegionFor('c0');
   const regionC1 = chartRegionFor('c1');
   const regionH1 = chartRegionFor('h1');
   const regionC5 = chartRegionFor('c5');
@@ -44,6 +46,7 @@ export default function ForecastOverview() {
   const regionNPartner = chartRegionFor('nPartner');
   const regionNHist = chartRegionFor('nHist');
 
+  const dC0 = D[curPeriod][regionC0];
   const dC1 = D[curPeriod][regionC1];
   const dH1 = D[curPeriod][regionH1];
   const dC5 = D[curPeriod][regionC5];
@@ -51,6 +54,7 @@ export default function ForecastOverview() {
   const dNPartner = D[curPeriod][regionNPartner];
   const dNHist = D[curPeriod][regionNHist];
 
+  const c0Config = useMemo(() => buildPlanOfferedConfig(dC0, theme), [dC0, theme]);
   const c1Config = useMemo(() => buildCallVolumeConfig(dC1, theme), [dC1, theme]);
   const h1Config = useMemo(() => buildChannelMixConfig(dH1, theme), [dH1, theme]);
   const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
@@ -67,6 +71,17 @@ export default function ForecastOverview() {
     setDmsDrill({ level: 'overall', country: '', offering: '' });
   }
 
+  const h1Cases = useMemo(() => {
+    const i = dH1.labels.length - 1;
+    const total = dH1.offered[i];
+    return [
+      { label: 'Voice Cases', value: Math.round((total * dH1.voice[i]) / 100) },
+      { label: 'Chat Cases', value: Math.round((total * dH1.chat[i]) / 100) },
+      { label: 'Email Cases', value: Math.round((total * dH1.email[i]) / 100) },
+      { label: 'Social Cases', value: Math.round((total * dH1.social[i]) / 100) },
+    ];
+  }, [dH1]);
+
   return (
     <div className="tab-panel active">
       <div className="ai-story">
@@ -80,8 +95,8 @@ export default function ForecastOverview() {
       <div className="kpi-grid">
         <div className="kpi-card"><div className="kpi-label">FORECAST ACCURACY</div><div className="kpi-value">{kpi.acc}</div><div className="kpi-sub">{kpi.accSub}</div></div>
         <div className="kpi-card"><div className="kpi-label">CALL VOLUME</div><div className="kpi-value">{kpi.vol}</div><div className="kpi-sub">{kpi.volSub}</div></div>
-        <div className="kpi-card"><div className="kpi-label">ACTIVE QUEUES</div><div className="kpi-value">{kpi.q}</div><div className="kpi-sub">{kpi.qSub}</div></div>
-        <div className="kpi-card"><div className="kpi-label">VARIANCE</div><div className="kpi-value">{kpi.var}</div><div className="kpi-sub">Over-forecast bias</div></div>
+        <div className="kpi-card"><div className="kpi-label">SHIPMENT VARIANCE</div><div className="kpi-value">{kpi.shvar}</div><div className="kpi-sub">Plan vs Actual</div></div>
+        <div className="kpi-card"><div className="kpi-label">ASU VARIANCE</div><div className="kpi-value">{kpi.asuvar}</div><div className="kpi-sub">vs Plan</div></div>
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
@@ -96,6 +111,20 @@ export default function ForecastOverview() {
         </div>
         <WorldMap theme={theme} mode={geoView} />
         <InsightBox text={geoMapInsight()} />
+      </div>
+
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">Plan vs Actual Offered <InfoBtn tip="<strong>Purpose</strong>Planned volume vs actual offered volume, with Offered% (actual/plan) on the right axis." /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionC0} onChange={(v) => setChartRegion('c0', v)} />
+              <CountrySelect value={chartCountryFor('c0')} onChange={(v) => setChartCountry('c0', v)} />
+            </div>
+          </div>
+          <ChartCanvas config={c0Config} height="220px" />
+          <InsightBox text={planOfferedInsight(dC0)} />
+        </div>
       </div>
 
       <div className="s-grid full">
@@ -157,10 +186,22 @@ export default function ForecastOverview() {
                 <option>All Queues</option>
                 {QUEUE_ROWS.map((q) => <option key={q.id}>{q.name}</option>)}
               </select>
+              <select className="f-sel" value={h1ForecastQueue} onChange={(e) => setH1ForecastQueue(e.target.value)}>
+                <option>All Queues</option>
+                {QUEUE_ROWS.map((q) => <option key={q.id}>{q.name}</option>)}
+              </select>
             </div>
           </div>
           <ChartCanvas config={h1Config} height="290px" />
           <InsightBox text={channelMixInsight(dH1)} />
+          <div className="mini-row">
+            {h1Cases.map((c) => (
+              <div className="mini-stat" key={c.label}>
+                <div className="mini-stat-lbl">{c.label}</div>
+                <div className="mini-stat-val tone-b">{c.value.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="card">
           <div className="card-header">

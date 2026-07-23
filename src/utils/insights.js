@@ -23,6 +23,12 @@ export function geoMapInsight() {
   return `${bestReg} leads at ${bestVal}% accuracy (${TIER_LABEL[accTier(bestVal)]}), while ${worstReg} trails at ${worstVal}% (${TIER_LABEL[accTier(worstVal)]}) — a ${bestVal - worstVal}-point gap between regions.`;
 }
 
+export function planOfferedInsight(d) {
+  const offeredPct = d.offered.map((o, i) => (d.forecast[i] ? round((o / d.forecast[i]) * 100) : 0));
+  const worstIdx = minIdx(offeredPct);
+  return `Actual offered volume tracked at ${round(avg(offeredPct))}% of plan on average, dropping to a low of ${offeredPct[worstIdx]}% in ${labelAt(d.labels, worstIdx)} (${fK(d.offered[worstIdx])} offered vs ${fK(d.forecast[worstIdx])} planned).`;
+}
+
 export function callVolumeInsight(d) {
   const att = d.handled.map((h, i) => round((h / d.offered[i]) * 100));
   const abIdx = maxIdx(d.abandon);

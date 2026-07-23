@@ -95,7 +95,7 @@ const globalMonthly = {
   plan3: [2010,2270,1800,1500,890,1590,1000,1320],
   mlfc: [1900,2100,1700,1400,850,1500,950,1250],
   linTr: [1850,1800,1750,1700,1650,1600,1550,1500],
-  kpi: { acc: '65%', accSub: '▼ 15%', vol: '812K', volSub: '▲ 5%', q: '100', qSub: '38·41·21', var: '±16%', ship: '1.93M', shgr: '+3.5%', shvar: '-3.8%', asu: '1.2M', sl: '72%', hc: '-5.8%', aht: '11.0m', util: '84%' },
+  kpi: { acc: '65%', accSub: '▼ 15%', vol: '812K', volSub: '▲ 5%', q: '100', qSub: '38·41·21', var: '±16%', ship: '1.93M', shgr: '+3.5%', shvar: '-3.8%', asu: '1.2M', asuvar: '+3.8%', sl: '72%', hc: '-5.8%', aht: '11.0m', util: '84%' },
 };
 
 function cloneRegion(overrides) {

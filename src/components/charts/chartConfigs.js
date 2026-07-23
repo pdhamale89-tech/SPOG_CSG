@@ -35,6 +35,37 @@ function dataLabelsDefault(theme) {
 }
 const TOP_LABEL_LAYOUT = { padding: { top: 16 } };
 
+export function buildPlanOfferedConfig(d, theme) {
+  const S = baseScales(theme);
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  const offeredPct = d.offered.map((o, i) => (d.forecast[i] ? Math.round((o / d.forecast[i]) * 100) : 0));
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Plan', data: d.forecast, backgroundColor: 'rgba(139,92,246,.55)', borderRadius: 3, order: 2 },
+        { label: 'Actual Offered', data: d.offered, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3, order: 3 },
+        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#10b981', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: S.x,
+        y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } },
+        y1: { position: 'right', ticks: { color: '#10b981', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
 export function buildCallVolumeConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
