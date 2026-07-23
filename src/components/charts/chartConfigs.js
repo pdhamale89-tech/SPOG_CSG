@@ -92,40 +92,59 @@ export function buildCallVolumeConfig(d, theme) {
   };
 }
 
+const CHANNEL_MIX_REF_TOTAL = 5500;
+
 export function buildChannelMixConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
+  const voiceN = d.voice.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const casesN = d.cases;
+  const emailN = d.email.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const chatN = d.chat.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const socialN = d.social.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const totals = d.labels.map((_, i) => voiceN[i] + casesN[i] + emailN[i] + chatN[i] + socialN[i]);
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Voice', data: d.voice, backgroundColor: '#3b82f6' },
-        { label: 'Chat', data: d.chat, backgroundColor: '#10b981' },
-        { label: 'Email', data: d.email, backgroundColor: '#f59e0b' },
-        { label: 'Social', data: d.social, backgroundColor: '#8b5cf6' },
+        { label: 'Voice', data: voiceN, backgroundColor: '#e0517a', borderRadius: 2 },
+        { label: 'Cases', data: casesN, backgroundColor: '#2f8fd1', borderRadius: 2 },
+        { label: 'Email', data: emailN, backgroundColor: '#d4a94a', borderRadius: 2 },
+        { label: 'Chat', data: chatN, backgroundColor: '#2ea89b', borderRadius: 2 },
+        { label: 'Social', data: socialN, backgroundColor: '#8b5cf6', borderRadius: 2 },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
-        y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, stacked: true },
+        y: {
+          ticks: { color: tc, font: { size: 9 }, callback: fK },
+          grid: { color: gc },
+          stacked: true,
+          title: { display: true, text: 'Number of Interactions', color: tc, font: { size: 9 } },
+        },
       },
       plugins: {
         legend: LP,
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            afterBody: (items) => [`Total: ${totals[items[0].dataIndex].toLocaleString()}`],
+          },
+        },
         datalabels: {
           display: true,
-          color: '#fff',
-          font: { size: 7, weight: 'bold' },
+          color: tp,
+          font: { size: 8, weight: 'bold' },
           anchor: 'center',
-          textAlign: 'center',
-          formatter: (v, ctx) => {
-            if (v <= 10) return '';
-            const cases = fK(Math.round((d.offered[ctx.dataIndex] * v) / 100));
-            return `${v}%\n${cases}`;
-          },
+          textStrokeColor: bg,
+          textStrokeWidth: 2,
+          formatter: (v) => (v > 150 ? fK(v) : ''),
         },
       },
     },

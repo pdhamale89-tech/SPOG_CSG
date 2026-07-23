@@ -217,6 +217,7 @@ export default function ShipmentAsu() {
       <div className="kpi-grid">
         <div className="kpi-card"><div className="kpi-label">TOTAL ASUs</div><div className="kpi-value">{d.kpi.asu}</div><div className="kpi-sub">+45K</div></div>
         <div className="kpi-card"><div className="kpi-label">ASU GROWTH</div><div className="kpi-value">+3.8%</div><div className="kpi-sub">vs plan</div></div>
+        <div className="kpi-card"><div className="kpi-label">ASU VARIANCE</div><div className="kpi-value">{d.kpi.asuvar}</div><div className="kpi-sub">Plan vs Actual</div></div>
         <div className="kpi-card"><div className="kpi-label">ASU EXIT</div><div className="kpi-value">12K</div><div className="kpi-sub">Expiring</div></div>
         <div className="kpi-card"><div className="kpi-label">EXPIRED</div><div className="kpi-value">8.4K</div><div className="kpi-sub">Lapsed</div></div>
       </div>
