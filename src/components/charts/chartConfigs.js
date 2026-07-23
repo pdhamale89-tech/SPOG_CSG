@@ -104,23 +104,30 @@ export function buildChannelMixConfig(d, theme) {
         { label: 'Chat', data: d.chat, backgroundColor: '#10b981' },
         { label: 'Email', data: d.email, backgroundColor: '#f59e0b' },
         { label: 'Social', data: d.social, backgroundColor: '#8b5cf6' },
-        {
-          label: 'Cases', data: d.offered, type: 'line', yAxisID: 'y1',
-          borderColor: '#ef4444', backgroundColor: '#ef4444', borderWidth: 2.5, pointRadius: 3, tension: 0.3, fill: false,
-          datalabels: { display: false },
-        },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
         y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, stacked: true },
-        y1: { position: 'right', ticks: { color: '#ef4444', font: { size: 9 }, callback: (v) => fK(v) }, grid: { display: false } },
       },
-      plugins: { legend: LP, datalabels: { display: true, color: '#fff', font: { size: 8, weight: 'bold' }, anchor: 'center', formatter: (v) => (v > 10 ? v + '%' : '') } },
+      plugins: {
+        legend: LP,
+        datalabels: {
+          display: true,
+          color: '#fff',
+          font: { size: 7, weight: 'bold' },
+          anchor: 'center',
+          textAlign: 'center',
+          formatter: (v, ctx) => {
+            if (v <= 10) return '';
+            const cases = fK(Math.round((d.offered[ctx.dataIndex] * v) / 100));
+            return `${v}%\n${cases}`;
+          },
+        },
+      },
     },
   };
 }
