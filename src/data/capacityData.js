@@ -21,23 +21,63 @@ export function capLabelsFor(period, length) {
 export const CAP_PERIOD_LABEL = { weekly: 'Week-on-Week', monthly: 'Month-on-Month', qtr: 'Quarter-on-Quarter' };
 export const CAP_PERIOD_WORD = { weekly: 'Weekly', monthly: 'Monthly', qtr: 'Quarterly' };
 
-export const capKpis = [
-  { label: 'Volume (FY27)', value: '2.33M', dir: 'dn', delta: '60.9% PoP', sub: 'DB: 295K · OSP: 2.04M' },
-  { label: 'HC (FY28 Q1)', value: '223', dir: 'dn', delta: 'From 238', sub: 'Avg: 217 · Exit: 210' },
-  { label: 'Excess Capacity', value: '154%', dir: 'dn', delta: 'From 161%', sub: 'Excess HC: 76' },
-  { label: 'Hiring (FY27)', value: '26', dir: 'flat', delta: 'UR: 26', sub: 'FY28: 19' },
-  { label: 'Gap (FY27)', value: '-3.64M', dir: 'dn', delta: 'Under-cap', sub: 'FY28Q4: -1.75M' },
-  { label: 'OSP Mix', value: '88%', dir: 'up', delta: 'From 67%', sub: 'DB: 12%' },
-  { label: 'Vol FY28', value: '4.34M', dir: 'dn', delta: '61.1%', sub: 'DB: 603K · OSP: 3.73M' },
-  { label: 'Weekly CQN', value: '-146K', dir: 'dn', delta: 'Worsening', sub: '~-150K trend' },
-];
+// KPI values genuinely differ by period: volume/hiring/gap/CQN are flow metrics that
+// scale with period length (weekly < monthly < quarterly), while headcount and the
+// percentage metrics are point-in-time state and stay put (with a slightly different
+// "from" comparison value so they don't look like an untouched copy-paste).
+export const CAP_KPIS = {
+  weekly: [
+    { label: 'Volume (Week)', value: '179K', dir: 'dn', delta: '60.9% PoP', sub: 'DB: 23K · OSP: 156K' },
+    { label: 'HC (Current Week)', value: '223', dir: 'dn', delta: 'From 227', sub: 'Avg: 217 · Exit: 210' },
+    { label: 'Excess Capacity', value: '154%', dir: 'dn', delta: 'From 157%', sub: 'Excess HC: 76' },
+    { label: 'Hiring (Week)', value: '2', dir: 'flat', delta: 'UR: 2', sub: 'Next Wk: 1' },
+    { label: 'Gap (Week)', value: '-280K', dir: 'dn', delta: 'Under-cap', sub: 'Next Wk: -135K' },
+    { label: 'OSP Mix', value: '88%', dir: 'up', delta: 'From 85%', sub: 'DB: 12%' },
+    { label: 'Vol Next Week', value: '334K', dir: 'dn', delta: '61.1%', sub: 'DB: 46K · OSP: 288K' },
+    { label: 'Weekly CQN', value: '-146K', dir: 'dn', delta: 'Worsening', sub: '~-150K trend' },
+  ],
+  monthly: [
+    { label: 'Volume (Month)', value: '778K', dir: 'dn', delta: '60.9% PoP', sub: 'DB: 98K · OSP: 680K' },
+    { label: 'HC (Current Month)', value: '223', dir: 'dn', delta: 'From 231', sub: 'Avg: 217 · Exit: 210' },
+    { label: 'Excess Capacity', value: '154%', dir: 'dn', delta: 'From 159%', sub: 'Excess HC: 76' },
+    { label: 'Hiring (Month)', value: '9', dir: 'flat', delta: 'UR: 9', sub: 'Next Mo: 6' },
+    { label: 'Gap (Month)', value: '-1.21M', dir: 'dn', delta: 'Under-cap', sub: 'Next Mo: -583K' },
+    { label: 'OSP Mix', value: '88%', dir: 'up', delta: 'From 76%', sub: 'DB: 12%' },
+    { label: 'Vol Next Month', value: '1.45M', dir: 'dn', delta: '61.1%', sub: 'DB: 201K · OSP: 1.24M' },
+    { label: 'Monthly CQN', value: '-633K', dir: 'dn', delta: 'Worsening', sub: '~-650K trend' },
+  ],
+  qtr: [
+    { label: 'Volume (Quarter)', value: '2.33M', dir: 'dn', delta: '60.9% PoP', sub: 'DB: 295K · OSP: 2.04M' },
+    { label: 'HC (Current Qtr)', value: '223', dir: 'dn', delta: 'From 238', sub: 'Avg: 217 · Exit: 210' },
+    { label: 'Excess Capacity', value: '154%', dir: 'dn', delta: 'From 161%', sub: 'Excess HC: 76' },
+    { label: 'Hiring (Quarter)', value: '26', dir: 'flat', delta: 'UR: 26', sub: 'Next Qtr: 19' },
+    { label: 'Gap (Quarter)', value: '-3.64M', dir: 'dn', delta: 'Under-cap', sub: 'Next Qtr: -1.75M' },
+    { label: 'OSP Mix', value: '88%', dir: 'up', delta: 'From 67%', sub: 'DB: 12%' },
+    { label: 'Vol Next Qtr', value: '4.34M', dir: 'dn', delta: '61.1%', sub: 'DB: 603K · OSP: 3.73M' },
+    { label: 'Quarterly CQN', value: '-1.90M', dir: 'dn', delta: 'Worsening', sub: '~-1.95M trend' },
+  ],
+};
 
-export const capMiniStats = [
-  { label: 'L1 HC Avg', value: '244', tone: 'b' },
-  { label: 'L1 HC Exit', value: '210', tone: 'r' },
-  { label: 'HC FY28Q4', value: '197', tone: 'b' },
-  { label: 'LOA Exit', value: '13', tone: 'y' },
-];
+export const CAP_MINI_STATS = {
+  weekly: [
+    { label: 'L1 HC Avg', value: '244', tone: 'b' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r' },
+    { label: 'HC Next Wk', value: '221', tone: 'b' },
+    { label: 'LOA Exit', value: '3', tone: 'y' },
+  ],
+  monthly: [
+    { label: 'L1 HC Avg', value: '244', tone: 'b' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r' },
+    { label: 'HC Next Mo', value: '209', tone: 'b' },
+    { label: 'LOA Exit', value: '10', tone: 'y' },
+  ],
+  qtr: [
+    { label: 'L1 HC Avg', value: '244', tone: 'b' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r' },
+    { label: 'HC FY28Q4', value: '197', tone: 'b' },
+    { label: 'LOA Exit', value: '13', tone: 'y' },
+  ],
+};
 
 // ===== Overview charts =====
 

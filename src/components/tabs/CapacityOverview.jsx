@@ -10,7 +10,7 @@ import {
   buildCapOfferingGapConfig, buildCapPlannerSubtotalsConfig, buildCapWeeklyGapConfig,
 } from '../charts/chartConfigs';
 import {
-  capKpis, capMiniStats, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
+  CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
   capA1, capA2, capA3, capA4, capA5, capA6, capA7, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD,
 } from '../../data/capacityData';
@@ -30,6 +30,8 @@ export default function CapacityOverview() {
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
+  const capKpis = CAP_KPIS[curPeriod];
+  const capMiniStats = CAP_MINI_STATS[curPeriod];
   const L6 = useMemo(() => capLabelsFor(curPeriod, 6), [curPeriod]);
   const L8 = useMemo(() => capLabelsFor(curPeriod, 8), [curPeriod]);
 
@@ -87,7 +89,7 @@ export default function CapacityOverview() {
         <div>
           <div className="ai-story-title">AI Capacity Summary</div>
           <div className="ai-story-text">
-            Volume at <strong>2.33M</strong> (FY27), down <strong>60.9% PoP</strong>. Excess capacity <strong>154%</strong>, HC gap <strong>-3.64M</strong>. OSP Mix <strong>88%</strong>. Hiring: <strong>26</strong> (all UR). Weekly CQN gap ~<strong>-150K</strong>.
+            Volume at <strong>{capKpis[0].value}</strong> ({periodWord.toLowerCase()}), down <strong>{capKpis[0].delta}</strong>. Excess capacity <strong>{capKpis[2].value}</strong>, capacity gap <strong>{capKpis[4].value}</strong>. OSP Mix <strong>{capKpis[5].value}</strong>. Hiring: <strong>{capKpis[3].value}</strong> (all UR). {periodWord} CQN gap ~<strong>{capKpis[7].value}</strong>.
           </div>
         </div>
       </div>
