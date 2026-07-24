@@ -111,12 +111,6 @@ export default function WorldMap({ theme, mode = 'region' }) {
 
   return (
     <div className="geo-map-wrap">
-      <div className="geo-legend">
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentGreen }}></span>&#8805;90% Excellent</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentBlue }}></span>80&#8211;90% Good</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentOrange }}></span>70&#8211;80% Fair</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentRed }}></span>{'<'}70% Critical</span>
-      </div>
       <div className="geo-map-inner" onMouseLeave={() => setHover(null)}>
         <div id="worldMap"></div>
         {hover && (
@@ -126,6 +120,12 @@ export default function WorldMap({ theme, mode = 'region' }) {
             <div className="geo-hover-sub">accuracy</div>
           </div>
         )}
+      </div>
+      <div className="geo-legend">
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentGreen }}></span>&#8805;90% Excellent</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentBlue }}></span>80&#8211;90% Good</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentOrange }}></span>70&#8211;80% Fair</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentRed }}></span>{'<'}70% Critical</span>
       </div>
     </div>
   );
