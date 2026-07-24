@@ -96,7 +96,7 @@ export function capVolumeInsight(d) {
 }
 
 export function capVolumeTrendInsight(d) {
-  return `Total volume fell from ${fK(first(d.julTotal))} to ${fK(last(d.augTotal))} between the Jul and Aug projections, tracking closely against the ${fK(last(d.demandFcst))} demand forecast.`;
+  return `Total volume fell from ${fK(first(d.julTotal))} (Jul) to ${fK(last(d.augTotal))} (Aug), a decline of ${round((1 - last(d.augTotal) / first(d.julTotal)) * 100)}% across the period.`;
 }
 
 export function capHcInsight(d) {

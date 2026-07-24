@@ -97,7 +97,7 @@ export default function CapacityOverview() {
               <InsightBox text={capVolumeInsight(capC1)} />
             </div>
             <div className="card">
-              <div className="card-header"><div className="card-title">Total Volume Trend + Demand Forecast <InfoBtn tip="<strong>Purpose</strong>Total volume trend against the demand forecast line." /></div></div>
+              <div className="card-header"><div className="card-title">Total Volume Trend <InfoBtn tip="<strong>Purpose</strong>Total volume trend across Jul and Aug projections." /></div></div>
               <ChartCanvas config={c2Config} height="300px" />
               <InsightBox text={capVolumeTrendInsight(capC2)} />
             </div>

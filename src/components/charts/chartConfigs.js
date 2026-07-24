@@ -545,7 +545,6 @@ export function buildCapVolumeTrendConfig(d, theme) {
       datasets: [
         { label: 'Jul Total Vol', data: d.julTotal, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
         { label: 'Aug Total Vol', data: d.augTotal, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
-        { label: 'Demand Fcst', data: d.demandFcst, borderColor: '#10b981', borderDash: [6, 3], tension: 0.3, pointRadius: 2, borderWidth: 2, fill: false, datalabels: { display: false } },
       ],
     },
     options: {
