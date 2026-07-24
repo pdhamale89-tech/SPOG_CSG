@@ -5,41 +5,40 @@ import { M8 } from '../../data/forecastData';
 const DEFAULTS = {
   fiscalYear: 'FY26',
   fiscalQuarter: 'All Quarters',
-  fiscalWeek: 'All Weeks',
   fiscalMonth: 'All Months',
+  fiscalWeek: 'All Weeks',
   subRegion: 'All Sub-Regions',
   country: 'All Countries',
+  offering: 'All Offerings',
+  forecastName: 'All Forecasts',
+  capacityPlanner: 'All Planners',
   businessOrg: 'All Business Orgs',
   businessLead: 'All Business Leads',
-  subServiceOffering: 'All Offerings',
-  channel: 'All Channels',
   queueName: 'All Queues',
-  forecastQueueName: 'All Queues',
-  forecastName: 'All Forecasts',
   reportingClassification: 'All Classifications',
-  mlOverrideReason: 'All Reasons',
-  forecaster: 'All Forecasters',
-  planDataSource: 'All Sources',
+  subServiceOffering: 'All Offerings',
 };
 
-const FILTER_FIELDS = [
+// Rendered in two groups so Region (the one real, wired filter) can sit
+// between Fiscal Week and Sub Region, matching the requested sequence.
+const FIELDS_BEFORE_REGION = [
   { key: 'fiscalYear', label: 'Fiscal Year', options: ['FY24', 'FY25', 'FY26', 'FY27'] },
   { key: 'fiscalQuarter', label: 'Fiscal Quarter', options: ['All Quarters', 'Q1', 'Q2', 'Q3', 'Q4'] },
   { key: 'fiscalMonth', label: 'Fiscal Month', options: ['All Months', ...M8] },
   { key: 'fiscalWeek', label: 'Fiscal Week', options: ['All Weeks', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'] },
+];
+
+const FIELDS_AFTER_REGION = [
   { key: 'subRegion', label: 'Sub Region', options: ['All Sub-Regions', 'North', 'South', 'East', 'West', 'Central'] },
   { key: 'country', label: 'Country', options: ['All Countries', 'US', 'UK', 'India', 'Canada', 'Germany', 'Australia'] },
+  { key: 'offering', label: 'Offering', options: ['All Offerings', 'Pro', 'Premium', 'Basic', 'PON'] },
+  { key: 'forecastName', label: 'Plan Name', options: ['All Forecasts', 'Jul Pro', 'Jun Pro', 'Aug Pro'] },
+  { key: 'capacityPlanner', label: 'Capacity Planner', options: ['All Planners', 'S. Johnson', 'K. Lee', 'D. Brown', 'N. Singh'] },
   { key: 'businessOrg', label: 'Business Org', options: ['All Business Orgs', 'Consumer', 'Commercial', 'Enterprise', 'Public Sector'] },
   { key: 'businessLead', label: 'Business Lead', options: ['All Business Leads', 'J. Smith', 'A. Patel', 'M. Chen', 'R. Garcia'] },
-  { key: 'subServiceOffering', label: 'Sub-Service Offering', options: ['All Offerings', 'Pro', 'Premium', 'Basic', 'OOP'] },
-  { key: 'channel', label: 'Channel', options: ['All Channels', 'Voice', 'Chat', 'Email', 'Social'] },
   { key: 'queueName', label: 'Combined Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] },
-  { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] },
-  { key: 'forecastName', label: 'Plan Name', options: ['All Forecasts', 'Jul Pro', 'Jun Pro', 'Aug Pro'] },
   { key: 'reportingClassification', label: 'Reporting Classification', options: ['All Classifications', 'Actual', 'Forecast', 'Plan', 'ML Forecast'] },
-  { key: 'mlOverrideReason', label: 'ML Override Reason', options: ['All Reasons', 'Demand Surge', 'Seasonality Adjustment', 'Data Anomaly', 'Manual Correction'] },
-  { key: 'forecaster', label: 'Forecaster', options: ['All Forecasters', 'S. Johnson', 'K. Lee', 'D. Brown', 'N. Singh'] },
-  { key: 'planDataSource', label: 'Plan Data Source', options: ['All Sources', 'ML Model', 'Manual Plan', 'Statistical Model', 'Hybrid'] },
+  { key: 'subServiceOffering', label: 'Sub-Service Offering', options: ['All Offerings', 'Pro', 'Premium', 'Basic', 'OOP'] },
 ];
 
 export default function FilterBar() {
@@ -50,6 +49,17 @@ export default function FilterBar() {
   function handleClear() {
     setDecor(DEFAULTS);
     clearFilters();
+  }
+
+  function renderField({ key, label, options }) {
+    return (
+      <div className="filter-group" key={key}>
+        <label>{label}</label>
+        <select value={decor[key]} onChange={(e) => setDecor((d) => ({ ...d, [key]: e.target.value }))}>
+          {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        </select>
+      </div>
+    );
   }
 
   return (
@@ -68,6 +78,7 @@ export default function FilterBar() {
       </div>
       {expanded && (
         <div className="filter-grid">
+          {FIELDS_BEFORE_REGION.map(renderField)}
           <div className="filter-group">
             <label>Region</label>
             <select value={curRegion} onChange={(e) => applyFilters(e.target.value)}>
@@ -77,14 +88,7 @@ export default function FilterBar() {
               <option value="APJ">APJ</option>
             </select>
           </div>
-          {FILTER_FIELDS.map(({ key, label, options }) => (
-            <div className="filter-group" key={key}>
-              <label>{label}</label>
-              <select value={decor[key]} onChange={(e) => setDecor((d) => ({ ...d, [key]: e.target.value }))}>
-                {options.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
-            </div>
-          ))}
+          {FIELDS_AFTER_REGION.map(renderField)}
         </div>
       )}
     </div>
