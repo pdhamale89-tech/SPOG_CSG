@@ -92,7 +92,7 @@ export default function CapacityOverview() {
           <div className="section-div"><h2>📊 Volume &amp; Demand Projections</h2><p>Combined Jul/Aug view across DB and OSP.</p></div>
           <div className="s-grid">
             <div className="card">
-              <div className="card-header"><div className="card-title">Jul vs Aug Volume — All Partners <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume comparison between the Jul and Aug projections." /></div></div>
+              <div className="card-header"><div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume comparison between the Jul and Aug projections." /></div></div>
               <ChartCanvas config={c1Config} height="300px" />
               <InsightBox text={capVolumeInsight(capC1)} />
             </div>
@@ -133,7 +133,7 @@ export default function CapacityOverview() {
               <InsightBox text={capHiringInsight(capC5)} />
             </div>
             <div className="card">
-              <div className="card-header"><div className="card-title">Hiring Breakdown — Jul + Aug Combined <InfoBtn tip="<strong>Purpose</strong>Approved, UR and non-approved hiring stacked by plan." /></div></div>
+              <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line." /></div></div>
               <ChartCanvas config={c6Config} height="300px" />
               <InsightBox text={capHiringBreakdownInsight(capC6)} />
             </div>

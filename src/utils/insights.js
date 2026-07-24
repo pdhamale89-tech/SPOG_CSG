@@ -113,7 +113,10 @@ export function capHiringInsight(d) {
 }
 
 export function capHiringBreakdownInsight(d) {
-  return `Jul hiring leaned on ${sum(d.julNonApproved)} non-approved requisitions versus ${sum(d.julApproved)} approved, while Aug hiring of ${sum(d.augUrHiring)} was entirely UR-driven.`;
+  const approved = sum(d.julApproved) + sum(d.julUrHiring) + sum(d.augUrHiring);
+  const nonApproved = sum(d.julNonApproved);
+  const total = approved + nonApproved;
+  return `Approved hiring accounts for ${approved} of the ${total} total hires tracked, versus ${nonApproved} still non-approved.`;
 }
 
 export function capCapOspInsight(d) {

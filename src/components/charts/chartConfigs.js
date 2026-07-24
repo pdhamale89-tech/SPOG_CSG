@@ -618,22 +618,21 @@ export function buildCapHiringConfig(d, theme) {
 export function buildCapHiringBreakdownConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
-  const { textPrimary: tp, bgCard: bg } = getColors(theme);
-  const stackDL = { display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, color: tp, font: { size: 8, weight: 'bold' }, textStrokeColor: bg, textStrokeWidth: 2 };
+  const DL = dataLabelsDefault(theme);
+  const approved = d.labels.map((_, i) => d.julApproved[i] + d.julUrHiring[i] + d.augUrHiring[i]);
+  const nonApproved = d.julNonApproved;
+  const total = d.labels.map((_, i) => approved[i] + nonApproved[i]);
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Jul Approved', data: d.julApproved, backgroundColor: 'rgba(59,130,246,.45)', stack: 'jul', borderRadius: 2 },
-        { label: 'Jul UR Hiring', data: d.julUrHiring, backgroundColor: 'rgba(59,130,246,.85)', stack: 'jul', borderRadius: 2 },
-        { label: 'Jul Non-Approved', data: d.julNonApproved, backgroundColor: 'rgba(245,158,11,.8)', stack: 'jul', borderRadius: 2 },
-        { label: 'Aug UR Hiring', data: d.augUrHiring, backgroundColor: 'rgba(139,92,246,.85)', stack: 'aug', borderRadius: 2 },
-        { label: 'Jul Overall', data: d.julOverall, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
-        { label: 'Aug Overall', data: d.augOverall, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: 'Approved Hiring', data: approved, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3 },
+        { label: 'Non-Approved Hiring', data: nonApproved, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3 },
+        { label: 'Total Hiring', data: total, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: S, plugins: { legend: LP, datalabels: stackDL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
 
