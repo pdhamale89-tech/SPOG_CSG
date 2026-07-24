@@ -20,13 +20,6 @@ export const capMiniStats = [
   { label: 'LOA Exit', value: '13', tone: 'y' },
 ];
 
-export const capAlerts = [
-  { tone: 'c', text: 'Critical: Volume gap -3.64M. Demand exceeds capacity.', time: 'Now' },
-  { tone: 'c', text: 'Critical: Hiring PoP = 0 in Q2 & Q4.', time: 'Today' },
-  { tone: 'w', text: 'Warning: Excess capacity 154%. Rebalance needed.', time: '2h ago' },
-  { tone: 'i', text: 'Info: OSP Mix 88% — partner dependency risk.', time: '4h ago' },
-];
-
 // ===== Overview charts =====
 
 export const capC1 = {

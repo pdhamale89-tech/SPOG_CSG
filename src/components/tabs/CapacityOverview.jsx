@@ -10,7 +10,7 @@ import {
   buildCapOfferingGapConfig, buildCapPlannerSubtotalsConfig, buildCapWeeklyGapConfig,
 } from '../charts/chartConfigs';
 import {
-  capKpis, capMiniStats, capAlerts, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
+  capKpis, capMiniStats, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
   capA1, capA2, capA3, capA4, capA5, capA6, capA7, capWeeklyTable,
 } from '../../data/capacityData';
 import {
@@ -20,7 +20,6 @@ import {
   capWeeklyGapInsight,
 } from '../../utils/insights';
 
-const ALERT_ICON = { c: '⛔', w: '⚠️', i: 'ℹ️' };
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
 
 export default function CapacityOverview() {
@@ -151,19 +150,6 @@ export default function CapacityOverview() {
               <div className="card-header"><div className="card-title">L1 Exit HC + DB/OSP Split <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
               <ChartCanvas config={c8Config} height="300px" />
               <InsightBox text={capExitInsight(capC8)} />
-            </div>
-          </div>
-
-          <div className="section-div"><h2>🔔 Alerts</h2><p>{capAlerts.length} active.</p></div>
-          <div className="card" style={{ marginBottom: '14px' }}>
-            <div className="alert-list" style={{ padding: '12px 16px' }}>
-              {capAlerts.map((a) => (
-                <div className={'alert-item tone-' + a.tone} key={a.text}>
-                  <span className="alert-ic">{ALERT_ICON[a.tone]}</span>
-                  <div className="alert-body">{a.text}</div>
-                  <span className="alert-time">{a.time}</span>
-                </div>
-              ))}
             </div>
           </div>
         </>
