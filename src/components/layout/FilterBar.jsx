@@ -15,9 +15,16 @@ const DEFAULTS = {
   businessOrg: 'All Business Orgs',
   businessLead: 'All Business Leads',
   queueName: 'All Queues',
+  forecastQueueName: 'All Queues',
   reportingClassification: 'All Classifications',
   subServiceOffering: 'All Offerings',
 };
+
+// Only shown on Forecast Overview and Shipment & ASU - not part of the
+// global sequence, so it is kept out of FIELDS_AFTER_REGION and rendered
+// conditionally instead.
+const FORECAST_QUEUE_TABS = ['forecast-overview', 'shipment-asu'];
+const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 
 // Rendered in two groups so Region (the one real, wired filter) can sit
 // between Fiscal Week and Sub Region, matching the requested sequence.
@@ -42,7 +49,7 @@ const FIELDS_AFTER_REGION = [
 ];
 
 export default function FilterBar() {
-  const { showFilters, curRegion, applyFilters, curPeriod, setCurPeriod, clearFilters } = useApp();
+  const { showFilters, currentTab, curRegion, applyFilters, curPeriod, setCurPeriod, clearFilters } = useApp();
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
@@ -89,6 +96,7 @@ export default function FilterBar() {
             </select>
           </div>
           {FIELDS_AFTER_REGION.map(renderField)}
+          {FORECAST_QUEUE_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
         </div>
       )}
     </div>
