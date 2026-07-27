@@ -8,7 +8,6 @@ export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', '
 const BREADCRUMBS = {
   'forecast-overview': 'Forecast › Overview',
   'shipment-asu': 'Forecast › Shipment & ASU',
-  'forecast-health': 'Forecast › Health Monitor',
   'capacity-overview': 'Capacity › Overview',
   'calendar-forecast': 'Calendar › Forecast',
   'calendar-fiscal': 'Calendar › Fiscal',

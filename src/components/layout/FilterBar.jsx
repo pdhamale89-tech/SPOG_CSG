@@ -20,10 +20,11 @@ const DEFAULTS = {
   subServiceOffering: 'All Offerings',
 };
 
-// Only shown on Forecast Overview and Shipment & ASU - not part of the
-// global sequence, so it is kept out of FIELDS_AFTER_REGION and rendered
-// conditionally instead.
-const FORECAST_QUEUE_TABS = ['forecast-overview', 'shipment-asu'];
+// Forecast Overview and Shipment & ASU get their own vocabulary: Forecast
+// Queue Name only shows on these tabs, and Capacity Planner reads as
+// Forecaster here (it stays Capacity Planner everywhere else, e.g. Capacity
+// Overview, where that label was requested).
+const FORECAST_TABS = ['forecast-overview', 'shipment-asu'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 
 // Rendered in two groups so Region (the one real, wired filter) can sit
@@ -95,8 +96,10 @@ export default function FilterBar() {
               <option value="APJ">APJ</option>
             </select>
           </div>
-          {FIELDS_AFTER_REGION.map(renderField)}
-          {FORECAST_QUEUE_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
+          {FIELDS_AFTER_REGION.map((f) => renderField(
+            f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
+          ))}
+          {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
         </div>
       )}
     </div>

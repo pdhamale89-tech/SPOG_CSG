@@ -66,27 +66,6 @@ export function histTrendInsight(d, curHistPlan) {
   return `The ${planLabel} plan runs ${Math.abs(gapAvg)} units ${dir} the ML forecast on average, versus FY2027 actuals of ${first(d.fy27act)} to ${last(d.fy27act)} over the same period.`;
 }
 
-// --- Forecast Health ---
-// Stability/Drift series are hardcoded inside their chart builders (not sourced from
-// forecastData.js), so these mirror those same fixed arrays rather than re-deriving them.
-
-export function biasInsight(d) {
-  const worstIdx = minIdx(d.bias);
-  return `Forecast bias has run negative throughout the period (over-forecasting demand), widening from ${first(d.bias)}% to a worst of ${d.bias[worstIdx]}% in ${labelAt(d.labels, worstIdx)} before easing to ${last(d.bias)}%.`;
-}
-
-export function stabilityInsight(d) {
-  const series = [85, 82, 78, 72, 68, 65, 62, 64];
-  const belowIdx = series.findIndex((v) => v < 70);
-  return `Forecast stability declined from ${series[0]}% to a low of ${Math.min(...series)}%, dropping below the 70% threshold in ${labelAt(d.labels, belowIdx)} before a slight rebound to ${last(series)}%.`;
-}
-
-export function driftInsight(d) {
-  const series = [8, 10, 13, 16, 18, 20, 22, 19];
-  const peakIdx = maxIdx(series);
-  return `Model drift nearly tripled from an ${series[0]}% baseline to a peak of ${series[peakIdx]}% in ${labelAt(d.labels, peakIdx)} before easing to ${last(series)}%.`;
-}
-
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {

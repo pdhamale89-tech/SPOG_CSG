@@ -25,7 +25,6 @@ export default function Sidebar() {
         <div className={'sb-sub' + (openSubMenu === 'f-sub' ? ' open' : '')}>
           <div className={subItemClass('forecast-overview')} onClick={() => goSub('forecast-overview')}>Forecast Overview</div>
           <div className={subItemClass('shipment-asu')} onClick={() => goSub('shipment-asu')}>Shipment &amp; ASU Trend</div>
-          <div className={subItemClass('forecast-health')} onClick={() => goSub('forecast-health')}>Forecast Health Monitor</div>
         </div>
 
         <div className="sidebar-section-label">Operations</div>
