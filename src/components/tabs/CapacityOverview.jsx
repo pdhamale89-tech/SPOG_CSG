@@ -84,16 +84,6 @@ export default function CapacityOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="ai-story">
-        <div className="ai-icon-box">✦</div>
-        <div>
-          <div className="ai-story-title">AI Capacity Summary</div>
-          <div className="ai-story-text">
-            Volume at <strong>{capKpis[0].value}</strong> ({periodWord.toLowerCase()}), down <strong>{capKpis[0].delta}</strong>. Excess capacity <strong>{capKpis[2].value}</strong>, capacity gap <strong>{capKpis[4].value}</strong>. OSP Mix <strong>{capKpis[5].value}</strong>. Hiring: <strong>{capKpis[3].value}</strong> (all UR). {periodWord} CQN gap ~<strong>{capKpis[7].value}</strong>.
-          </div>
-        </div>
-      </div>
-
       <div className="plan-sel" style={{ marginBottom: '14px' }}>
         <button className={'plan-btn' + (capTab === 'overview' ? ' active' : '')} onClick={() => setCapTab('overview')}>Overview</button>
         <button className={'plan-btn' + (capTab === 'analytics' ? ' active' : '')} onClick={() => setCapTab('analytics')}>Analytics</button>

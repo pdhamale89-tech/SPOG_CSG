@@ -73,14 +73,6 @@ export default function ForecastOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="ai-story">
-        <div className="ai-icon-box">✦</div>
-        <div>
-          <div className="ai-story-title">AI Business Story</div>
-          <div className="ai-story-text">This period, contact center handled <strong>{kpi.vol}</strong> calls. Accuracy at <strong>{kpi.acc}</strong> — below 80% target.</div>
-        </div>
-      </div>
-
       <div className="kpi-grid">
         <div className="kpi-card"><div className="kpi-label">FORECAST ACCURACY</div><div className="kpi-value">{kpi.acc}</div><div className="kpi-sub">{kpi.accSub}</div></div>
         <div className="kpi-card"><div className="kpi-label">CALL VOLUME</div><div className="kpi-value">{kpi.vol}</div><div className="kpi-sub">{kpi.volSub}</div></div>

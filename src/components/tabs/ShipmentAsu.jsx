@@ -63,14 +63,6 @@ export default function ShipmentAsu() {
 
   return (
     <div className="tab-panel active">
-      <div className="ai-story">
-        <div className="ai-icon-box">✦</div>
-        <div>
-          <div className="ai-story-title">AI Shipment Summary</div>
-          <div className="ai-story-text">Shipments 4% below AOP. Commercial leads +7% YoY. ASU base: 1.2M.</div>
-        </div>
-      </div>
-
       <div className="tier-sel">
         {TIERS.map((t) => (
           <button key={t} className={'tier-btn' + (tier === t ? ' active' : '')} onClick={() => setTier(t)}>{t}</button>
