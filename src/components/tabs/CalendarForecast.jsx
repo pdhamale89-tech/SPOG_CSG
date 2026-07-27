@@ -1,49 +1,79 @@
+import { DAY_COLUMNS, FISCAL_CALENDAR } from '../../data/calendarData';
+
+const LEGEND = [
+  { cls: 'cal-ev-alt', label: 'ALT-UPP Due' },
+  { cls: 'cal-ev-demand', label: 'Demand Due' },
+  { cls: 'cal-ev-osp', label: 'OSP Locks Due' },
+  { cls: 'cal-ev-scaling', label: 'Scaling Review / HC Plan Due' },
+  { cls: 'cal-ev-finance', label: 'Finance Summaries Due' },
+  { cls: 'cal-ev-plain', label: 'UPP Out' },
+  { cls: 'cal-ev-holiday', label: 'Holiday' },
+];
+
+function WeekRow({ week }) {
+  const holiday = week.events.HOLIDAY;
+  return (
+    <tr>
+      {DAY_COLUMNS.map((col, i) => {
+        if (holiday && holiday.span.includes(col)) {
+          if (col !== holiday.span[0]) return null;
+          return (
+            <td key={col} colSpan={holiday.span.length} className={holiday.cls}>
+              <div className="cal-daynum">{week.days[i]}</div>
+              <div className="cal-ev-text">{holiday.text}</div>
+            </td>
+          );
+        }
+        const ev = week.events[col];
+        return (
+          <td key={col} className={ev ? ev.cls : ''}>
+            <div className="cal-daynum">{week.days[i]}</div>
+            {col === 'SAT' && <div className="cal-wk">{week.wk} <span className="cal-wk-cum">({week.cum})</span></div>}
+            {ev && <div className="cal-ev-text">{ev.text}{ev.text2 ? `\n${ev.text2}` : ''}</div>}
+          </td>
+        );
+      })}
+    </tr>
+  );
+}
+
+function MonthBlock({ month }) {
+  return (
+    <div className="cal-month">
+      <div className="cal-month-side">{month.name}{month.tag && <small>{month.tag}</small>}</div>
+      <div className="cal-month-body">
+        <table className="cal-table">
+          <thead><tr>{DAY_COLUMNS.map((c) => <th key={c}>{c}</th>)}</tr></thead>
+          <tbody>
+            {month.weeks.map((w) => <WeekRow key={w.cum} week={w} />)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function CalendarForecast() {
   return (
     <div className="tab-panel active">
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>📅 Forecast Calendar — FY25</h2>
-      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Key deadlines.</p>
-      <div className="fcal-grid">
-        <div>
-          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-blue)', textAlign: 'center', marginBottom: '8px' }}>FY25 Q1</p>
-          <div className="fcal-month" style={{ marginBottom: '10px' }}>
-            <div className="fcal-month-title" style={{ color: 'var(--accent-blue)' }}>FEBRUARY 2024</div>
-            <table className="fcal-table">
-              <thead><tr><th>SAT</th><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th></tr></thead>
-              <tbody>
-                <tr><td>3<div className="wk-label">Wk1</div></td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
-                <tr>
-                  <td>10<div className="wk-label">Wk2</div></td><td>11</td><td>12</td>
-                  <td>13<span className="fcal-event ev-alt">ALT-UPP</span></td><td>14</td><td>15</td>
-                  <td>16<span className="fcal-event ev-internal">Internal</span></td>
-                </tr>
-              </tbody>
-            </table>
+      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>📅 Forecast Calendar — FY27</h2>
+      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+        Fiscal weeks and key planning deadlines across all four quarters (4-4-5 calendar).
+      </p>
+      <div className="cal-quarter-grid">
+        {FISCAL_CALENDAR.map((q) => (
+          <div className="cal-quarter" key={q.label}>
+            <div className="cal-quarter-title">{q.label}</div>
+            {q.months.map((m) => <MonthBlock key={m.name} month={m} />)}
           </div>
-        </div>
-        <div>
-          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-blue)', textAlign: 'center', marginBottom: '8px' }}>FY25 Q2</p>
-          <div className="fcal-month">
-            <div className="fcal-month-title" style={{ color: 'var(--accent-blue)' }}>MAY</div>
-            <table className="fcal-table">
-              <thead><tr><th>SAT</th><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th></tr></thead>
-              <tbody>
-                <tr><td>3<div className="wk-label">Wk1</div></td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        ))}
       </div>
-      <div className="fcal-legend">
-        <span><span className="leg-box ev-alt"></span>ALT-UPP</span>
-        <span><span className="leg-box ev-internal"></span>Internal</span>
-        <span><span className="leg-box ev-biz"></span>Business</span>
-        <span><span className="leg-box ev-demand"></span>Demand</span>
-        <span><span className="leg-box ev-osp"></span>OSP</span>
-        <span><span className="leg-box ev-capacity"></span>Capacity</span>
-        <span><span className="leg-box ev-scaling"></span>Scaling</span>
-        <span><span className="leg-box ev-finance"></span>Finance</span>
-        <span><span className="leg-box ev-upp"></span>UPP</span>
+      <div className="cal-legend">
+        {LEGEND.map((l) => (
+          <span className="cal-legend-item" key={l.cls}>
+            <span className={'cal-legend-dot ' + l.cls}></span>{l.label}
+          </span>
+        ))}
       </div>
     </div>
   );
