@@ -24,7 +24,8 @@ export default function Sidebar() {
         <div className="sb-i active" onClick={() => toggleSub('f-sub', 'forecast-overview')}><span className="ic">📊</span>Forecast<span className="arr">▾</span></div>
         <div className={'sb-sub' + (openSubMenu === 'f-sub' ? ' open' : '')}>
           <div className={subItemClass('forecast-overview')} onClick={() => goSub('forecast-overview')}>Forecast Overview</div>
-          <div className={subItemClass('shipment-asu')} onClick={() => goSub('shipment-asu')}>Shipment &amp; ASU Trend</div>
+          <div className={subItemClass('shipment-overview')} onClick={() => goSub('shipment-overview')}>Shipment Overview</div>
+          <div className={subItemClass('asu-overview')} onClick={() => goSub('asu-overview')}>ASU Overview</div>
         </div>
 
         <div className="sidebar-section-label">Operations</div>

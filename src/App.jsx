@@ -12,7 +12,8 @@ import PartnerRcaModal from './components/modals/PartnerRcaModal';
 
 import Home from './components/tabs/Home';
 import ForecastOverview from './components/tabs/ForecastOverview';
-import ShipmentAsu from './components/tabs/ShipmentAsu';
+import ShipmentOverview from './components/tabs/ShipmentOverview';
+import AsuOverview from './components/tabs/AsuOverview';
 import CapacityOverview from './components/tabs/CapacityOverview';
 import CalendarForecast from './components/tabs/CalendarForecast';
 import CalendarFiscal from './components/tabs/CalendarFiscal';
@@ -23,7 +24,8 @@ import Settings from './components/tabs/Settings';
 const TABS = {
   'home': Home,
   'forecast-overview': ForecastOverview,
-  'shipment-asu': ShipmentAsu,
+  'shipment-overview': ShipmentOverview,
+  'asu-overview': AsuOverview,
   'capacity-overview': CapacityOverview,
   'calendar-forecast': CalendarForecast,
   'calendar-fiscal': CalendarFiscal,

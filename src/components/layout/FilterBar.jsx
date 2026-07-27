@@ -20,11 +20,11 @@ const DEFAULTS = {
   subServiceOffering: 'All Offerings',
 };
 
-// Forecast Overview and Shipment & ASU get their own vocabulary: Forecast
-// Queue Name only shows on these tabs, and Capacity Planner reads as
-// Forecaster here (it stays Capacity Planner everywhere else, e.g. Capacity
-// Overview, where that label was requested).
-const FORECAST_TABS = ['forecast-overview', 'shipment-asu'];
+// Forecast Overview, Shipment Overview, and ASU Overview get their own
+// vocabulary: Forecast Queue Name only shows on these tabs, and Capacity
+// Planner reads as Forecaster here (it stays Capacity Planner everywhere
+// else, e.g. Capacity Overview, where that label was requested).
+const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 
 // Rendered in two groups so Region (the one real, wired filter) can sit
