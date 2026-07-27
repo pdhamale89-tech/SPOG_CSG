@@ -102,7 +102,6 @@ export default function CapacityOverview() {
 
       {capTab === 'overview' ? (
         <>
-          <div className="section-div"><h2>📊 Volume &amp; Demand Projections</h2><p>Combined Jul/Aug view across DB and OSP.</p></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume comparison between the Jul and Aug projections." /></div></div>
@@ -116,7 +115,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>👥 Headcount &amp; Components</h2><p>Declining across both plans.</p></div>
           <div className="mini-row">
             {capMiniStats.map((m) => (
               <div className="mini-stat" key={m.label}>
@@ -138,7 +136,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>🧑‍💼 Hiring Trends</h2><p>Gaps persist {periodLabel.toLowerCase()}.</p></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Hiring PoP — Old vs New + Annual ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Old vs new hiring plan comparison." /></div></div>
@@ -152,7 +149,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>📈 Capacity, OSP Mix &amp; L1 Exit</h2><p>Over-staffed relative to demand.</p></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Capacity % + OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % on the left axis, OSP mix % on the right." /></div></div>
@@ -168,7 +164,6 @@ export default function CapacityOverview() {
         </>
       ) : (
         <>
-          <div className="section-div"><h2>📉 {periodLabel} Analysis</h2><p>{periodLabel} comparison — negative across the board.</p></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Volume and headcount period-over-period % change." /></div></div>
@@ -182,7 +177,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>⚖️ Demand vs Capacity Gap</h2><p>Critical.</p></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Planner Gap Distribution + {periodWord} Trend <InfoBtn tip="<strong>Purpose</strong>Gap trend by planner across periods." /></div></div>
@@ -196,7 +190,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>🗂️ Drill-Down: Offering &amp; Planner</h2></div>
           <div className="s-grid">
             <div className="card">
               <div className="card-header"><div className="card-title">Offering Gap + {periodWord} Breakdown <InfoBtn tip="<strong>Purpose</strong>Gap contribution by offering, stacked by period." /></div></div>
@@ -210,7 +203,6 @@ export default function CapacityOverview() {
             </div>
           </div>
 
-          <div className="section-div"><h2>🗓️ {periodWord} CQN Volume Gap</h2><p>Worsening.</p></div>
           <div className="card" style={{ marginBottom: '14px' }}>
             <div className="card-header"><div className="card-title">{periodWord} Gap Trend + Top Queue Breakdown <InfoBtn tip="<strong>Purpose</strong>Total gap trend with the top contributing queues overlaid." /></div></div>
             <ChartCanvas config={a7Config} height="360px" />
