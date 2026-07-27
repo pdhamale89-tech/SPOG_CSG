@@ -82,6 +82,36 @@ export default function CapacityOverview() {
     return copy;
   }, [sort]);
 
+  const cqnDetailCard = (
+    <div className="card" style={{ marginBottom: '14px' }}>
+      <div className="card-header"><div className="card-title">{periodWord} CQN Detail <InfoBtn tip="<strong>Purpose</strong>Per-queue gap detail. Click a column header to sort." /></div></div>
+      <div className="tw">
+        <table>
+          <thead>
+            <tr>
+              <th className="sortable-th" onClick={() => toggleSort('queue')}>Queue<span className="sort-ic">{sortIcon('queue')}</span></th>
+              {detailTable.cols.map((c, i) => (
+                <th className="sortable-th" key={c} onClick={() => toggleSort(i)}>{c}<span className="sort-ic">{sortIcon(i)}</span></th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sortedRows.map((r) => (
+              <tr key={r.queue}>
+                <td>{r.queue}</td>
+                {r.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
+              </tr>
+            ))}
+            <tr className="tbl-total">
+              <td>{capWeeklyTable.total.queue}</td>
+              {capWeeklyTable.total.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
   return (
     <div className="tab-panel active">
       <div className="plan-sel" style={{ marginBottom: '14px' }}>
@@ -161,6 +191,8 @@ export default function CapacityOverview() {
               <InsightBox text={capExitInsight(dC8)} />
             </div>
           </div>
+
+          {cqnDetailCard}
         </>
       ) : (
         <>
@@ -208,33 +240,8 @@ export default function CapacityOverview() {
             <ChartCanvas config={a7Config} height="360px" />
             <InsightBox text={capWeeklyGapInsight(dA7)} />
           </div>
-          <div className="card" style={{ marginBottom: '14px' }}>
-            <div className="card-header"><div className="card-title">{periodWord} CQN Detail <InfoBtn tip="<strong>Purpose</strong>Per-queue gap detail. Click a column header to sort." /></div></div>
-            <div className="tw">
-              <table>
-                <thead>
-                  <tr>
-                    <th className="sortable-th" onClick={() => toggleSort('queue')}>Queue<span className="sort-ic">{sortIcon('queue')}</span></th>
-                    {detailTable.cols.map((c, i) => (
-                      <th className="sortable-th" key={c} onClick={() => toggleSort(i)}>{c}<span className="sort-ic">{sortIcon(i)}</span></th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedRows.map((r) => (
-                    <tr key={r.queue}>
-                      <td>{r.queue}</td>
-                      {r.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
-                    </tr>
-                  ))}
-                  <tr className="tbl-total">
-                    <td>{capWeeklyTable.total.queue}</td>
-                    {capWeeklyTable.total.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+
+          {cqnDetailCard}
         </>
       )}
     </div>
