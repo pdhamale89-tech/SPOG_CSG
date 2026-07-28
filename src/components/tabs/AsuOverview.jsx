@@ -67,7 +67,7 @@ export default function AsuOverview() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Volume by case origin." /></div>
+            <div className="card-title">🏷️ Case Origin wise Tag Count <InfoBtn tip="<strong>Purpose</strong>Volume by case origin." /></div>
             <div className="card-dd">
               <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
               <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
