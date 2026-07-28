@@ -21,6 +21,15 @@ const OFFERINGS = ['pro', 'premium', 'basic', 'oop'];
 const SEGMENTS = ['consumer', 'commercial', 'enterprise'];
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+const QUEUE_DETAIL_ROWS = [
+  { id: 'Q-101', name: 'Enterprise Voice T1', region: 'AMER', offering: 'Pro', segment: 'Enterprise', forecast: 42000, actual: 40320 },
+  { id: 'Q-102', name: 'Commercial Voice T2', region: 'EMEA', offering: 'Premium', segment: 'Commercial', forecast: 28500, actual: 27100 },
+  { id: 'Q-103', name: 'Consumer Chat', region: 'APJ', offering: 'Basic', segment: 'Consumer', forecast: 18700, actual: 14350 },
+  { id: 'Q-104', name: 'OOP Support', region: 'AMER', offering: 'OOP', segment: 'Enterprise', forecast: 9600, actual: 9800 },
+  { id: 'Q-105', name: 'Enterprise Email', region: 'EMEA', offering: 'Pro', segment: 'Enterprise', forecast: 15400, actual: 14100 },
+  { id: 'Q-106', name: 'Commercial Chat', region: 'APJ', offering: 'Premium', segment: 'Commercial', forecast: 21200, actual: 20650 },
+];
+
 export default function ShipmentOverview() {
   const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
   const [prodView, setProdView] = useState('top5');
@@ -140,49 +149,32 @@ export default function ShipmentOverview() {
           <InsightBox text={productTrendInsight()} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Adherence <InfoBtn tip="<strong>Purpose</strong>Plan adherence." /></div></div>
-          <div className="tw">
-            <table>
-              <thead><tr><th>Region</th><th>Seg</th><th>Actual</th><th>Plan</th><th>Adh%</th><th>St</th></tr></thead>
-              <tbody>
-                <tr><td>AMER</td><td>Con</td><td>82K</td><td>85K</td><td>96.5%</td><td><span className="dot dot-g"></span></td></tr>
-                <tr><td>APJ</td><td>Ent</td><td>38K</td><td>50K</td><td style={{ color: 'var(--accent-red)' }}>76.0%</td><td><span className="dot dot-r"></span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div className="s-grid">
-        <div className="card">
           <div className="card-header"><div className="card-title">Shipment Growth <InfoBtn tip="<strong>Purpose</strong>Growth by region." /></div></div>
           <ChartCanvas config={s5Config} />
           <InsightBox text={shipmentGrowthInsight()} />
         </div>
-        <div className="card">
-          <div className="card-header"><div className="card-title">⚠ Risk Assessment <InfoBtn tip="<strong>Purpose</strong>Regional risk scores." /></div></div>
-          <div className="risk-assess-grid">
-            <div className="risk-assess-card risk-low">
-              <div className="risk-region">AMER</div><div className="risk-score" style={{ color: 'var(--accent-green)' }}>82</div>
-              <div className="risk-badge risk-badge-low">Low</div>
-              <div className="risk-bar"><div className="risk-bar-fill" style={{ width: '82%', background: 'var(--accent-green)' }}></div></div>
-            </div>
-            <div className="risk-assess-card risk-med">
-              <div className="risk-region">EMEA</div><div className="risk-score" style={{ color: 'var(--accent-orange)' }}>58</div>
-              <div className="risk-badge risk-badge-med">Medium</div>
-              <div className="risk-bar"><div className="risk-bar-fill" style={{ width: '58%', background: 'var(--accent-orange)' }}></div></div>
-            </div>
-            <div className="risk-assess-card risk-high">
-              <div className="risk-region">APJ</div><div className="risk-score" style={{ color: 'var(--accent-red)' }}>35</div>
-              <div className="risk-badge risk-badge-high">High</div>
-              <div className="risk-bar"><div className="risk-bar-fill" style={{ width: '35%', background: 'var(--accent-red)' }}></div></div>
-            </div>
-          </div>
-          <div className="risk-legend-row">
-            <div className="risk-legend-item"><div className="risk-legend-dot" style={{ background: 'var(--accent-green)' }}></div>Low</div>
-            <div className="risk-legend-item"><div className="risk-legend-dot" style={{ background: 'var(--accent-orange)' }}></div>Medium</div>
-            <div className="risk-legend-item"><div className="risk-legend-dot" style={{ background: 'var(--accent-red)' }}></div>High</div>
-          </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: '14px' }}>
+        <div className="card-header"><div className="card-title">📋 Queue-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments broken out by queue, region, offering and segment." /></div></div>
+        <div className="tw">
+          <table>
+            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Offering</th><th>Segment</th><th>Forecast</th><th>Actual</th><th>Adh%</th><th>St</th></tr></thead>
+            <tbody>
+              {QUEUE_DETAIL_ROWS.map((q) => {
+                const adh = (q.actual / q.forecast) * 100;
+                const tier = adh >= 95 ? 'g' : adh >= 80 ? 'o' : 'r';
+                return (
+                  <tr key={q.id}>
+                    <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td><td>{q.offering}</td><td>{q.segment}</td>
+                    <td>{q.forecast.toLocaleString()}</td><td>{q.actual.toLocaleString()}</td>
+                    <td style={tier === 'r' ? { color: 'var(--accent-red)' } : undefined}>{adh.toFixed(1)}%</td>
+                    <td><span className={'dot dot-' + tier}></span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
