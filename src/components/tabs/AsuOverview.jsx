@@ -93,7 +93,7 @@ export default function AsuOverview() {
 
       <div className="s-grid">
         <div className="card">
-          <div className="card-header"><div className="card-title">ASU Acq vs Exit <InfoBtn tip="<strong>Purpose</strong>Net ASU growth." /></div></div>
+          <div className="card-header"><div className="card-title">ASU Acquisition vs Exit <InfoBtn tip="<strong>Purpose</strong>Net ASU growth." /></div></div>
           <ChartCanvas config={a3Config} />
           <InsightBox text={asuAcqExitInsight()} />
         </div>

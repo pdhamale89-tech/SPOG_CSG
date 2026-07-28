@@ -4,6 +4,7 @@ import { D } from '../../data/forecastData';
 import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
+import SubRegionSelect from '../common/SubRegionSelect';
 import CountrySelect from '../common/CountrySelect';
 import KpiCard from '../common/KpiCard';
 import DownloadBtn from '../common/DownloadBtn';
@@ -32,7 +33,10 @@ const QUEUE_DETAIL_ROWS = [
 ];
 
 export default function ShipmentOverview() {
-  const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
+  const {
+    theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartSubRegionFor, setChartSubRegion,
+    chartCountryFor, setChartCountry, drill, setDrill,
+  } = useApp();
   const [prodView, setProdView] = useState('top5');
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
@@ -73,6 +77,7 @@ export default function ShipmentOverview() {
           <div className="card-title">📦 Ship vs Projections/UPP <InfoBtn tip="<strong>Purpose</strong>Actual vs projections with UPP lines." /></div>
           <div className="card-dd">
             <RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} />
+            <SubRegionSelect value={chartSubRegionFor('shipUpp')} onChange={(v) => setChartSubRegion('shipUpp', v)} />
             <CountrySelect value={chartCountryFor('shipUpp')} onChange={(v) => setChartCountry('shipUpp', v)} />
           </div>
         </div>
@@ -85,6 +90,7 @@ export default function ShipmentOverview() {
           <div className="card-title">📈 Overall Shipment <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
           <div className="card-dd">
             <RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} />
+            <SubRegionSelect value={chartSubRegionFor('shipDrill')} onChange={(v) => setChartSubRegion('shipDrill', v)} />
             <CountrySelect value={chartCountryFor('shipDrill')} onChange={(v) => setChartCountry('shipDrill', v)} />
           </div>
         </div>
@@ -122,6 +128,7 @@ export default function ShipmentOverview() {
             <div className="card-title">Shipment Trend <InfoBtn tip="<strong>Purpose</strong>Track shipment vs plan." /></div>
             <div className="card-dd">
               <RegionSelect value={regionS1} onChange={(v) => setChartRegion('s1', v)} />
+              <SubRegionSelect value={chartSubRegionFor('s1')} onChange={(v) => setChartSubRegion('s1', v)} />
               <CountrySelect value={chartCountryFor('s1')} onChange={(v) => setChartCountry('s1', v)} />
             </div>
           </div>

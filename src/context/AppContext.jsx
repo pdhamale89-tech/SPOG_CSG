@@ -32,6 +32,7 @@ export function AppProvider({ children }) {
   const [curPeriod, setCurPeriod] = useState('monthly');
   const [fiscalYear, setFiscalYear] = useState('FY26');
   const [chartRegions, setChartRegions] = useState({});
+  const [chartSubRegions, setChartSubRegions] = useState({});
   const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
   const [drill, setDrill] = useState({ level: 'overall', offering: '', segment: '' });
@@ -87,6 +88,12 @@ export function AppProvider({ children }) {
 
   const chartRegionFor = useCallback((id) => chartRegions[id] || curRegion, [chartRegions, curRegion]);
 
+  const setChartSubRegion = useCallback((id, subRegion) => {
+    setChartSubRegions((prev) => ({ ...prev, [id]: subRegion }));
+  }, []);
+
+  const chartSubRegionFor = useCallback((id) => chartSubRegions[id] || 'All', [chartSubRegions]);
+
   const setChartCountry = useCallback((id, country) => {
     setChartCountries((prev) => ({ ...prev, [id]: country }));
   }, []);
@@ -100,6 +107,7 @@ export function AppProvider({ children }) {
   const clearFilters = useCallback(() => {
     setCurRegion('Global');
     setChartRegions({});
+    setChartSubRegions({});
     setChartCountries({});
   }, []);
 
@@ -171,6 +179,7 @@ export function AppProvider({ children }) {
     currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, setCurRegion, curPeriod, setCurPeriod, fiscalYear, setFiscalYear,
     chartRegions, setChartRegion, chartRegionFor,
+    chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
     drill, setDrill,
@@ -186,6 +195,7 @@ export function AppProvider({ children }) {
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
+    chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
