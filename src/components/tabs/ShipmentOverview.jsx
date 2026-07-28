@@ -16,14 +16,12 @@ import {
   shipmentGrowthInsight,
 } from '../../utils/insights';
 
-const TIERS = ['All', 'Pro', 'Premium', 'Basic'];
 const OFFERINGS = ['pro', 'premium', 'basic', 'oop'];
 const SEGMENTS = ['consumer', 'commercial', 'enterprise'];
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function ShipmentOverview() {
   const { theme, curPeriod, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
-  const [tier, setTier] = useState('All');
   const [prodView, setProdView] = useState('top5');
 
   const d = D[curPeriod].Global;
@@ -52,12 +50,6 @@ export default function ShipmentOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="tier-sel">
-        {TIERS.map((t) => (
-          <button key={t} className={'tier-btn' + (tier === t ? ' active' : '')} onClick={() => setTier(t)}>{t}</button>
-        ))}
-      </div>
-
       <div className="kpi-grid">
         <KpiCard label="TOTAL SHIPMENTS" value={d.kpi.ship} delta="▼ 4% vs AOP" />
         <KpiCard label="SHIPMENT GROWTH" value={d.kpi.shgr} sub="YoY" />

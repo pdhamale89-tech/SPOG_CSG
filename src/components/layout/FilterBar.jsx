@@ -96,7 +96,7 @@ export default function FilterBar() {
               <option value="APJ">APJ</option>
             </select>
           </div>
-          {FIELDS_AFTER_REGION.map((f) => renderField(
+          {FIELDS_AFTER_REGION.filter((f) => !(f.key === 'offering' && currentTab === 'asu-overview')).map((f) => renderField(
             f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
           ))}
           {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
