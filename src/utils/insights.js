@@ -1,4 +1,4 @@
-import { uppData, drillData, drillLabels, FM } from '../data/forecastData';
+import { uppData, drillData } from '../data/forecastData';
 import { REGION_ACC, accTier } from '../data/regions';
 
 function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
@@ -144,23 +144,23 @@ export function capWeeklyGapInsight(d) {
 
 // --- Shipment / ASU ---
 
-export function shipUppInsight(region) {
+export function shipUppInsight(region, labels) {
   const ud = uppData[region] || uppData.Global;
   const diffs = ud.projection.map((p, i) => p - ud.shipAct[i]);
   const gapIdx = maxIdx(diffs);
   const upp1 = ud.upp1.filter((v) => v != null);
   const upp2 = ud.upp2.filter((v) => v != null);
   const dir = last(upp2) > last(upp1) ? 'more optimistic' : 'more conservative';
-  return `Projection ran furthest ahead of actual shipments (+${diffs[gapIdx]}K) in ${FM[gapIdx]}; the UPP2 scenario ends ${dir} than UPP1 (${last(upp2)}K vs ${last(upp1)}K by the final period).`;
+  return `Projection ran furthest ahead of actual shipments (+${diffs[gapIdx]}K) in ${labelAt(labels, gapIdx)}; the UPP2 scenario ends ${dir} than UPP1 (${last(upp2)}K vs ${last(upp1)}K by the final period).`;
 }
 
-export function shipDrillInsight(region, level, offering) {
+export function shipDrillInsight(region, level, offering, labels) {
   const dd = drillData[region] || drillData.Global;
   const key = level === 'overall' ? 'overall' : offering;
   const sd = dd[key] || dd.overall;
   const peakIdx = maxIdx(sd.act);
   const dir = last(sd.proj) >= last(sd.act) ? 'above' : 'below';
-  return `${key === 'overall' ? 'Overall' : cap(key)} actuals peaked at ${sd.act[peakIdx]}K in ${drillLabels[peakIdx]} before falling to ${last(sd.act)}K by period-end, while projections stayed ${dir} actuals throughout.`;
+  return `${key === 'overall' ? 'Overall' : cap(key)} actuals peaked at ${sd.act[peakIdx]}K in ${labelAt(labels, peakIdx)} before falling to ${last(sd.act)}K by period-end, while projections stayed ${dir} actuals throughout.`;
 }
 
 // Static/hardcoded builders below mirror the fixed arrays in chartConfigs.js — the

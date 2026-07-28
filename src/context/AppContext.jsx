@@ -30,6 +30,7 @@ export function AppProvider({ children }) {
 
   const [curRegion, setCurRegion] = useState('Global');
   const [curPeriod, setCurPeriod] = useState('monthly');
+  const [fiscalYear, setFiscalYear] = useState('FY26');
   const [chartRegions, setChartRegions] = useState({});
   const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
@@ -168,7 +169,7 @@ export function AppProvider({ children }) {
   const value = useMemo(() => ({
     theme, toggleTheme, lastUpdated,
     currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
-    curRegion, setCurRegion, curPeriod, setCurPeriod,
+    curRegion, setCurRegion, curPeriod, setCurPeriod, fiscalYear, setFiscalYear,
     chartRegions, setChartRegion, chartRegionFor,
     chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
@@ -184,7 +185,7 @@ export function AppProvider({ children }) {
     drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
-    curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor,
+    curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,

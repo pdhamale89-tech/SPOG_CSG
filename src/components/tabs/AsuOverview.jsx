@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
@@ -17,20 +18,26 @@ import {
 } from '../../utils/insights';
 
 export default function AsuOverview() {
-  const { theme, curPeriod, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry } = useApp();
+  const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry } = useApp();
 
-  const d = D[curPeriod].Global;
+  const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
   const regionNTag = chartRegionFor('nTag');
   const regionNExpiry = chartRegionFor('nExpiry');
 
-  const a1Config = useMemo(() => buildAsuTrendConfig(theme), [theme]);
-  const a2Config = useMemo(() => buildAsuCpasuConfig(theme), [theme]);
-  const dNTag = D[curPeriod][regionNTag];
-  const dNExpiry = D[curPeriod][regionNExpiry];
+  const a1Config = useMemo(() => buildAsuTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const a2Config = useMemo(() => buildAsuCpasuConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const dNTag = useMemo(
+    () => ({ ...D[curPeriod][regionNTag], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNTag].labels.length) }),
+    [curPeriod, regionNTag, fiscalYear],
+  );
+  const dNExpiry = useMemo(
+    () => ({ ...D[curPeriod][regionNExpiry], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNExpiry].labels.length) }),
+    [curPeriod, regionNExpiry, fiscalYear],
+  );
   const nTagConfig = useMemo(() => buildTagRoutedConfig(dNTag, theme), [dNTag, theme]);
   const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
-  const a3Config = useMemo(() => buildAsuAcqExitConfig(theme), [theme]);
+  const a3Config = useMemo(() => buildAsuAcqExitConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
 
   return (

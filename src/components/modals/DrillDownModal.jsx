@@ -19,7 +19,7 @@ export default function DrillDownModal() {
           {(panels || []).map((p) => (
             <div className="drilldown-panel" key={p.title}>
               <div className="drilldown-panel-title">{p.title}</div>
-              <ChartCanvas config={p.config} height="200px" onClick={noop} />
+              <ChartCanvas config={p.config} height="250px" onClick={noop} />
             </div>
           ))}
         </div>

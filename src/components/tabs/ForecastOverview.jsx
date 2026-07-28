@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { D, M8, dmsDrillData } from '../../data/forecastData';
+import { D, dmsDrillData } from '../../data/forecastData';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
@@ -29,7 +30,7 @@ const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function ForecastOverview() {
   const {
-    theme, curPeriod, curRegion, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry,
+    theme, curPeriod, fiscalYear, curRegion, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry,
     curHistPlan, setCurHistPlan, openApproval, openPartnerRca, actionLog,
   } = useApp();
   const [geoView, setGeoView] = useState('region');
@@ -47,23 +48,24 @@ export default function ForecastOverview() {
   const regionNPartner = chartRegionFor('nPartner');
   const regionNHist = chartRegionFor('nHist');
 
-  const dC0 = D[curPeriod][regionC0];
-  const dC1 = D[curPeriod][regionC1];
-  const dH1 = D[curPeriod][regionH1];
-  const dC5 = D[curPeriod][regionC5];
-  const dNDms = D[curPeriod][regionNDms];
-  const dNPartner = D[curPeriod][regionNPartner];
-  const dNHist = D[curPeriod][regionNHist];
+  const dC0 = useMemo(() => ({ ...D[curPeriod][regionC0], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC0].labels.length) }), [curPeriod, regionC0, fiscalYear]);
+  const dC1 = useMemo(() => ({ ...D[curPeriod][regionC1], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC1].labels.length) }), [curPeriod, regionC1, fiscalYear]);
+  const dH1 = useMemo(() => ({ ...D[curPeriod][regionH1], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionH1].labels.length) }), [curPeriod, regionH1, fiscalYear]);
+  const dC5 = useMemo(() => ({ ...D[curPeriod][regionC5], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC5].labels.length) }), [curPeriod, regionC5, fiscalYear]);
+  const dNDms = useMemo(() => ({ ...D[curPeriod][regionNDms], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNDms].labels.length) }), [curPeriod, regionNDms, fiscalYear]);
+  const dNPartner = useMemo(() => ({ ...D[curPeriod][regionNPartner], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNPartner].labels.length) }), [curPeriod, regionNPartner, fiscalYear]);
+  const dNHist = useMemo(() => ({ ...D[curPeriod][regionNHist], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNHist].labels.length) }), [curPeriod, regionNHist, fiscalYear]);
 
   const c0Config = useMemo(() => buildPlanOfferedConfig(dC0, theme), [dC0, theme]);
   const c1Config = useMemo(() => buildCallVolumeConfig(dC1, theme), [dC1, theme]);
   const h1Config = useMemo(() => buildChannelMixConfig(dH1, theme), [dH1, theme]);
   const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
   const nDmsData = useMemo(() => {
-    if (dmsDrill.level === 'country') return { labels: M8, ...dmsDrillData.country[dmsDrill.country] };
-    if (dmsDrill.level === 'offering') return { labels: M8, ...dmsDrillData.offering[dmsDrill.offering] };
+    const dmsLabels = buildPeriodLabels(fiscalYear, curPeriod, 8);
+    if (dmsDrill.level === 'country') return { labels: dmsLabels, ...dmsDrillData.country[dmsDrill.country] };
+    if (dmsDrill.level === 'offering') return { labels: dmsLabels, ...dmsDrillData.offering[dmsDrill.offering] };
     return dNDms;
-  }, [dmsDrill, dNDms]);
+  }, [dmsDrill, dNDms, curPeriod, fiscalYear]);
   const nDmsConfig = useMemo(() => buildDmsConfig(nDmsData, theme), [nDmsData, theme]);
   const nPartnerConfig = useMemo(() => buildPartnerConfig(dNPartner, theme), [dNPartner, theme]);
   const nHistConfig = useMemo(() => buildHistTrendConfig(dNHist, theme, curHistPlan), [dNHist, theme, curHistPlan]);

@@ -8,11 +8,11 @@ export default function ChartCanvas({ config, height, onClick }) {
   const chartRef = useRef(null);
   const onClickRef = useRef(onClick);
   onClickRef.current = onClick;
-  const { curPeriod, theme, openDrillDown } = useApp();
+  const { curPeriod, fiscalYear, openDrillDown } = useApp();
   const curPeriodRef = useRef(curPeriod);
   curPeriodRef.current = curPeriod;
-  const themeRef = useRef(theme);
-  themeRef.current = theme;
+  const fiscalYearRef = useRef(fiscalYear);
+  fiscalYearRef.current = fiscalYear;
   const configRef = useRef(config);
   configRef.current = config;
 
@@ -24,12 +24,11 @@ export default function ChartCanvas({ config, height, onClick }) {
       ? (evt, els) => onClickRef.current(evt, els)
       : (evt, els) => {
         if (!els.length) return;
-        const { datasetIndex } = els[0];
-        const { seriesLabel, panels } = computeChartTrendPanels({
-          config: configRef.current, datasetIndex, curPeriod: curPeriodRef.current, theme: themeRef.current,
+        const { panels } = computeChartTrendPanels({
+          config: configRef.current, curPeriod: curPeriodRef.current, fiscalYear: fiscalYearRef.current,
         });
         if (!panels.length) return;
-        openDrillDown(seriesLabel || 'Trend Drill-Down', 'Same series, viewed at the other period granularities', panels);
+        openDrillDown('Trend Drill-Down', 'Same series, viewed at the other period granularities', panels);
       };
     const handleHover = config.options?.onHover || ((evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; });
     const finalConfig = { ...config, options: { ...config.options, onClick: handleClick, onHover: handleHover } };

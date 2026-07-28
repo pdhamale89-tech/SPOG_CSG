@@ -1,22 +1,15 @@
+import { buildPeriodLabels } from '../utils/periodLabels';
+
 export const CAP_Q8 = ['FY27 Q1', 'FY27 Q2', 'FY27 Q3', 'FY27 Q4', 'FY28 Q1', 'FY28 Q2', 'FY28 Q3', 'FY28 Q4'];
 export const CAP_Q6 = ['FY27 Q3', 'FY27 Q4', 'FY28 Q1', 'FY28 Q2', 'FY28 Q3', 'FY28 Q4'];
 export const CAP_WK6 = ['Wk27', 'Wk28', 'Wk29', 'Wk30', 'Wk31', 'Wk32'];
 
 // Same approach as forecastData.js's weekly/qtr clones: the numbers stay put,
 // only the period axis labels change, so every chart can be re-labeled to
-// match the Weekly/Monthly/QTR toggle without a separate dataset per period.
-const CAP_PERIOD_LABELS_6 = {
-  weekly: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
-  monthly: ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'],
-  qtr: CAP_Q6,
-};
-const CAP_PERIOD_LABELS_8 = {
-  weekly: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
-  monthly: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'],
-  qtr: CAP_Q8,
-};
-export function capLabelsFor(period, length) {
-  return (length === 8 ? CAP_PERIOD_LABELS_8 : CAP_PERIOD_LABELS_6)[period] || CAP_Q8;
+// match the Weekly/Monthly/QTR toggle (and the Fiscal Year filter) without a
+// separate dataset per period.
+export function capLabelsFor(period, length, fiscalYear) {
+  return buildPeriodLabels(fiscalYear, period, length);
 }
 export const CAP_PERIOD_LABEL = { weekly: 'Week-on-Week', monthly: 'Month-on-Month', qtr: 'Quarter-on-Quarter' };
 export const CAP_PERIOD_WORD = { weekly: 'Weekly', monthly: 'Monthly', qtr: 'Quarterly' };

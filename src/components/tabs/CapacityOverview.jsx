@@ -26,7 +26,7 @@ import {
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
 
 export default function CapacityOverview() {
-  const { theme, curPeriod } = useApp();
+  const { theme, curPeriod, fiscalYear } = useApp();
   const [capTab, setCapTab] = useState('overview');
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
 
@@ -34,8 +34,8 @@ export default function CapacityOverview() {
   const periodWord = CAP_PERIOD_WORD[curPeriod];
   const capKpis = CAP_KPIS[curPeriod];
   const capMiniStats = CAP_MINI_STATS[curPeriod];
-  const L6 = useMemo(() => capLabelsFor(curPeriod, 6), [curPeriod]);
-  const L8 = useMemo(() => capLabelsFor(curPeriod, 8), [curPeriod]);
+  const L6 = useMemo(() => capLabelsFor(curPeriod, 6, fiscalYear), [curPeriod, fiscalYear]);
+  const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
 
   const dC1 = useMemo(() => ({ ...capC1, labels: L6 }), [L6]);
   const dC2 = useMemo(() => ({ ...capC2, labels: L6 }), [L6]);

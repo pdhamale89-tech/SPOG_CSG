@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
@@ -21,20 +22,20 @@ const SEGMENTS = ['consumer', 'commercial', 'enterprise'];
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function ShipmentOverview() {
-  const { theme, curPeriod, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
+  const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry, drill, setDrill } = useApp();
   const [prodView, setProdView] = useState('top5');
 
-  const d = D[curPeriod].Global;
+  const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
   const regionShipUpp = chartRegionFor('shipUpp');
   const regionShipDrill = chartRegionFor('shipDrill');
   const regionS1 = chartRegionFor('s1');
 
-  const shipUppConfig = useMemo(() => buildShipUppConfig(regionShipUpp, theme), [regionShipUpp, theme]);
-  const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, drill.level, drill.offering, theme), [regionShipDrill, drill.level, drill.offering, theme]);
-  const s1Config = useMemo(() => buildShipmentTrendStaticConfig(theme), [theme]);
-  const s2Config = useMemo(() => buildSegmentSoldConfig(theme), [theme]);
-  const s3Config = useMemo(() => buildProductTrendConfig(theme), [theme]);
+  const shipUppConfig = useMemo(() => buildShipUppConfig(regionShipUpp, theme, curPeriod, fiscalYear), [regionShipUpp, theme, curPeriod, fiscalYear]);
+  const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, drill.level, drill.offering, theme, curPeriod, fiscalYear), [regionShipDrill, drill.level, drill.offering, theme, curPeriod, fiscalYear]);
+  const s1Config = useMemo(() => buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const s2Config = useMemo(() => buildSegmentSoldConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const s3Config = useMemo(() => buildProductTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s5Config = useMemo(() => buildShipmentGrowthConfig(theme), [theme]);
 
   function drillTo(offering) {
@@ -66,7 +67,7 @@ export default function ShipmentOverview() {
           </div>
         </div>
         <ChartCanvas config={shipUppConfig} height="260px" />
-        <InsightBox text={shipUppInsight(regionShipUpp)} />
+        <InsightBox text={shipUppInsight(regionShipUpp, shipUppConfig.data.labels)} />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
@@ -102,7 +103,7 @@ export default function ShipmentOverview() {
             <button key={s} className="btn-a" onClick={() => drillToSeg(drill.offering, s)}>{cap(s)}</button>
           ))}
         </div>
-        <InsightBox text={shipDrillInsight(regionShipDrill, drill.level, drill.offering)} />
+        <InsightBox text={shipDrillInsight(regionShipDrill, drill.level, drill.offering, shipDrillConfig.data.labels)} />
       </div>
 
       <div className="s-grid">

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { M8 } from '../../data/forecastData';
 
+const FISCAL_YEARS = ['FY24', 'FY25', 'FY26', 'FY27'];
+
 const DEFAULTS = {
-  fiscalYear: 'FY26',
   fiscalQuarter: 'All Quarters',
   fiscalMonth: 'All Months',
   fiscalWeek: 'All Weeks',
@@ -30,7 +31,6 @@ const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue 
 // Rendered in two groups so Region (the one real, wired filter) can sit
 // between Fiscal Week and Sub Region, matching the requested sequence.
 const FIELDS_BEFORE_REGION = [
-  { key: 'fiscalYear', label: 'Fiscal Year', options: ['FY24', 'FY25', 'FY26', 'FY27'] },
   { key: 'fiscalQuarter', label: 'Fiscal Quarter', options: ['All Quarters', 'Q1', 'Q2', 'Q3', 'Q4'] },
   { key: 'fiscalMonth', label: 'Fiscal Month', options: ['All Months', ...M8] },
   { key: 'fiscalWeek', label: 'Fiscal Week', options: ['All Weeks', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'] },
@@ -50,12 +50,16 @@ const FIELDS_AFTER_REGION = [
 ];
 
 export default function FilterBar() {
-  const { showFilters, currentTab, curRegion, applyFilters, curPeriod, setCurPeriod, clearFilters } = useApp();
+  const {
+    showFilters, currentTab, curRegion, applyFilters, curPeriod, setCurPeriod,
+    fiscalYear, setFiscalYear, clearFilters,
+  } = useApp();
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
   function handleClear() {
     setDecor(DEFAULTS);
+    setFiscalYear('FY26');
     clearFilters();
   }
 
@@ -86,6 +90,12 @@ export default function FilterBar() {
       </div>
       {expanded && (
         <div className="filter-grid">
+          <div className="filter-group">
+            <label>Fiscal Year</label>
+            <select value={fiscalYear} onChange={(e) => setFiscalYear(e.target.value)}>
+              {FISCAL_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
           {FIELDS_BEFORE_REGION.map(renderField)}
           <div className="filter-group">
             <label>Region</label>

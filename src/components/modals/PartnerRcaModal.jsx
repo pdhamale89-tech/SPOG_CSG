@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 
 const ROOT_CAUSES = ['Demand Surge', 'OSP Staffing Gap', 'Seasonality Impact', 'Model Drift', 'Data Quality Issue', 'Other'];
 
@@ -20,11 +21,11 @@ function priorityFromGap(gapPct) {
 }
 
 export default function PartnerRcaModal() {
-  const { partnerRcaModal, closePartnerRca, chartRegionFor, curPeriod, actionLog, logAction, openApproval, showToast } = useApp();
+  const { partnerRcaModal, closePartnerRca, chartRegionFor, curPeriod, fiscalYear, actionLog, logAction, openApproval, showToast } = useApp();
   const region = chartRegionFor('nPartner');
   const d = D[curPeriod][region];
   const idx = partnerRcaModal.idx;
-  const period = d?.labels?.[idx];
+  const period = buildPeriodLabels(fiscalYear, curPeriod, d?.labels?.length || 0)[idx];
   const actual = d?.partActual?.[idx];
   const forecast = d?.partForecast?.[idx];
   const threshold = Number.isFinite(forecast) ? Math.round(forecast * 0.8) : null;

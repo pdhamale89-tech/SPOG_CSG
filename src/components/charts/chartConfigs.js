@@ -1,5 +1,6 @@
-import { M8, FM, uppData, drillData, drillLabels } from '../../data/forecastData';
+import { uppData, drillData } from '../../data/forecastData';
 import { getColors } from '../../theme/colors';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 
 function fK(v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'K' : v; }
 
@@ -264,14 +265,14 @@ export function buildHistTrendConfig(d, theme, curHistPlan) {
   };
 }
 
-export function buildShipmentTrendStaticConfig(theme) {
+export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
     type: 'line',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#3b82f6', tension: 0.4, fill: false },
         { label: 'AOP', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
@@ -331,7 +332,7 @@ export function buildExpiryConfig(d, theme) {
   };
 }
 
-export function buildShipUppConfig(region, theme) {
+export function buildShipUppConfig(region, theme, curPeriod, fiscalYear) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
@@ -339,7 +340,7 @@ export function buildShipUppConfig(region, theme) {
   return {
     type: 'bar',
     data: {
-      labels: FM,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, ud.shipAct.length),
       datasets: [
         { label: 'Ship_Actual', data: ud.shipAct, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 2, order: 3 },
         { label: 'Projection', data: ud.projection, backgroundColor: 'rgba(245,158,11,.85)', borderRadius: 2, order: 2 },
@@ -361,7 +362,7 @@ export function buildShipUppConfig(region, theme) {
   };
 }
 
-export function buildShipDrillConfig(region, level, offering, theme) {
+export function buildShipDrillConfig(region, level, offering, theme, curPeriod, fiscalYear) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
@@ -371,7 +372,7 @@ export function buildShipDrillConfig(region, level, offering, theme) {
   return {
     type: 'line',
     data: {
-      labels: drillLabels,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, sd.act.length),
       datasets: [
         { label: 'Ship_Actual', data: sd.act, borderColor: '#3b82f6', borderWidth: 2.5, tension: 0.3, fill: false, pointRadius: 3 },
         { label: 'Projection', data: sd.proj, borderColor: '#f59e0b', borderWidth: 2.5, tension: 0.3, fill: false, pointRadius: 3 },
@@ -388,13 +389,13 @@ export function buildShipDrillConfig(region, level, offering, theme) {
   };
 }
 
-export function buildSegmentSoldConfig(theme) {
+export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   return {
     type: 'bar',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'Consumer', data: [18,19,17,20,21,22,20,21], backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 2 },
         { label: 'Commercial', data: [22,24,22,25,26,27,24,27], backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 2 },
@@ -413,12 +414,12 @@ export function buildSegmentSoldConfig(theme) {
   };
 }
 
-export function buildProductTrendConfig(theme) {
+export function buildProductTrendConfig(theme, curPeriod, fiscalYear) {
   const { textSecondary: tc, textPrimary: tp, bgCard: bg } = getColors(theme);
   return {
     type: 'bar',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'Latitude', data: [22,24,21,25,26,28,24,27], backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 2 },
         { label: 'Precision', data: [12,13,11,14,14,15,13,15], backgroundColor: 'rgba(245,158,11,.7)', borderRadius: 2 },
@@ -454,14 +455,14 @@ export function buildShipmentGrowthConfig(theme) {
   };
 }
 
-export function buildAsuTrendConfig(theme) {
+export function buildAsuTrendConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
     type: 'line',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#10b981', tension: 0.4, fill: false },
         { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
@@ -471,14 +472,14 @@ export function buildAsuTrendConfig(theme) {
   };
 }
 
-export function buildAsuCpasuConfig(theme) {
+export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
     type: 'line',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#3b82f6', tension: 0.4, fill: false },
         { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false },
@@ -488,14 +489,14 @@ export function buildAsuCpasuConfig(theme) {
   };
 }
 
-export function buildAsuAcqExitConfig(theme) {
+export function buildAsuAcqExitConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
     type: 'bar',
     data: {
-      labels: M8,
+      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'New', data: [18,22,15,20,24,19,21,25], backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 2 },
         { label: 'Exit', data: [-12,-14,-10,-13,-15,-11,-14,-13], backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 2 },
