@@ -4,6 +4,7 @@ import { D, M8, dmsDrillData } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
+import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
@@ -74,10 +75,10 @@ export default function ForecastOverview() {
   return (
     <div className="tab-panel active">
       <div className="kpi-grid">
-        <div className="kpi-card"><div className="kpi-label">FORECAST ACCURACY</div><div className="kpi-value">{kpi.acc}</div><div className="kpi-sub">{kpi.accSub}</div></div>
-        <div className="kpi-card"><div className="kpi-label">CALL VOLUME</div><div className="kpi-value">{kpi.vol}</div><div className="kpi-sub">{kpi.volSub}</div></div>
-        <div className="kpi-card"><div className="kpi-label">SHIPMENT VARIANCE</div><div className="kpi-value">{kpi.shvar}</div><div className="kpi-sub">Plan vs Actual</div></div>
-        <div className="kpi-card"><div className="kpi-label">ASU VARIANCE</div><div className="kpi-value">{kpi.asuvar}</div><div className="kpi-sub">vs Plan</div></div>
+        <KpiCard label="FORECAST ACCURACY" value={kpi.acc} delta={kpi.accSub} />
+        <KpiCard label="CALL VOLUME" value={kpi.vol} delta={kpi.volSub} />
+        <KpiCard label="SHIPMENT VARIANCE" value={kpi.shvar} sub="Plan vs Actual" />
+        <KpiCard label="ASU VARIANCE" value={kpi.asuvar} sub="vs Plan" />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>

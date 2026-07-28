@@ -40,6 +40,7 @@ export function AppProvider({ children }) {
   const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low', prefillRootCause: '' });
   const [forwardModal, setForwardModal] = useState({ open: false, step: 1, forRca: false });
   const [partnerRcaModal, setPartnerRcaModal] = useState({ open: false, idx: 0 });
+  const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', rows: [] });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
   // so this is what lets the UI show "Actioned" after a submit instead of the toast being the
@@ -144,6 +145,9 @@ export function AppProvider({ children }) {
   const openPartnerRca = useCallback((idx) => setPartnerRcaModal({ open: true, idx }), []);
   const closePartnerRca = useCallback(() => setPartnerRcaModal((m) => ({ ...m, open: false })), []);
 
+  const openDrillDown = useCallback((title, subtitle, rows) => setDrillDownModal({ open: true, title, subtitle, rows }), []);
+  const closeDrillDown = useCallback(() => setDrillDownModal((m) => ({ ...m, open: false })), []);
+
   const openDetail = useCallback((title, body) => setDetailModal({ open: true, title, body }), []);
   const closeDetail = useCallback(() => setDetailModal((m) => ({ ...m, open: false })), []);
 
@@ -154,6 +158,7 @@ export function AppProvider({ children }) {
         setForwardModal((m) => ({ ...m, open: false }));
         setDetailModal((m) => ({ ...m, open: false }));
         setPartnerRcaModal((m) => ({ ...m, open: false }));
+        setDrillDownModal((m) => ({ ...m, open: false }));
       }
     }
     document.addEventListener('keydown', onKey);
@@ -176,6 +181,7 @@ export function AppProvider({ children }) {
     handleRCAApproval,
     forwardModal, openForward, closeForward, submitForward,
     partnerRcaModal, openPartnerRca, closePartnerRca,
+    drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
     curRegion, curPeriod, chartRegions, setChartRegion, chartRegionFor,
@@ -183,7 +189,8 @@ export function AppProvider({ children }) {
     showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
-    partnerRcaModal, openPartnerRca, closePartnerRca, actionLog, logAction]);
+    partnerRcaModal, openPartnerRca, closePartnerRca,
+    drillDownModal, openDrillDown, closeDrillDown, actionLog, logAction]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

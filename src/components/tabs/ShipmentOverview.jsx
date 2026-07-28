@@ -4,6 +4,7 @@ import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
+import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -58,10 +59,10 @@ export default function ShipmentOverview() {
       </div>
 
       <div className="kpi-grid">
-        <div className="kpi-card"><div className="kpi-label">TOTAL SHIPMENTS</div><div className="kpi-value">{d.kpi.ship}</div><div className="kpi-sub">▼ 4% vs AOP</div></div>
-        <div className="kpi-card"><div className="kpi-label">SHIPMENT GROWTH</div><div className="kpi-value">{d.kpi.shgr}</div><div className="kpi-sub">YoY</div></div>
-        <div className="kpi-card"><div className="kpi-label">SHIPMENT VARIANCE</div><div className="kpi-value">{d.kpi.shvar}</div><div className="kpi-sub">Plan vs Actual</div></div>
-        <div className="kpi-card"><div className="kpi-label">RISK INDICATOR</div><div className="kpi-value">3 Regions</div><div className="kpi-sub">Below target</div></div>
+        <KpiCard label="TOTAL SHIPMENTS" value={d.kpi.ship} delta="▼ 4% vs AOP" />
+        <KpiCard label="SHIPMENT GROWTH" value={d.kpi.shgr} sub="YoY" />
+        <KpiCard label="SHIPMENT VARIANCE" value={d.kpi.shvar} sub="Plan vs Actual" />
+        <KpiCard label="RISK INDICATOR" value="3 Regions" delta="Below target" />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>

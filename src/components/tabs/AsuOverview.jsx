@@ -4,6 +4,7 @@ import { D } from '../../data/forecastData';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
+import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -35,11 +36,11 @@ export default function AsuOverview() {
   return (
     <div className="tab-panel active">
       <div className="kpi-grid">
-        <div className="kpi-card"><div className="kpi-label">TOTAL ASUs</div><div className="kpi-value">{d.kpi.asu}</div><div className="kpi-sub">+45K</div></div>
-        <div className="kpi-card"><div className="kpi-label">ASU GROWTH</div><div className="kpi-value">+3.8%</div><div className="kpi-sub">vs plan</div></div>
-        <div className="kpi-card"><div className="kpi-label">ASU VARIANCE</div><div className="kpi-value">{d.kpi.asuvar}</div><div className="kpi-sub">Plan vs Actual</div></div>
-        <div className="kpi-card"><div className="kpi-label">ASU EXIT</div><div className="kpi-value">12K</div><div className="kpi-sub">Expiring</div></div>
-        <div className="kpi-card"><div className="kpi-label">EXPIRED</div><div className="kpi-value">8.4K</div><div className="kpi-sub">Lapsed</div></div>
+        <KpiCard label="TOTAL ASUs" value={d.kpi.asu} delta="+45K" />
+        <KpiCard label="ASU GROWTH" value="+3.8%" sub="vs plan" />
+        <KpiCard label="ASU VARIANCE" value={d.kpi.asuvar} sub="Plan vs Actual" />
+        <KpiCard label="ASU EXIT" value="12K" delta="Expiring" />
+        <KpiCard label="EXPIRED" value="8.4K" delta="Lapsed" />
       </div>
 
       <div className="s-grid">

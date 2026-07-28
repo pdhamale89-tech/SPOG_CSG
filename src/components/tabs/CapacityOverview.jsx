@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import InfoBtn from '../common/InfoBtn';
+import KpiCard from '../common/KpiCard';
+import MiniStat from '../common/MiniStat';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -121,12 +123,7 @@ export default function CapacityOverview() {
 
       <div className="kpi-grid">
         {capKpis.map((k) => (
-          <div className="kpi-card" key={k.label}>
-            <div className="kpi-label">{k.label}</div>
-            <div className="kpi-value">{k.value}</div>
-            <div className="kpi-sub">{DIR_ARROW[k.dir] + k.delta}</div>
-            <div className="kpi-sub">{k.sub}</div>
-          </div>
+          <KpiCard key={k.label} label={k.label} value={k.value} delta={DIR_ARROW[k.dir] + k.delta} sub={k.sub} />
         ))}
       </div>
 
@@ -147,10 +144,7 @@ export default function CapacityOverview() {
 
           <div className="mini-row">
             {capMiniStats.map((m) => (
-              <div className="mini-stat" key={m.label}>
-                <div className="mini-stat-lbl">{m.label}</div>
-                <div className={'mini-stat-val tone-' + m.tone}>{m.value}</div>
-              </div>
+              <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} />
             ))}
           </div>
           <div className="s-grid">
