@@ -8,6 +8,7 @@ export default function MiniStat({ label, value, tone }) {
 
   function handleClick() {
     const { rows } = computeKpiDrillDown({ label, value }, curPeriod);
+    if (!rows.length) return;
     openDrillDown(label, DRILLDOWN_SUBTITLE, rows);
   }
 

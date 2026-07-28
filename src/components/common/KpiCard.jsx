@@ -8,6 +8,7 @@ export default function KpiCard({ label, value, delta, sub }) {
 
   function handleClick() {
     const { rows } = computeKpiDrillDown({ label, value, delta, sub }, curPeriod);
+    if (!rows.length) return;
     openDrillDown(label, DRILLDOWN_SUBTITLE, rows);
   }
 

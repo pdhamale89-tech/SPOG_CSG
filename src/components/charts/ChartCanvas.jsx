@@ -28,6 +28,7 @@ export default function ChartCanvas({ config, height, onClick }) {
         const { pointLabel, seriesLabel, rows } = computeChartDrillDown({
           config: configRef.current, datasetIndex, dataIndex: index, curPeriod: curPeriodRef.current,
         });
+        if (!rows.length) return;
         openDrillDown(seriesLabel ? `${seriesLabel} — ${pointLabel}` : pointLabel, DRILLDOWN_SUBTITLE, rows);
       };
     const handleHover = config.options?.onHover || ((evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; });
