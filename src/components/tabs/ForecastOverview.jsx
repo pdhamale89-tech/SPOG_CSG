@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { D, dmsDrillData } from '../../data/forecastData';
+import { D, dmsDrillData, hvData } from '../../data/forecastData';
 import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
 import KpiCard from '../common/KpiCard';
+import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
@@ -151,6 +152,11 @@ export default function ForecastOverview() {
               <option value="Q-001">Q-001</option>
               <option value="Q-027">Q-027</option>
             </select>
+            <DownloadBtn
+              filename="historical-volume"
+              title="Download historical volume"
+              rows={[(hvData[curPeriod] || hvData.monthly).cols, (hvData[curPeriod] || hvData.monthly).total, ...(hvData[curPeriod] || hvData.monthly).rows]}
+            />
           </div>
         </div>
         <HistVolTable period={curPeriod} />
@@ -271,7 +277,17 @@ export default function ForecastOverview() {
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
-        <div className="card-header"><div className="card-title">Queue Performance <InfoBtn tip="<strong>Purpose</strong>Queue-level data." /></div></div>
+        <div className="card-header">
+          <div className="card-title">Queue Performance <InfoBtn tip="<strong>Purpose</strong>Queue-level data." /></div>
+          <DownloadBtn
+            filename="queue-performance"
+            title="Download queue performance"
+            rows={[
+              ['Queue', 'Name', 'Region', 'Forecast', 'Actual', 'Acc%'],
+              ...QUEUE_ROWS.map((q) => [q.id, q.name, q.region, q.forecast, q.actual, ((q.actual / q.forecast) * 100).toFixed(1) + '%']),
+            ]}
+          />
+        </div>
         <div className="tw">
           <table>
             <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Forecast</th><th>Actual</th><th>Acc%</th><th>Status</th><th>RCA/CLCA</th></tr></thead>

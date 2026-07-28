@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import InfoBtn from '../common/InfoBtn';
 import KpiCard from '../common/KpiCard';
 import MiniStat from '../common/MiniStat';
+import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -86,7 +87,18 @@ export default function CapacityOverview() {
 
   const cqnDetailCard = (
     <div className="card" style={{ marginBottom: '14px' }}>
-      <div className="card-header"><div className="card-title">{periodWord} CQN Detail <InfoBtn tip="<strong>Purpose</strong>Per-queue gap detail. Click a column header to sort." /></div></div>
+      <div className="card-header">
+        <div className="card-title">{periodWord} CQN Detail <InfoBtn tip="<strong>Purpose</strong>Per-queue gap detail. Click a column header to sort." /></div>
+        <DownloadBtn
+          filename="cqn-detail"
+          title="Download CQN detail"
+          rows={[
+            ['Queue', ...detailTable.cols],
+            ...sortedRows.map((r) => [r.queue, ...r.vals]),
+            [capWeeklyTable.total.queue, ...capWeeklyTable.total.vals],
+          ]}
+        />
+      </div>
       <div className="tw">
         <table>
           <thead>

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Chart } from './chartSetup';
 import { useApp } from '../../context/AppContext';
 import { computeChartTrendPanels } from '../../utils/drillDown';
+import { downloadCsv, chartToCsvRows } from '../../utils/csvExport';
 
 export default function ChartCanvas({ config, height, onClick }) {
   const canvasRef = useRef(null);
@@ -42,6 +43,13 @@ export default function ChartCanvas({ config, height, onClick }) {
 
   return (
     <div className="chart-container" style={height ? { height } : undefined}>
+      {config && (
+        <button
+          className="chart-dl-btn"
+          title="Download chart data"
+          onClick={(e) => { e.stopPropagation(); downloadCsv('chart-data', chartToCsvRows(config)); }}
+        >⬇</button>
+      )}
       <canvas ref={canvasRef}></canvas>
     </div>
   );

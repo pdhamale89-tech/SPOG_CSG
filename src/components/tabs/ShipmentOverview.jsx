@@ -6,6 +6,7 @@ import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
 import KpiCard from '../common/KpiCard';
+import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -156,7 +157,17 @@ export default function ShipmentOverview() {
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
-        <div className="card-header"><div className="card-title">📋 Queue-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments broken out by queue, region, offering and segment." /></div></div>
+        <div className="card-header">
+          <div className="card-title">📋 Queue-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments broken out by queue, region, offering and segment." /></div>
+          <DownloadBtn
+            filename="queue-wise-shipment-detail"
+            title="Download queue-wise shipment detail"
+            rows={[
+              ['Queue', 'Name', 'Region', 'Offering', 'Segment', 'Forecast', 'Actual', 'Adh%'],
+              ...QUEUE_DETAIL_ROWS.map((q) => [q.id, q.name, q.region, q.offering, q.segment, q.forecast, q.actual, ((q.actual / q.forecast) * 100).toFixed(1) + '%']),
+            ]}
+          />
+        </div>
         <div className="tw">
           <table>
             <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Offering</th><th>Segment</th><th>Forecast</th><th>Actual</th><th>Adh%</th><th>St</th></tr></thead>
