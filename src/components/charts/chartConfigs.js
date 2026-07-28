@@ -305,6 +305,45 @@ export function buildTagRoutedConfig(d, theme) {
   };
 }
 
+// Offered vs total Tag Count (Web+Phone+Chat+Email combined) with the
+// resulting Tags% on a secondary axis, matching the reference "Offered /
+// Tag Count / Tags%" combo chart.
+export function buildTagRouted2Config(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const LP = legendPos(theme);
+  const valueLabels = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() };
+  const tagCount = d.labels.map((_, i) => d.tagWeb[i] + d.tagPhone[i] + d.tagChat[i] + d.tagEmail[i]);
+  const tagsPct = tagCount.map((c, i) => (d.offered[i] ? Math.round((c / d.offered[i]) * 1000) / 10 : 0));
+  const minPct = Math.floor(Math.min(...tagsPct));
+  const maxPct = Math.ceil(Math.max(...tagsPct));
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Offered', data: d.offered, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3, order: 3, datalabels: valueLabels },
+        { label: 'Tag Count', data: tagCount, backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 3, order: 2, datalabels: valueLabels },
+        {
+          label: 'Tags %', data: tagsPct, type: 'line', borderColor: '#1a1f36', backgroundColor: '#1a1f36', pointBackgroundColor: '#1a1f36',
+          borderWidth: 2.5, pointRadius: 4, tension: 0.2, fill: false, yAxisID: 'y1', order: 1,
+          datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' },
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
+        y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: minPct === maxPct ? minPct - 1 : minPct, max: minPct === maxPct ? maxPct + 1 : maxPct },
+      },
+      plugins: { legend: LP, datalabels: { display: false } },
+    },
+  };
+}
+
 export function buildExpiryConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);

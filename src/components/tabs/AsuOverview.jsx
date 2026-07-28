@@ -9,11 +9,11 @@ import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
-  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRoutedConfig, buildExpiryConfig,
+  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRoutedConfig, buildTagRouted2Config, buildExpiryConfig,
   buildAsuAcqExitConfig, buildAsuLifecycleConfig,
 } from '../charts/chartConfigs';
 import {
-  asuTrendInsight, asuCpasuInsight, tagRoutedInsight, expiryInsight,
+  asuTrendInsight, asuCpasuInsight, tagRoutedInsight, tagRouted2Insight, expiryInsight,
   asuAcqExitInsight, asuLifecycleInsight,
 } from '../../utils/insights';
 
@@ -36,6 +36,7 @@ export default function AsuOverview() {
     [curPeriod, regionNExpiry, fiscalYear],
   );
   const nTagConfig = useMemo(() => buildTagRoutedConfig(dNTag, theme), [dNTag, theme]);
+  const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
   const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
   const a3Config = useMemo(() => buildAsuAcqExitConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
@@ -74,6 +75,20 @@ export default function AsuOverview() {
           </div>
           <ChartCanvas config={nTagConfig} height="220px" />
           <InsightBox text={tagRoutedInsight(dNTag)} />
+        </div>
+      </div>
+
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">🏷️ Tag Routed 2 <InfoBtn tip="<strong>Purpose</strong>Offered vs total Tag Count with the resulting Tags% trend." /></div>
+            <div className="card-dd">
+              <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
+              <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
+            </div>
+          </div>
+          <ChartCanvas config={nTag2Config} height="220px" />
+          <InsightBox text={tagRouted2Insight(dNTag)} />
         </div>
       </div>
 

@@ -209,6 +209,14 @@ export function tagRoutedInsight(d) {
   return `Web-originated cases rose from ${fK(first(d.tagWeb))} to ${fK(last(d.tagWeb))} and overtook Phone, which fell from ${fK(first(d.tagPhone))} to ${fK(last(d.tagPhone))} — a clear shift away from phone-based intake.`;
 }
 
+export function tagRouted2Insight(d) {
+  const tagCount = d.labels.map((_, i) => d.tagWeb[i] + d.tagPhone[i] + d.tagChat[i] + d.tagEmail[i]);
+  const pct = tagCount.map((c, i) => (d.offered[i] ? round((c / d.offered[i]) * 100) : 0));
+  const worstIdx = minIdx(pct);
+  const bestIdx = maxIdx(pct);
+  return `Tag coverage of offered volume ranged from a low of ${pct[worstIdx]}% in ${labelAt(d.labels, worstIdx)} to a high of ${pct[bestIdx]}% in ${labelAt(d.labels, bestIdx)}.`;
+}
+
 export function expiryInsight(d) {
   const peakIdx = maxIdx(d.expAssets);
   return `Assets nearing expiry peaked at ${fK(d.expAssets[peakIdx])} in ${labelAt(d.labels, peakIdx)}; Tech ASUs under support kept climbing to ${fK(last(d.expASU))}, tracking just behind the ${fK(last(d.expFcASU))} forecast.`;
