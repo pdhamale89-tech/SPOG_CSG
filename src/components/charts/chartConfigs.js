@@ -294,7 +294,6 @@ export function buildTagRoutedConfig(d, theme) {
         { label: 'Phone', data: d.tagPhone, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 2 },
         { label: 'Chat', data: d.tagChat, backgroundColor: 'rgba(245,158,11,.75)', borderRadius: 2 },
         { label: 'Email', data: d.tagEmail, backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 2 },
-        { label: 'Social', data: d.tagSocial, backgroundColor: 'rgba(239,68,68,.75)', borderRadius: 2 },
       ],
     },
     options: {
