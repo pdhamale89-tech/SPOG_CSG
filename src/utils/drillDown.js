@@ -1,70 +1,108 @@
-// Generic Plan over Plan / Year on Year / Month on Month / Week on Week
-// drill-down, derived from whatever a chart or KPI actually has data for.
-// A comparison that cannot be computed from the clicked chart's own series
-// (or a KPI's own fields) is left out entirely rather than guessed at.
+// Clicking a chart opens trend graphs of that same clicked series, relabeled
+// for whichever two period granularities are NOT the active toggle (weekly /
+// monthly / qtr). Nothing is invented: these are the exact values already on
+// screen, just viewed at the other two granularities the period toggle
+// switches between elsewhere in this app. A series with fewer than two real
+// points can't be charted at all, so no panels are returned for it.
 
-function pctDelta(curr, prev) {
-  if (typeof curr !== 'number' || typeof prev !== 'number' || prev === 0) return null;
-  return ((curr - prev) / Math.abs(prev)) * 100;
+import { M8 } from '../data/forecastData';
+import { getColors } from '../theme/colors';
+
+const PERIODS = ['weekly', 'monthly', 'qtr'];
+const PERIOD_TITLE = { weekly: 'Weekly Trend', monthly: 'Monthly Trend', qtr: 'Quarterly Trend' };
+
+function otherPeriods(curPeriod) {
+  return PERIODS.filter((p) => p !== curPeriod);
 }
 
-function periodRowLabel(curPeriod) {
-  return curPeriod === 'weekly' ? 'Week on Week' : 'Month on Month';
+function synthLabels(period, n) {
+  if (period === 'weekly') return Array.from({ length: n }, (_, i) => `W${i + 1}`);
+  if (period === 'qtr') {
+    return Array.from({ length: n }, (_, i) => {
+      const q = (i % 4) + 1;
+      const yr = Math.floor(i / 4);
+      return yr === 0 ? `Q${q}` : `Q${q} · Yr${yr + 1}`;
+    });
+  }
+  return Array.from({ length: n }, (_, i) => {
+    const m = M8[i % M8.length];
+    const yr = Math.floor(i / M8.length);
+    return yr === 0 ? m : `${m} · Yr${yr + 1}`;
+  });
 }
 
-// Pulls a signed percentage out of KPI display text such as "+3.8%",
-// "▼ 4% vs AOP" or "▲ 12%". Returns null when the text carries no
-// parseable percentage (e.g. "12K", "Below target").
-function parsePct(text) {
-  if (typeof text !== 'string') return null;
-  const m = text.match(/([+-]?)\s*(\d+(?:\.\d+)?)\s*%/);
-  if (!m) return null;
-  let val = parseFloat(m[2]);
-  if (m[1] === '-' || /▼/.test(text)) val = -val;
-  return val;
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 }
 
-// config: the Chart.js config passed to ChartCanvas. datasetIndex/dataIndex: from
-// the click event's elements[0]. curPeriod: 'weekly' | 'monthly' | 'qtr' from AppContext.
-export function computeChartDrillDown({ config, datasetIndex, dataIndex, curPeriod }) {
-  const labels = config?.data?.labels || [];
+function mix(hexA, hexB, t) {
+  const a = hexToRgb(hexA);
+  const b = hexToRgb(hexB);
+  const r = Math.round(a.r + (b.r - a.r) * t);
+  const g = Math.round(a.g + (b.g - a.g) * t);
+  const bl = Math.round(a.b + (b.b - a.b) * t);
+  return `rgb(${r},${g},${bl})`;
+}
+
+function shade(rgbStr, amt) {
+  const m = rgbStr.match(/\d+/g).map(Number);
+  const f = (c) => Math.max(0, Math.min(255, Math.round(c + (amt > 0 ? (255 - c) * amt : c * amt))));
+  return `rgb(${f(m[0])},${f(m[1])},${f(m[2])})`;
+}
+
+// Gives each bar its own blue-to-green hue (matching the reference "Year over
+// Year" chart) with a vertical gradient so bars read as glossy, not flat.
+function barGradient(ctx, n) {
+  const base = mix('#2563eb', '#10b981', n <= 1 ? 0 : ctx.dataIndex / (n - 1));
+  const area = ctx.chart.chartArea;
+  if (!area) return base;
+  const g = ctx.chart.ctx.createLinearGradient(0, area.bottom, 0, area.top);
+  g.addColorStop(0, shade(base, -0.35));
+  g.addColorStop(1, shade(base, 0.3));
+  return g;
+}
+
+function buildTrendPanelConfig(values, period, theme) {
+  const n = values.length;
+  const { textSecondary, gridColor } = getColors(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: synthLabels(period, n),
+      datasets: [{
+        data: values,
+        backgroundColor: (ctx) => barGradient(ctx, n),
+        borderRadius: 6,
+        maxBarThickness: 46,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, datalabels: { display: false } },
+      scales: {
+        x: { ticks: { color: textSecondary, font: { size: 9 } }, grid: { display: false } },
+        y: { ticks: { color: textSecondary, font: { size: 9 } }, grid: { color: gridColor } },
+      },
+    },
+  };
+}
+
+// config: the Chart.js config passed to ChartCanvas. datasetIndex: from the
+// click event's elements[0]. curPeriod/theme: from AppContext.
+export function computeChartTrendPanels({ config, datasetIndex, curPeriod, theme }) {
   const datasets = config?.data?.datasets || [];
   const clicked = datasets[datasetIndex];
-  const pointLabel = labels[dataIndex] ?? `point ${dataIndex + 1}`;
-  const rows = [];
+  const raw = clicked?.data || [];
+  const numericCount = raw.filter((v) => typeof v === 'number').length;
+  if (numericCount < 2) return { seriesLabel: clicked?.label, panels: [] };
 
-  const planDs = datasets.find((d) => /plan|forecast/i.test(d.label || ''));
-  if (planDs && dataIndex > 0 && planDs.data[dataIndex] != null && planDs.data[dataIndex - 1] != null) {
-    const pct = pctDelta(planDs.data[dataIndex], planDs.data[dataIndex - 1]);
-    if (pct != null) rows.push({ label: 'Plan over Plan', pct, sub: `${planDs.label}: ${labels[dataIndex - 1]} → ${pointLabel}` });
-  }
+  const panels = otherPeriods(curPeriod).map((period) => ({
+    title: PERIOD_TITLE[period],
+    config: buildTrendPanelConfig(raw, period, theme),
+  }));
 
-  if (dataIndex > 0 && clicked?.data[dataIndex] != null && clicked.data[0] != null) {
-    const pct = pctDelta(clicked.data[dataIndex], clicked.data[0]);
-    if (pct != null) rows.push({ label: 'Year on Year', pct, sub: `${labels[0]} → ${pointLabel} (full range shown)` });
-  }
-
-  if (dataIndex > 0 && clicked?.data[dataIndex] != null && clicked.data[dataIndex - 1] != null) {
-    const pct = pctDelta(clicked.data[dataIndex], clicked.data[dataIndex - 1]);
-    if (pct != null) rows.push({ label: periodRowLabel(curPeriod), pct, sub: `${labels[dataIndex - 1]} → ${pointLabel}` });
-  }
-
-  return { pointLabel, seriesLabel: clicked?.label, rows };
-}
-
-// kpi: one of this app's plain { label, value, delta, sub } KPI/mini-stat objects.
-// These have no historical series, so only a comparison the KPI's own text
-// actually carries a parseable percentage for gets a row.
-export function computeKpiDrillDown(kpi, curPeriod) {
-  const isPlanMetric = /plan/i.test(kpi.sub || '') || /plan/i.test(kpi.delta || '') || /variance/i.test(kpi.label || '');
-  const isYoyMetric = !isPlanMetric && (/yoy|year/i.test(kpi.sub || '') || /yoy|year/i.test(kpi.delta || ''));
-  const pct = parsePct(kpi.delta) ?? parsePct(kpi.value);
-
-  const rows = [];
-  if (pct != null) {
-    const label = isPlanMetric ? 'Plan over Plan' : isYoyMetric ? 'Year on Year' : periodRowLabel(curPeriod);
-    rows.push({ label, pct, sub: kpi.sub || '' });
-  }
-
-  return { rows };
+  return { seriesLabel: clicked?.label, panels };
 }

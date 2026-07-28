@@ -1,18 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { Chart } from './chartSetup';
 import { useApp } from '../../context/AppContext';
-import { computeChartDrillDown } from '../../utils/drillDown';
-
-const DRILLDOWN_SUBTITLE = 'Plan over Plan · Year on Year · Month on Month · Week on Week';
+import { computeChartTrendPanels } from '../../utils/drillDown';
 
 export default function ChartCanvas({ config, height, onClick }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const onClickRef = useRef(onClick);
   onClickRef.current = onClick;
-  const { curPeriod, openDrillDown } = useApp();
+  const { curPeriod, theme, openDrillDown } = useApp();
   const curPeriodRef = useRef(curPeriod);
   curPeriodRef.current = curPeriod;
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
   const configRef = useRef(config);
   configRef.current = config;
 
@@ -24,12 +24,12 @@ export default function ChartCanvas({ config, height, onClick }) {
       ? (evt, els) => onClickRef.current(evt, els)
       : (evt, els) => {
         if (!els.length) return;
-        const { datasetIndex, index } = els[0];
-        const { pointLabel, seriesLabel, rows } = computeChartDrillDown({
-          config: configRef.current, datasetIndex, dataIndex: index, curPeriod: curPeriodRef.current,
+        const { datasetIndex } = els[0];
+        const { seriesLabel, panels } = computeChartTrendPanels({
+          config: configRef.current, datasetIndex, curPeriod: curPeriodRef.current, theme: themeRef.current,
         });
-        if (!rows.length) return;
-        openDrillDown(seriesLabel ? `${seriesLabel} — ${pointLabel}` : pointLabel, DRILLDOWN_SUBTITLE, rows);
+        if (!panels.length) return;
+        openDrillDown(seriesLabel || 'Trend Drill-Down', 'Same series, viewed at the other period granularities', panels);
       };
     const handleHover = config.options?.onHover || ((evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; });
     const finalConfig = { ...config, options: { ...config.options, onClick: handleClick, onHover: handleHover } };
