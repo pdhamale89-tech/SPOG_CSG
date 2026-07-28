@@ -72,7 +72,7 @@ export default function ShipmentOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📈 Ship Drill Down <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
+          <div className="card-title">📈 Overall Shipment <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
           <div className="card-dd">
             <RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} />
             <CountrySelect value={chartCountryFor('shipDrill')} onChange={(v) => setChartCountry('shipDrill', v)} />
