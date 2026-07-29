@@ -613,23 +613,6 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
   };
 }
 
-export function buildAsuLifecycleConfig(theme) {
-  const S = baseScales(theme);
-  const { textPrimary: tp } = getColors(theme);
-  return {
-    type: 'bar',
-    data: { labels: ['Activated', 'Active', 'Retained', 'Renewed'], datasets: [{ data: [280,1200,950,820], backgroundColor: ['rgba(59,130,246,.7)', 'rgba(16,185,129,.7)', 'rgba(139,92,246,.7)', 'rgba(245,158,11,.7)'], borderRadius: 5 }] },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: 'y',
-      layout: { padding: { right: 24 } },
-      scales: S,
-      plugins: { legend: { display: false }, datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'right', formatter: (v) => v + 'K' } },
-    },
-  };
-}
-
 // ===== Capacity — Workforce Planning =====
 
 export function buildCapVolumeConfig(d, theme) {

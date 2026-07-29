@@ -221,9 +221,3 @@ export function asuVolumeTrendInsight() {
   return 'Contact volume has trended down across the last two fiscal years as Tech Support ASU eased off its peak; the January projection revises the December view slightly lower heading into the new fiscal year.';
 }
 
-export function asuLifecycleInsight() {
-  const stages = { Activated: 280, Active: 1200, Retained: 950, Renewed: 820 };
-  const retainRate = round((stages.Retained / stages.Active) * 100);
-  const renewRate = round((stages.Renewed / stages.Retained) * 100);
-  return `Of ${stages.Active}K active ASUs, ${retainRate}% are retained (${stages.Retained}K) and ${renewRate}% of those go on to renew (${stages.Renewed}K).`;
-}

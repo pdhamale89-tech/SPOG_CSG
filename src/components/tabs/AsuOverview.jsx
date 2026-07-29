@@ -10,11 +10,11 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExitTrendConfig,
-  buildAsuVolumeTrendConfig, buildAsuLifecycleConfig, PROJECTION_MONTHS,
+  buildAsuVolumeTrendConfig, PROJECTION_MONTHS,
 } from '../charts/chartConfigs';
 import {
   asuTrendInsight, asuCpasuInsight, tagRouted2Insight, exitTrendInsight,
-  asuVolumeTrendInsight, asuLifecycleInsight,
+  asuVolumeTrendInsight,
 } from '../../utils/insights';
 
 const CASE_SOURCES = ['All Sources', 'Self-Service', 'Assisted', 'Automated', 'Escalated'];
@@ -44,7 +44,6 @@ export default function AsuOverview() {
     () => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonth),
     [theme, curPeriod, fiscalYear, projMonth],
   );
-  const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
 
   return (
     <div className="tab-panel active">
@@ -112,14 +111,6 @@ export default function AsuOverview() {
           </div>
           <ChartCanvas config={nVolumeTrendConfig} height="320px" />
           <InsightBox text={asuVolumeTrendInsight()} />
-        </div>
-      </div>
-
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header"><div className="card-title">ASU Lifecycle <InfoBtn tip="<strong>Purpose</strong>Activation to renewal." /></div></div>
-          <ChartCanvas config={a4Config} />
-          <InsightBox text={asuLifecycleInsight()} />
         </div>
       </div>
     </div>
