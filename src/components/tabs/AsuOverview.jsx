@@ -9,11 +9,11 @@ import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
-  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRoutedConfig, buildTagRouted2Config, buildExpiryConfig,
+  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExpiryConfig,
   buildAsuAcqExitConfig, buildAsuLifecycleConfig,
 } from '../charts/chartConfigs';
 import {
-  asuTrendInsight, asuCpasuInsight, tagRoutedInsight, tagRouted2Insight, expiryInsight,
+  asuTrendInsight, asuCpasuInsight, tagRouted2Insight, expiryInsight,
   asuAcqExitInsight, asuLifecycleInsight,
 } from '../../utils/insights';
 
@@ -42,7 +42,6 @@ export default function AsuOverview() {
     () => ({ ...D[curPeriod][regionNExpiry], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNExpiry].labels.length) }),
     [curPeriod, regionNExpiry, fiscalYear],
   );
-  const nTagConfig = useMemo(() => buildTagRoutedConfig(dNTag, theme), [dNTag, theme]);
   const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
   const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
   const a3Config = useMemo(() => buildAsuAcqExitConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
@@ -68,20 +67,6 @@ export default function AsuOverview() {
           <div className="card-header"><div className="card-title">ASU vs CPASU <InfoBtn tip="<strong>Purpose</strong>ASU/CPASU." /></div></div>
           <ChartCanvas config={a2Config} />
           <InsightBox text={asuCpasuInsight()} />
-        </div>
-      </div>
-
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header">
-            <div className="card-title">🏷️ Case Origin wise Tag Count <InfoBtn tip="<strong>Purpose</strong>Volume by case origin." /></div>
-            <div className="card-dd">
-              <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
-              <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
-            </div>
-          </div>
-          <ChartCanvas config={nTagConfig} height="220px" />
-          <InsightBox text={tagRoutedInsight(dNTag)} />
         </div>
       </div>
 

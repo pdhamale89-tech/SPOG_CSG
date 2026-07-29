@@ -282,29 +282,6 @@ export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
   };
 }
 
-export function buildTagRoutedConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
-  const LP = legendPos(theme);
-  return {
-    type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Web', data: d.tagWeb, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 2 },
-        { label: 'Phone', data: d.tagPhone, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 2 },
-        { label: 'Chat', data: d.tagChat, backgroundColor: 'rgba(245,158,11,.75)', borderRadius: 2 },
-        { label: 'Email', data: d.tagEmail, backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 2 },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } }, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
-      plugins: { legend: LP, datalabels: { display: false } },
-    },
-  };
-}
-
 // Offered vs total Tag Count (Web+Phone+Chat+Email combined) with the
 // resulting Tags% on a secondary axis, matching the reference "Offered /
 // Tag Count / Tags%" combo chart.

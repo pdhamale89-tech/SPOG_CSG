@@ -205,10 +205,6 @@ export function asuCpasuInsight() {
   return `CPASU has consistently trailed ASU by roughly ${round(avg(asu.map((v, i) => v - cpasu[i])))}K, running at about ${share}% of total ASU by period-end.`;
 }
 
-export function tagRoutedInsight(d) {
-  return `Web-originated cases rose from ${fK(first(d.tagWeb))} to ${fK(last(d.tagWeb))} and overtook Phone, which fell from ${fK(first(d.tagPhone))} to ${fK(last(d.tagPhone))} — a clear shift away from phone-based intake.`;
-}
-
 export function tagRouted2Insight(d) {
   const tagCount = d.labels.map((_, i) => d.tagWeb[i] + d.tagPhone[i] + d.tagChat[i] + d.tagEmail[i]);
   const pct = tagCount.map((c, i) => (d.offered[i] ? round((c / d.offered[i]) * 100) : 0));
