@@ -42,7 +42,7 @@ export function AppProvider({ children }) {
   const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low', prefillRootCause: '' });
   const [forwardModal, setForwardModal] = useState({ open: false, step: 1, forRca: false });
   const [partnerRcaModal, setPartnerRcaModal] = useState({ open: false, idx: 0 });
-  const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [] });
+  const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [], tableRows: [] });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
   // so this is what lets the UI show "Actioned" after a submit instead of the toast being the
@@ -154,7 +154,7 @@ export function AppProvider({ children }) {
   const openPartnerRca = useCallback((idx) => setPartnerRcaModal({ open: true, idx }), []);
   const closePartnerRca = useCallback(() => setPartnerRcaModal((m) => ({ ...m, open: false })), []);
 
-  const openDrillDown = useCallback((title, subtitle, panels) => setDrillDownModal({ open: true, title, subtitle, panels }), []);
+  const openDrillDown = useCallback((title, subtitle, panels, tableRows) => setDrillDownModal({ open: true, title, subtitle, panels, tableRows }), []);
   const closeDrillDown = useCallback(() => setDrillDownModal((m) => ({ ...m, open: false })), []);
 
   const openDetail = useCallback((title, body) => setDetailModal({ open: true, title, body }), []);
