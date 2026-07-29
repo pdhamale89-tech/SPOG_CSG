@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { D } from '../../data/forecastData';
 import { buildPeriodLabels } from '../../utils/periodLabels';
@@ -17,8 +17,15 @@ import {
   asuAcqExitInsight, asuLifecycleInsight,
 } from '../../utils/insights';
 
+const CASE_SOURCES = ['All Sources', 'Self-Service', 'Assisted', 'Automated', 'Escalated'];
+const CASE_ORIGINS = ['All Origins', 'Web', 'Phone', 'Chat', 'Email'];
+const TAG_PRODUCTS = ['All Products', 'Pro', 'Premium', 'Basic', 'OOP'];
+
 export default function AsuOverview() {
   const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry } = useApp();
+  const [caseSource, setCaseSource] = useState(CASE_SOURCES[0]);
+  const [caseOrigin, setCaseOrigin] = useState(CASE_ORIGINS[0]);
+  const [tagProduct, setTagProduct] = useState(TAG_PRODUCTS[0]);
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
@@ -85,6 +92,15 @@ export default function AsuOverview() {
             <div className="card-dd">
               <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
               <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
+              <select className="f-sel" value={caseSource} onChange={(e) => setCaseSource(e.target.value)}>
+                {CASE_SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <select className="f-sel" value={caseOrigin} onChange={(e) => setCaseOrigin(e.target.value)}>
+                {CASE_ORIGINS.map((o) => <option key={o} value={o}>{o}</option>)}
+              </select>
+              <select className="f-sel" value={tagProduct} onChange={(e) => setTagProduct(e.target.value)}>
+                {TAG_PRODUCTS.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
             </div>
           </div>
           <ChartCanvas config={nTag2Config} height="220px" />
