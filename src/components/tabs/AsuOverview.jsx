@@ -10,11 +10,11 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExpiryConfig,
-  buildAsuAcqExitConfig, buildAsuLifecycleConfig,
+  buildAsuVolumeTrendConfig, buildAsuLifecycleConfig,
 } from '../charts/chartConfigs';
 import {
   asuTrendInsight, asuCpasuInsight, tagRouted2Insight, expiryInsight,
-  asuAcqExitInsight, asuLifecycleInsight,
+  asuVolumeTrendInsight, asuLifecycleInsight,
 } from '../../utils/insights';
 
 const CASE_SOURCES = ['All Sources', 'Self-Service', 'Assisted', 'Automated', 'Escalated'];
@@ -44,7 +44,7 @@ export default function AsuOverview() {
   );
   const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
   const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
-  const a3Config = useMemo(() => buildAsuAcqExitConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const nVolumeTrendConfig = useMemo(() => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
 
   return (
@@ -107,12 +107,15 @@ export default function AsuOverview() {
         </div>
       </div>
 
-      <div className="s-grid">
+      <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">ASU Acquisition vs Exit <InfoBtn tip="<strong>Purpose</strong>Net ASU growth." /></div></div>
-          <ChartCanvas config={a3Config} />
-          <InsightBox text={asuAcqExitInsight()} />
+          <div className="card-header"><div className="card-title">📈 Contact Volume vs Tech Support ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div></div>
+          <ChartCanvas config={nVolumeTrendConfig} height="320px" />
+          <InsightBox text={asuVolumeTrendInsight()} />
         </div>
+      </div>
+
+      <div className="s-grid full">
         <div className="card">
           <div className="card-header"><div className="card-title">ASU Lifecycle <InfoBtn tip="<strong>Purpose</strong>Activation to renewal." /></div></div>
           <ChartCanvas config={a4Config} />

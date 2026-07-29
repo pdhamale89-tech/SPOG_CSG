@@ -504,20 +504,68 @@ export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
   };
 }
 
-export function buildAsuAcqExitConfig(theme, curPeriod, fiscalYear) {
-  const S = baseScales(theme);
+// Deterministic decline-with-wiggle generator so the multi-year trend below
+// renders identically on every re-render (no Math.random/Date.now — those
+// would make the "same" chart repaint with different numbers each time).
+function genTrend(n, start, end, amp, freq, spikes = []) {
+  const arr = [];
+  for (let i = 0; i < n; i++) {
+    const t = n <= 1 ? 0 : i / (n - 1);
+    let v = start + (end - start) * t + Math.sin(i * freq) * amp;
+    const spike = spikes.find((s) => s.i === i);
+    if (spike) v += spike.d;
+    arr.push(Math.max(0, Math.round(v * 10) / 10));
+  }
+  return arr;
+}
+
+// Multi-year Contact Volume (Actual / Dec Projection / Jan Projection) over
+// ASU / ASU Proj area context on a secondary axis, spanning 3 fiscal years
+// at whatever granularity the Weekly/Monthly/QTR toggle is set to.
+export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const perYear = curPeriod === 'weekly' ? 52 : curPeriod === 'monthly' ? 12 : 4;
+  const n = perYear * 3;
+  const cutover = perYear * 2;
+  const labels = buildPeriodLabels(fiscalYear, curPeriod, n);
+
+  const contactFull = genTrend(n, 19, 7.5, 1.6, 0.35, [
+    { i: Math.round(n * 0.28), d: n > 20 ? 3 : 1.2 },
+    { i: Math.round(n * 0.30), d: n > 20 ? -4 : -1.5 },
+  ]);
+  const asuFull = genTrend(n, 28, 23.8, 0.3, 0.15);
+  const overlapStart = Math.max(0, cutover - Math.min(3, perYear));
+
+  const actual = contactFull.map((v, i) => (i < cutover ? v : null));
+  const decProjection = contactFull.map((v, i) => (i >= overlapStart && i <= cutover + 1 ? v : null));
+  const janProjection = contactFull.map((v, i) => (i >= overlapStart ? Math.round(v * 0.97 * 10) / 10 : null));
+  const asu = asuFull.map((v, i) => (i < cutover ? v : null));
+  const asuProj = asuFull.map((v, i) => (i >= cutover ? v : null));
+
   return {
-    type: 'bar',
+    type: 'line',
     data: {
-      labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
+      labels,
       datasets: [
-        { label: 'New', data: [18,22,15,20,24,19,21,25], backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 2 },
-        { label: 'Exit', data: [-12,-14,-10,-13,-15,-11,-14,-13], backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 2 },
+        { label: 'ASU', data: asu, borderColor: 'rgba(59,130,246,.4)', backgroundColor: 'rgba(147,197,253,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 4, spanGaps: false },
+        { label: 'ASU Proj', data: asuProj, borderColor: 'rgba(245,158,11,.4)', backgroundColor: 'rgba(253,186,116,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 3, spanGaps: false },
+        { label: 'Actual', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 2, spanGaps: false },
+        { label: 'Dec Projection', data: decProjection, borderColor: '#9ca3af', backgroundColor: '#9ca3af', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
+        { label: 'Jan Projection', data: janProjection, borderColor: '#22c55e', backgroundColor: '#22c55e', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 0, spanGaps: false },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { ticks: { color: tc, font: { size: 7 }, maxRotation: 60, autoSkip: true, maxTicksLimit: 24 }, grid: { display: false } },
+        y: { title: { display: true, text: 'Contact Volume', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
+        y1: { position: 'right', title: { display: true, text: 'Tech Support ASU', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: { display: false } },
+    },
   };
 }
 

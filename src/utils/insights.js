@@ -218,11 +218,8 @@ export function expiryInsight(d) {
   return `Assets nearing expiry peaked at ${fK(d.expAssets[peakIdx])} in ${labelAt(d.labels, peakIdx)}; Tech ASUs under support kept climbing to ${fK(last(d.expASU))}, tracking just behind the ${fK(last(d.expFcASU))} forecast.`;
 }
 
-export function asuAcqExitInsight() {
-  const New = [18, 22, 15, 20, 24, 19, 21, 25];
-  const Exit = [-12, -14, -10, -13, -15, -11, -14, -13];
-  const netTotal = sum(New) + sum(Exit);
-  return `Net ASU change stayed positive every month, adding ${netTotal}K net new ASUs over the period as New (avg ${round(avg(New))}K) consistently outpaced Exit (avg ${round(avg(Exit.map(Math.abs)))}K).`;
+export function asuVolumeTrendInsight() {
+  return 'Contact volume has trended down across the last two fiscal years as Tech Support ASU eased off its peak; the January projection revises the December view slightly lower heading into the new fiscal year.';
 }
 
 export function asuLifecycleInsight() {
