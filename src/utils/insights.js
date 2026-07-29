@@ -213,9 +213,8 @@ export function tagRouted2Insight(d) {
   return `Tag coverage of offered volume ranged from a low of ${pct[worstIdx]}% in ${labelAt(d.labels, worstIdx)} to a high of ${pct[bestIdx]}% in ${labelAt(d.labels, bestIdx)}.`;
 }
 
-export function expiryInsight(d) {
-  const peakIdx = maxIdx(d.expAssets);
-  return `Assets nearing expiry peaked at ${fK(d.expAssets[peakIdx])} in ${labelAt(d.labels, peakIdx)}; Tech ASUs under support kept climbing to ${fK(last(d.expASU))}, tracking just behind the ${fK(last(d.expFcASU))} forecast.`;
+export function exitTrendInsight() {
+  return 'Total Shipment has declined for four straight fiscal years while ASU Exit has held roughly flat in the mid-20 millions; the FY26 forecast points to another modest step down.';
 }
 
 export function asuVolumeTrendInsight() {

@@ -9,11 +9,11 @@ import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
-  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExpiryConfig,
+  buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExitTrendConfig,
   buildAsuVolumeTrendConfig, buildAsuLifecycleConfig, PROJECTION_MONTHS,
 } from '../charts/chartConfigs';
 import {
-  asuTrendInsight, asuCpasuInsight, tagRouted2Insight, expiryInsight,
+  asuTrendInsight, asuCpasuInsight, tagRouted2Insight, exitTrendInsight,
   asuVolumeTrendInsight, asuLifecycleInsight,
 } from '../../utils/insights';
 
@@ -31,7 +31,6 @@ export default function AsuOverview() {
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
   const regionNTag = chartRegionFor('nTag');
-  const regionNExpiry = chartRegionFor('nExpiry');
 
   const a1Config = useMemo(() => buildAsuTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const a2Config = useMemo(() => buildAsuCpasuConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
@@ -39,12 +38,8 @@ export default function AsuOverview() {
     () => ({ ...D[curPeriod][regionNTag], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNTag].labels.length) }),
     [curPeriod, regionNTag, fiscalYear],
   );
-  const dNExpiry = useMemo(
-    () => ({ ...D[curPeriod][regionNExpiry], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNExpiry].labels.length) }),
-    [curPeriod, regionNExpiry, fiscalYear],
-  );
   const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
-  const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
+  const nExitTrendConfig = useMemo(() => buildExitTrendConfig(theme, fiscalYear), [theme, fiscalYear]);
   const nVolumeTrendConfig = useMemo(
     () => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonth),
     [theme, curPeriod, fiscalYear, projMonth],
@@ -99,15 +94,9 @@ export default function AsuOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header">
-            <div className="card-title">📅 Weekly Expiring <InfoBtn tip="<strong>Purpose</strong>Expiry projections." /></div>
-            <div className="card-dd">
-              <RegionSelect value={regionNExpiry} onChange={(v) => setChartRegion('nExpiry', v)} />
-              <CountrySelect value={chartCountryFor('nExpiry')} onChange={(v) => setChartCountry('nExpiry', v)} />
-            </div>
-          </div>
-          <ChartCanvas config={nExpiryConfig} height="220px" />
-          <InsightBox text={expiryInsight(dNExpiry)} />
+          <div className="card-header"><div className="card-title">📉 Exit Trend <InfoBtn tip="<strong>Purpose</strong>Total Expiring Assets and Total Shipment by fiscal year against ASU Exit Actual/FCST." /></div></div>
+          <ChartCanvas config={nExitTrendConfig} height="260px" />
+          <InsightBox text={exitTrendInsight()} />
         </div>
       </div>
 

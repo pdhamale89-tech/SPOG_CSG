@@ -321,26 +321,57 @@ export function buildTagRouted2Config(d, theme) {
   };
 }
 
-export function buildExpiryConfig(d, theme) {
+// Six most recent fiscal years ending at the selected Fiscal Year filter —
+// annual, not tied to the Weekly/Monthly/QTR toggle, matching the reference
+// "Total Expiring Assets / Total Shipment / ASU Exit Actual / ASU Exit FCST"
+// trend view.
+function fyYearLabels(fiscalYear, count) {
+  const end = parseInt(String(fiscalYear ?? '').match(/(\d+)/)?.[1] ?? '26', 10);
+  return Array.from({ length: count }, (_, i) => `FY${end - count + 1 + i}`);
+}
+
+export function buildExitTrendConfig(theme, fiscalYear) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
+  const labels = fyYearLabels(fiscalYear, 6);
+
+  const expiringAssets = [11200, 13600, 14200, 11300, 11000, 9900];
+  const shipment = [14500, 14790, 11090, 9090, 8910, 8820];
+  const shipmentPct = shipment.map((v, i) => (i === 0 ? null : Math.round(((v - shipment[i - 1]) / shipment[i - 1]) * 100)));
+  const lastIdx = shipment.length - 1;
+  const exitActual = [29, 30, 27, 25.5, 23, null];
+  const exitFcst = [null, null, null, null, 23, 22];
+
   return {
     type: 'bar',
     data: {
-      labels: d.labels,
+      labels,
       datasets: [
-        { label: 'Expiring', data: d.expAssets, backgroundColor: 'rgba(239,68,68,.75)' },
-        { label: 'Shipped', data: d.expShipped, backgroundColor: 'rgba(245,158,11,.75)' },
-        { label: 'Tech ASUs', data: d.expASU, backgroundColor: 'rgba(16,185,129,.75)' },
-        { label: 'Forecast', data: d.expFcASU, backgroundColor: 'rgba(59,130,246,.75)' },
+        { label: 'Total Expiring Assets', data: expiringAssets, backgroundColor: '#1e3a5f', borderRadius: 2, order: 3 },
+        {
+          label: 'Total Shipment', data: shipment, order: 2,
+          backgroundColor: shipment.map((_, i) => (i === lastIdx ? 'rgba(96,165,250,.4)' : 'rgba(96,165,250,.85)')),
+          borderColor: '#60a5fa',
+          borderWidth: shipment.map((_, i) => (i === lastIdx ? 2 : 0)),
+          borderDash: [4, 3],
+          borderRadius: 2,
+          datalabels: {
+            display: true, color: '#1a1f36', font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'end', offset: 6,
+            formatter: (v, ctx) => { const p = shipmentPct[ctx.dataIndex]; return p == null ? '' : `${p >= 0 ? '+' : ''}${p}%`; },
+          },
+        },
+        { label: 'ASU Exit Actual', data: exitActual, type: 'line', borderColor: '#dc2626', borderWidth: 2.5, pointRadius: 0, tension: 0.35, fill: false, yAxisID: 'y1', order: 1, spanGaps: false },
+        { label: 'ASU Exit FCST', data: exitFcst, type: 'line', borderColor: '#f59e0b', borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false, yAxisID: 'y1', order: 0, spanGaps: false },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       scales: {
-        x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
-        y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc }, stacked: true },
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        y: { title: { display: true, text: 'Millions', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, min: 0, max: 16 },
+        y1: { position: 'right', title: { display: true, text: 'Millions', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, min: 0, max: 35 },
       },
       plugins: { legend: LP, datalabels: { display: false } },
     },
