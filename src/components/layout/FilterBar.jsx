@@ -19,6 +19,7 @@ const DEFAULTS = {
   forecastQueueName: 'All Queues',
   reportingClassification: 'All Classifications',
   subServiceOffering: 'All Offerings',
+  segment: 'All Segments',
 };
 
 // Forecast Overview, Shipment Overview, and ASU Overview get their own
@@ -27,6 +28,7 @@ const DEFAULTS = {
 // else, e.g. Capacity Overview, where that label was requested).
 const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
+const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 
 // Rendered in two groups so Region (the one real, wired filter) can sit
 // between Fiscal Week and Sub Region, matching the requested sequence.
@@ -110,6 +112,7 @@ export default function FilterBar() {
             f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
           ))}
           {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
+          {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
         </div>
       )}
     </div>
