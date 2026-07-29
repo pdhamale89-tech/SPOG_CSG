@@ -48,7 +48,7 @@ export default function AsuOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="kpi-grid">
+      <div className="kpi-grid cols-5">
         <KpiCard label="TOTAL ASUs" value={d.kpi.asu} delta="+45K" />
         <KpiCard label="ASU GROWTH" value="+3.8%" sub="vs plan" />
         <KpiCard label="ASU VARIANCE" value={d.kpi.asuvar} sub="Plan vs Actual" />
