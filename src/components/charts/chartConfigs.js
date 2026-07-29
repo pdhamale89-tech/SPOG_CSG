@@ -519,6 +519,7 @@ export function buildAsuTrendConfig(theme, curPeriod, fiscalYear) {
 }
 
 export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
+  const { textSecondary: tc } = getColors(theme);
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
@@ -529,9 +530,16 @@ export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
       datasets: [
         { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#3b82f6', tension: 0.4, fill: false },
         { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false },
+        { label: 'Contact Trend', data: [98000,95500,99000,93500,90500,88000,85500,87000], borderColor: '#f59e0b', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, datalabels: { display: false } },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { ...S, y1: { position: 'right', title: { display: true, text: 'Contact Volume', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { display: false } } },
+      plugins: { legend: LP, datalabels: DL },
+    },
   };
 }
 
