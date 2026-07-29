@@ -1,7 +1,7 @@
 import { useApp } from '../../context/AppContext';
 
 export default function Sidebar() {
-  const { currentTab, openSubMenu, toggleSub, goSub, navTo } = useApp();
+  const { currentTab, goSub, navTo } = useApp();
 
   const subItemClass = (pid) => 'sb-i' + (currentTab === pid ? ' active' : '');
   const topItemClass = (pid) => 'sb-i' + (currentTab === pid ? ' active' : '');
@@ -34,8 +34,8 @@ export default function Sidebar() {
 
         <div className="sidebar-section-label">Tools</div>
         <div className={topItemClass('reports')} onClick={() => navTo('reports')}><span className="ic">📋</span>Reports</div>
-        <div className="sb-i" onClick={() => toggleSub('cal-sub', 'calendar-forecast')}><span className="ic">📅</span>Calendar<span className="arr">▾</span></div>
-        <div className={'sb-sub' + (openSubMenu === 'cal-sub' ? ' open' : '')}>
+        <div className="sb-i" onClick={() => goSub('calendar-forecast')}><span className="ic">📅</span>Calendar</div>
+        <div className="sb-sub open">
           <div className={subItemClass('calendar-forecast')} onClick={() => goSub('calendar-forecast')}>Forecast Calendar</div>
           <div className={subItemClass('calendar-fiscal')} onClick={() => goSub('calendar-fiscal')}>Fiscal Calendar</div>
         </div>

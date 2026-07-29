@@ -21,7 +21,6 @@ function defaultBreadcrumb(pid) {
 export function AppProvider({ children }) {
   const [theme, setTheme] = useState('light');
   const [currentTab, setCurrentTabState] = useState('forecast-overview');
-  const [openSubMenu, setOpenSubMenu] = useState('f-sub');
   const [breadcrumb, setBreadcrumb] = useState('Forecast › Overview');
 
   // Snapshot of when this dashboard session loaded, shown in the topbar and info popups.
@@ -59,7 +58,6 @@ export function AppProvider({ children }) {
   }, []);
 
   const navTo = useCallback((pid) => {
-    setOpenSubMenu(null);
     setCurrentTabState(pid);
     setBreadcrumb(defaultBreadcrumb(pid));
   }, []);
@@ -67,17 +65,6 @@ export function AppProvider({ children }) {
   const goSub = useCallback((pid) => {
     setCurrentTabState(pid);
     setBreadcrumb(defaultBreadcrumb(pid));
-  }, []);
-
-  const toggleSub = useCallback((id, firstChild) => {
-    setOpenSubMenu((prev) => {
-      const willOpen = prev !== id;
-      if (willOpen && firstChild) {
-        setCurrentTabState(firstChild);
-        setBreadcrumb(defaultBreadcrumb(firstChild));
-      }
-      return willOpen ? id : null;
-    });
   }, []);
 
   const showFilters = !NO_FILTER_TABS.includes(currentTab);
@@ -178,7 +165,7 @@ export function AppProvider({ children }) {
 
   const value = useMemo(() => ({
     theme, toggleTheme, lastUpdated,
-    currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
+    currentTab, navTo, goSub, breadcrumb,
     curRegion, setCurRegion, curPeriod, setCurPeriod, fiscalYear, setFiscalYear,
     chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
@@ -195,7 +182,7 @@ export function AppProvider({ children }) {
     partnerRcaModal, openPartnerRca, closePartnerRca,
     drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
-  }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, openSubMenu, toggleSub, breadcrumb,
+  }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb,
     curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
