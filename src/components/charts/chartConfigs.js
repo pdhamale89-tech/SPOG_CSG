@@ -566,9 +566,37 @@ export const PROJECTION_MONTHS = ['Oct', 'Nov', 'Dec', 'Jan'];
 const PROJECTION_FACTORS = { Oct: 1.03, Nov: 1.0, Dec: 0.985, Jan: 0.97 };
 const PROJECTION_COLORS = { Oct: '#f59e0b', Nov: '#8b5cf6', Dec: '#9ca3af', Jan: '#22c55e' };
 
-// Multi-year Contact Volume (Actual / one line per selected projection
-// vintage) over ASU / ASU Proj area context on a secondary axis, spanning 3
-// fiscal years at whatever granularity the Weekly/Monthly/QTR toggle is set.
+// Draws a dashed vertical divider where Actual hands off to the projection
+// lines, so the historical/forecast boundary reads at a glance instead of
+// being implied only by a change in line style.
+function buildCutoverPlugin(cutoverIndex) {
+  return {
+    id: 'volumeCutoverLine',
+    afterDatasetsDraw(chart) {
+      const { x: xScale, y: yScale } = chart.scales;
+      if (!xScale || !yScale) return;
+      const xPos = xScale.getPixelForTick(cutoverIndex);
+      const { ctx } = chart;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(107,114,128,.55)';
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xPos, yScale.top);
+      ctx.lineTo(xPos, yScale.bottom);
+      ctx.stroke();
+      ctx.restore();
+    },
+  };
+}
+
+// Multi-year Contact Volume (Actual solid / one dashed line per selected
+// projection vintage) over ASU / ASU Proj context bars on a secondary axis,
+// spanning 3 fiscal years at whatever granularity the Weekly/Monthly/QTR
+// toggle is set to. ASU moved from an overlapping filled area to a thin bar
+// layer (the standard "line + column" dual-axis pairing) so it reads as
+// background context rather than competing with the Contact Volume lines,
+// and both axes start at 0 instead of a tightly cropped range.
 export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonths) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
@@ -592,17 +620,20 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
     const factor = PROJECTION_FACTORS[m] ?? 1;
     const color = PROJECTION_COLORS[m] || '#22c55e';
     const data = contactFull.map((v, i) => (i >= overlapStart ? Math.round(v * factor * 10) / 10 : null));
-    return { label: `${m} Projection`, data, borderColor: color, backgroundColor: color, fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: idx, spanGaps: false };
+    return {
+      label: `${m} Projection`, type: 'line', data, borderColor: color, backgroundColor: color, fill: false,
+      pointRadius: 0, borderWidth: 2, borderDash: [6, 3], tension: 0.2, yAxisID: 'y', order: idx, spanGaps: false,
+    };
   });
 
   return {
-    type: 'line',
+    type: 'bar',
     data: {
       labels,
       datasets: [
-        { label: 'ASU', data: asu, borderColor: 'rgba(59,130,246,.4)', backgroundColor: 'rgba(147,197,253,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 3, spanGaps: false },
-        { label: 'ASU Proj', data: asuProj, borderColor: 'rgba(245,158,11,.4)', backgroundColor: 'rgba(253,186,116,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 2, spanGaps: false },
-        { label: 'Actual', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
+        { label: 'ASU', type: 'bar', data: asu, backgroundColor: 'rgba(59,130,246,.32)', borderWidth: 0, yAxisID: 'y1', order: 5, barPercentage: 1, categoryPercentage: 1 },
+        { label: 'ASU Proj', type: 'bar', data: asuProj, backgroundColor: 'rgba(245,158,11,.28)', borderWidth: 0, yAxisID: 'y1', order: 4, barPercentage: 1, categoryPercentage: 1 },
+        { label: 'Actual', type: 'line', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2.5, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
         ...projectionDatasets,
       ],
     },
@@ -611,12 +642,13 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       scales: {
-        x: { ticks: { color: tc, font: { size: 7 }, maxRotation: 60, autoSkip: true, maxTicksLimit: 24 }, grid: { display: false } },
-        y: { title: { display: true, text: 'Contact Volume', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
-        y1: { position: 'right', title: { display: true, text: 'Tech Support ASU', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        x: { ticks: { color: tc, font: { size: 7 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 18 }, grid: { display: false } },
+        y: { min: 0, title: { display: true, text: 'Contact Volume', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
+        y1: { position: 'right', min: 0, title: { display: true, text: 'Tech Support ASU', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
       },
       plugins: { legend: LP, datalabels: { display: false } },
     },
+    plugins: [buildCutoverPlugin(cutover)],
   };
 }
 

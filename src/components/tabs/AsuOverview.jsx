@@ -108,7 +108,7 @@ export default function AsuOverview() {
               <MultiSelectDropdown options={PROJECTION_MONTHS} selected={projMonths} onChange={setProjMonths} suffix="Projection" />
             </div>
           </div>
-          <ChartCanvas config={nVolumeTrendConfig} height="320px" />
+          <ChartCanvas config={nVolumeTrendConfig} height="360px" />
           <InsightBox text={asuVolumeTrendInsight()} />
         </div>
       </div>
