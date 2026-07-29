@@ -63,7 +63,7 @@ export default function AsuOverview() {
           <InsightBox text={asuTrendInsight()} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">ASU vs CPASU <InfoBtn tip="<strong>Purpose</strong>ASU/CPASU." /></div></div>
+          <div className="card-header"><div className="card-title">ASU vs CPASU/Contacts <InfoBtn tip="<strong>Purpose</strong>ASU/CPASU." /></div></div>
           <ChartCanvas config={a2Config} />
           <InsightBox text={asuCpasuInsight()} />
         </div>

@@ -528,9 +528,9 @@ export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#3b82f6', tension: 0.4, fill: false },
-        { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false },
-        { label: 'Contact Trend', data: [98000,95500,99000,93500,90500,88000,85500,87000], borderColor: '#f59e0b', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, datalabels: { display: false } },
+        { label: 'ASU', type: 'bar', data: [1120,1135,1140,1150,1160,1175,1185,1200], backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3, order: 2 },
+        { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false, order: 1 },
+        { label: 'Contacts', data: [98000,95500,99000,93500,90500,88000,85500,87000], borderColor: '#f59e0b', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, order: 0, datalabels: { display: false } },
       ],
     },
     options: {
