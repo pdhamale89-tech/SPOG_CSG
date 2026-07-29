@@ -21,14 +21,14 @@ export default function Sidebar() {
         <div className={topItemClass('home')} onClick={() => navTo('home')}><span className="ic">🏠</span>Home</div>
 
         <div className="sidebar-section-label">Forecast &amp; Capacity Overview</div>
-        <div className="sb-i active" onClick={() => toggleSub('f-sub', 'forecast-overview')}><span className="ic">📊</span>Forecast<span className="arr">▾</span></div>
-        <div className={'sb-sub' + (openSubMenu === 'f-sub' ? ' open' : '')}>
+        <div className="sb-i active" onClick={() => goSub('forecast-overview')}><span className="ic">📊</span>Forecast</div>
+        <div className="sb-sub open">
           <div className={subItemClass('forecast-overview')} onClick={() => goSub('forecast-overview')}>Forecast Overview</div>
           <div className={subItemClass('shipment-overview')} onClick={() => goSub('shipment-overview')}>Shipment Overview</div>
           <div className={subItemClass('asu-overview')} onClick={() => goSub('asu-overview')}>ASU Overview</div>
         </div>
-        <div className="sb-i" onClick={() => toggleSub('c-sub', 'capacity-overview')}><span className="ic">⚙️</span>Capacity<span className="arr">▾</span></div>
-        <div className={'sb-sub' + (openSubMenu === 'c-sub' ? ' open' : '')}>
+        <div className="sb-i" onClick={() => goSub('capacity-overview')}><span className="ic">⚙️</span>Capacity</div>
+        <div className="sb-sub open">
           <div className={subItemClass('capacity-overview')} onClick={() => goSub('capacity-overview')}>Capacity Overview</div>
         </div>
 
