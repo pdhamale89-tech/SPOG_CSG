@@ -6,6 +6,7 @@ import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
 import KpiCard from '../common/KpiCard';
+import MultiSelectDropdown from '../common/MultiSelectDropdown';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
@@ -26,7 +27,7 @@ export default function AsuOverview() {
   const [caseSource, setCaseSource] = useState(CASE_SOURCES[0]);
   const [caseOrigin, setCaseOrigin] = useState(CASE_ORIGINS[0]);
   const [tagProduct, setTagProduct] = useState(TAG_PRODUCTS[0]);
-  const [projMonth, setProjMonth] = useState(PROJECTION_MONTHS[PROJECTION_MONTHS.length - 1]);
+  const [projMonths, setProjMonths] = useState([PROJECTION_MONTHS[PROJECTION_MONTHS.length - 1]]);
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
@@ -41,8 +42,8 @@ export default function AsuOverview() {
   const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
   const nExitTrendConfig = useMemo(() => buildExitTrendConfig(theme, fiscalYear), [theme, fiscalYear]);
   const nVolumeTrendConfig = useMemo(
-    () => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonth),
-    [theme, curPeriod, fiscalYear, projMonth],
+    () => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonths),
+    [theme, curPeriod, fiscalYear, projMonths],
   );
 
   return (
@@ -104,9 +105,7 @@ export default function AsuOverview() {
           <div className="card-header">
             <div className="card-title">📈 Contact volume vs ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div>
             <div className="card-dd">
-              <select className="f-sel" value={projMonth} onChange={(e) => setProjMonth(e.target.value)}>
-                {PROJECTION_MONTHS.map((m) => <option key={m} value={m}>{m} Projection</option>)}
-              </select>
+              <MultiSelectDropdown options={PROJECTION_MONTHS} selected={projMonths} onChange={setProjMonths} suffix="Projection" />
             </div>
           </div>
           <ChartCanvas config={nVolumeTrendConfig} height="320px" />
