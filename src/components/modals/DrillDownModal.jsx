@@ -30,7 +30,7 @@ export default function DrillDownModal() {
             {(panels || []).map((p, i) => (
               <button key={p.title} className={'drilldown-toggle-btn' + (view === i ? ' active' : '')} onClick={() => setView(i)}>{p.title}</button>
             ))}
-            <button className={'drilldown-toggle-btn' + (view === 'table' ? ' active' : '')} onClick={() => setView('table')}>Table</button>
+            <button className={'drilldown-toggle-btn' + (view === 'table' ? ' active' : '')} onClick={() => setView('table')}>Queue Detail</button>
           </div>
 
           {activePanel && <ChartCanvas config={activePanel.config} height="280px" onClick={noop} />}
