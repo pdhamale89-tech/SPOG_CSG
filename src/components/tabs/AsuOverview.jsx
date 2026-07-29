@@ -10,7 +10,7 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExpiryConfig,
-  buildAsuVolumeTrendConfig, buildAsuLifecycleConfig,
+  buildAsuVolumeTrendConfig, buildAsuLifecycleConfig, PROJECTION_MONTHS,
 } from '../charts/chartConfigs';
 import {
   asuTrendInsight, asuCpasuInsight, tagRouted2Insight, expiryInsight,
@@ -26,6 +26,7 @@ export default function AsuOverview() {
   const [caseSource, setCaseSource] = useState(CASE_SOURCES[0]);
   const [caseOrigin, setCaseOrigin] = useState(CASE_ORIGINS[0]);
   const [tagProduct, setTagProduct] = useState(TAG_PRODUCTS[0]);
+  const [projMonth, setProjMonth] = useState(PROJECTION_MONTHS[PROJECTION_MONTHS.length - 1]);
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
@@ -44,7 +45,10 @@ export default function AsuOverview() {
   );
   const nTag2Config = useMemo(() => buildTagRouted2Config(dNTag, theme), [dNTag, theme]);
   const nExpiryConfig = useMemo(() => buildExpiryConfig(dNExpiry, theme), [dNExpiry, theme]);
-  const nVolumeTrendConfig = useMemo(() => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const nVolumeTrendConfig = useMemo(
+    () => buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonth),
+    [theme, curPeriod, fiscalYear, projMonth],
+  );
   const a4Config = useMemo(() => buildAsuLifecycleConfig(theme), [theme]);
 
   return (
@@ -109,7 +113,14 @@ export default function AsuOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">📈 Contact Volume vs Tech Support ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div></div>
+          <div className="card-header">
+            <div className="card-title">📈 Contact Volume vs Tech Support ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div>
+            <div className="card-dd">
+              <select className="f-sel" value={projMonth} onChange={(e) => setProjMonth(e.target.value)}>
+                {PROJECTION_MONTHS.map((m) => <option key={m} value={m}>{m} Projection</option>)}
+              </select>
+            </div>
+          </div>
           <ChartCanvas config={nVolumeTrendConfig} height="320px" />
           <InsightBox text={asuVolumeTrendInsight()} />
         </div>

@@ -519,16 +519,23 @@ function genTrend(n, start, end, amp, freq, spikes = []) {
   return arr;
 }
 
-// Multi-year Contact Volume (Actual / Dec Projection / Jan Projection) over
+// Selectable forecast vintages for the Contact Volume trend below: each
+// later month's projection is a small downward revision of the previous
+// one, matching how a rolling forecast typically firms up over time.
+export const PROJECTION_MONTHS = ['Oct', 'Nov', 'Dec', 'Jan'];
+const PROJECTION_FACTORS = { Oct: 1.03, Nov: 1.0, Dec: 0.985, Jan: 0.97 };
+
+// Multi-year Contact Volume (Actual / selected month's Projection) over
 // ASU / ASU Proj area context on a secondary axis, spanning 3 fiscal years
 // at whatever granularity the Weekly/Monthly/QTR toggle is set to.
-export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear) {
+export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonth) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const perYear = curPeriod === 'weekly' ? 52 : curPeriod === 'monthly' ? 12 : 4;
   const n = perYear * 3;
   const cutover = perYear * 2;
   const labels = buildPeriodLabels(fiscalYear, curPeriod, n);
+  const factor = PROJECTION_FACTORS[projMonth] ?? PROJECTION_FACTORS.Jan;
 
   const contactFull = genTrend(n, 19, 7.5, 1.6, 0.35, [
     { i: Math.round(n * 0.28), d: n > 20 ? 3 : 1.2 },
@@ -538,8 +545,7 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear) {
   const overlapStart = Math.max(0, cutover - Math.min(3, perYear));
 
   const actual = contactFull.map((v, i) => (i < cutover ? v : null));
-  const decProjection = contactFull.map((v, i) => (i >= overlapStart && i <= cutover + 1 ? v : null));
-  const janProjection = contactFull.map((v, i) => (i >= overlapStart ? Math.round(v * 0.97 * 10) / 10 : null));
+  const projection = contactFull.map((v, i) => (i >= overlapStart ? Math.round(v * factor * 10) / 10 : null));
   const asu = asuFull.map((v, i) => (i < cutover ? v : null));
   const asuProj = asuFull.map((v, i) => (i >= cutover ? v : null));
 
@@ -548,11 +554,10 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels,
       datasets: [
-        { label: 'ASU', data: asu, borderColor: 'rgba(59,130,246,.4)', backgroundColor: 'rgba(147,197,253,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 4, spanGaps: false },
-        { label: 'ASU Proj', data: asuProj, borderColor: 'rgba(245,158,11,.4)', backgroundColor: 'rgba(253,186,116,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 3, spanGaps: false },
-        { label: 'Actual', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 2, spanGaps: false },
-        { label: 'Dec Projection', data: decProjection, borderColor: '#9ca3af', backgroundColor: '#9ca3af', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
-        { label: 'Jan Projection', data: janProjection, borderColor: '#22c55e', backgroundColor: '#22c55e', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 0, spanGaps: false },
+        { label: 'ASU', data: asu, borderColor: 'rgba(59,130,246,.4)', backgroundColor: 'rgba(147,197,253,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 3, spanGaps: false },
+        { label: 'ASU Proj', data: asuProj, borderColor: 'rgba(245,158,11,.4)', backgroundColor: 'rgba(253,186,116,.35)', fill: true, pointRadius: 0, borderWidth: 1, tension: 0.3, yAxisID: 'y1', order: 2, spanGaps: false },
+        { label: 'Actual', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
+        { label: `${projMonth || 'Jan'} Projection`, data: projection, borderColor: '#22c55e', backgroundColor: '#22c55e', fill: false, pointRadius: 0, borderWidth: 2, tension: 0.2, yAxisID: 'y', order: 0, spanGaps: false },
       ],
     },
     options: {
