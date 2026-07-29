@@ -36,6 +36,7 @@ export function AppProvider({ children }) {
   const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
   const [drill, setDrill] = useState({ level: 'overall', offering: '', segment: '' });
+  const [rcaCollapsed, setRcaCollapsed] = useState(false);
 
   const [toast, setToast] = useState({ show: false, msg: '', cls: '' });
   const [detailModal, setDetailModal] = useState({ open: false, title: '', body: '' });
@@ -81,6 +82,7 @@ export function AppProvider({ children }) {
 
   const showFilters = !NO_FILTER_TABS.includes(currentTab);
   const showRCA = !NO_FILTER_TABS.includes(currentTab);
+  const toggleRcaCollapsed = useCallback(() => setRcaCollapsed((c) => !c), []);
 
   const setChartRegion = useCallback((id, region) => {
     setChartRegions((prev) => ({ ...prev, [id]: region }));
@@ -183,7 +185,7 @@ export function AppProvider({ children }) {
     chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
     drill, setDrill,
-    showFilters, showRCA,
+    showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed,
     applyFilters, clearFilters,
     toast, showToast,
     detailModal, openDetail, closeDetail,
@@ -197,7 +199,7 @@ export function AppProvider({ children }) {
     curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
-    showFilters, showRCA, applyFilters, clearFilters, toast, showToast,
+    showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
     partnerRcaModal, openPartnerRca, closePartnerRca,
