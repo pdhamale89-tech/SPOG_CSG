@@ -597,8 +597,30 @@ function buildCutoverPlugin(cutoverIndex) {
 // layer (the standard "line + column" dual-axis pairing) so it reads as
 // background context rather than competing with the Contact Volume lines,
 // and both axes start at 0 instead of a tightly cropped range.
+// Value labels for the trend lines, thinned to roughly one per ~16 points
+// (plus the final point) so a 156-point weekly view doesn't drown in text;
+// monthly/quarterly views have few enough points to label every one.
+function trendDatalabels(color, bg, n) {
+  const step = Math.max(1, Math.ceil(n / 16));
+  return {
+    display: (ctx) => {
+      const v = ctx.dataset.data[ctx.dataIndex];
+      if (v == null) return false;
+      return ctx.dataIndex % step === 0 || ctx.dataIndex === n - 1;
+    },
+    color,
+    font: { size: 8, weight: 'bold' },
+    anchor: 'end',
+    align: 'top',
+    offset: 4,
+    textStrokeColor: bg,
+    textStrokeWidth: 3,
+    formatter: (v) => (v == null ? '' : v.toLocaleString()),
+  };
+}
+
 export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonths) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const perYear = curPeriod === 'weekly' ? 52 : curPeriod === 'monthly' ? 12 : 4;
   const n = perYear * 3;
@@ -623,6 +645,7 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
     return {
       label: `${m} Projection`, type: 'line', data, borderColor: color, backgroundColor: color, fill: false,
       pointRadius: 0, borderWidth: 2, borderDash: [6, 3], tension: 0.2, yAxisID: 'y', order: idx, spanGaps: false,
+      datalabels: trendDatalabels(color, bg, n),
     };
   });
 
@@ -633,7 +656,11 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
       datasets: [
         { label: 'ASU', type: 'bar', data: asu, backgroundColor: 'rgba(59,130,246,.32)', borderWidth: 0, yAxisID: 'y1', order: 5, barPercentage: 1, categoryPercentage: 1 },
         { label: 'ASU Proj', type: 'bar', data: asuProj, backgroundColor: 'rgba(245,158,11,.28)', borderWidth: 0, yAxisID: 'y1', order: 4, barPercentage: 1, categoryPercentage: 1 },
-        { label: 'Actual', type: 'line', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false, pointRadius: 0, borderWidth: 2.5, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false },
+        {
+          label: 'Actual', type: 'line', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false,
+          pointRadius: 0, borderWidth: 2.5, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false,
+          datalabels: trendDatalabels('#1a1f36', bg, n),
+        },
         ...projectionDatasets,
       ],
     },
