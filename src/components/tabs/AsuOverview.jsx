@@ -21,6 +21,8 @@ import {
 const CASE_SOURCES = ['All Sources', 'Self-Service', 'Assisted', 'Automated', 'Escalated'];
 const CASE_ORIGINS = ['All Origins', 'Web', 'Phone', 'Chat', 'Email'];
 const TAG_PRODUCTS = ['All Products', 'Pro', 'Premium', 'Basic', 'OOP'];
+// Temporarily hidden per request; flip back to true to restore.
+const SHOW_TAG_ROUTED = false;
 
 export default function AsuOverview() {
   const { theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry } = useApp();
@@ -90,28 +92,30 @@ export default function AsuOverview() {
         </div>
       </div>
 
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header">
-            <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Offered vs total Tag Count with the resulting Tags% trend." /></div>
-            <div className="card-dd">
-              <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
-              <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
-              <select className="f-sel" value={caseSource} onChange={(e) => setCaseSource(e.target.value)}>
-                {CASE_SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <select className="f-sel" value={caseOrigin} onChange={(e) => setCaseOrigin(e.target.value)}>
-                {CASE_ORIGINS.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
-              <select className="f-sel" value={tagProduct} onChange={(e) => setTagProduct(e.target.value)}>
-                {TAG_PRODUCTS.map((p) => <option key={p} value={p}>{p}</option>)}
-              </select>
+      {SHOW_TAG_ROUTED && (
+        <div className="s-grid full">
+          <div className="card">
+            <div className="card-header">
+              <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Offered vs total Tag Count with the resulting Tags% trend." /></div>
+              <div className="card-dd">
+                <RegionSelect value={regionNTag} onChange={(v) => setChartRegion('nTag', v)} />
+                <CountrySelect value={chartCountryFor('nTag')} onChange={(v) => setChartCountry('nTag', v)} />
+                <select className="f-sel" value={caseSource} onChange={(e) => setCaseSource(e.target.value)}>
+                  {CASE_SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <select className="f-sel" value={caseOrigin} onChange={(e) => setCaseOrigin(e.target.value)}>
+                  {CASE_ORIGINS.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
+                <select className="f-sel" value={tagProduct} onChange={(e) => setTagProduct(e.target.value)}>
+                  {TAG_PRODUCTS.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
             </div>
+            <ChartCanvas config={nTag2Config} height="220px" />
+            <InsightBox text={tagRouted2Insight(dNTag)} />
           </div>
-          <ChartCanvas config={nTag2Config} height="220px" />
-          <InsightBox text={tagRouted2Insight(dNTag)} />
         </div>
-      </div>
+      )}
     </div>
   );
 }
