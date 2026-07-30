@@ -42,6 +42,7 @@ export function AppProvider({ children }) {
   const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low', prefillRootCause: '' });
   const [forwardModal, setForwardModal] = useState({ open: false, step: 1, forRca: false });
   const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [], tableRows: [] });
+  const [adherenceModal, setAdherenceModal] = useState({ open: false });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
   // so this is what lets the UI show "Actioned" after a submit instead of the toast being the
@@ -145,12 +146,16 @@ export function AppProvider({ children }) {
   const openDetail = useCallback((title, body) => setDetailModal({ open: true, title, body }), []);
   const closeDetail = useCallback(() => setDetailModal((m) => ({ ...m, open: false })), []);
 
+  const openAdherence = useCallback(() => setAdherenceModal({ open: true }), []);
+  const closeAdherence = useCallback(() => setAdherenceModal((m) => ({ ...m, open: false })), []);
+
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
         setApprovalModal((m) => ({ ...m, open: false }));
         setForwardModal((m) => ({ ...m, open: false }));
         setDetailModal((m) => ({ ...m, open: false }));
+        setAdherenceModal((m) => ({ ...m, open: false }));
         setDrillDownModal((m) => ({ ...m, open: false }));
       }
     }
@@ -171,6 +176,7 @@ export function AppProvider({ children }) {
     applyFilters, clearFilters,
     toast, showToast,
     detailModal, openDetail, closeDetail,
+    adherenceModal, openAdherence, closeAdherence,
     approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval,
     forwardModal, openForward, closeForward, submitForward,
@@ -181,7 +187,8 @@ export function AppProvider({ children }) {
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
-    detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
+    detailModal, openDetail, closeDetail, adherenceModal, openAdherence, closeAdherence,
+    approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
     drillDownModal, openDrillDown, closeDrillDown, actionLog, logAction]);
 

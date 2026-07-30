@@ -33,7 +33,7 @@ const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1)
 export default function ForecastOverview() {
   const {
     theme, curPeriod, fiscalYear, curRegion, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry,
-    curHistPlan, setCurHistPlan, openApproval, actionLog,
+    curHistPlan, setCurHistPlan, openApproval, openAdherence, actionLog,
   } = useApp();
   const [geoView, setGeoView] = useState('region');
   const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
@@ -84,7 +84,7 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">🌍 Country &amp; Region Forecast Accuracy <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Country/Region to change map granularity; % labels shown directly on the map." /></div>
+          <div className="card-title">🌍 Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Country/Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
           <div className="card-dd">
             <div className="plan-sel">
               <button className={'plan-btn' + (geoView === 'country' ? ' active' : '')} onClick={() => setGeoView('country')}>Country</button>
@@ -92,7 +92,7 @@ export default function ForecastOverview() {
             </div>
           </div>
         </div>
-        <WorldMap theme={theme} mode={geoView} />
+        <WorldMap theme={theme} mode={geoView} onOpenDetail={openAdherence} />
         <InsightBox text={geoMapInsight()} />
       </div>
 

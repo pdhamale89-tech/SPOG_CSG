@@ -9,6 +9,7 @@ import DetailModal from './components/modals/DetailModal';
 import ApprovalModal from './components/modals/ApprovalModal';
 import ForwardModal from './components/modals/ForwardModal';
 import DrillDownModal from './components/modals/DrillDownModal';
+import AdherenceModal from './components/modals/AdherenceModal';
 
 import Home from './components/tabs/Home';
 import ForecastOverview from './components/tabs/ForecastOverview';
@@ -61,6 +62,7 @@ function DashboardShell() {
       <ApprovalModal />
       <ForwardModal />
       <DrillDownModal />
+      <AdherenceModal />
       <Toast />
     </div>
   );

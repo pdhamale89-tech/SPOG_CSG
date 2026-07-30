@@ -14,7 +14,7 @@ function tierColor(val, c) {
   return scale[accTier(val)];
 }
 
-export default function WorldMap({ theme, mode = 'region' }) {
+export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
   const mapRef = useRef(null);
   const [hover, setHover] = useState(null);
   const c = getColors(theme);
@@ -111,7 +111,7 @@ export default function WorldMap({ theme, mode = 'region' }) {
 
   return (
     <div className="geo-map-wrap">
-      <div className="geo-map-inner" onMouseLeave={() => setHover(null)}>
+      <div className="geo-map-inner" onMouseLeave={() => setHover(null)} onClick={onOpenDetail}>
         <div id="worldMap"></div>
         {hover && (
           <div className="geo-hover-card">
