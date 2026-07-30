@@ -27,6 +27,45 @@ export const COUNTRY_ACC = Object.keys(COUNTRY_REGION).reduce((acc, code) => {
 
 export const MAJOR_COUNTRIES = ['US', 'CA', 'MX', 'BR', 'AR', 'GB', 'DE', 'FR', 'ES', 'IT', 'RU', 'CN', 'JP', 'IN', 'AU', 'ZA', 'SA', 'KR', 'ID', 'NG'];
 
+// Sub-region buckets, one level below the top-level Region grouping above.
+// Explicitly listed member countries per sub-region; EMEA's SER bucket
+// absorbs everything else in the region (Southern Europe, Middle East,
+// Africa) so every country still resolves to exactly one sub-region.
+const SUBREGION_MEMBERS = {
+  NA: ['US', 'CA'],
+  Brazil: ['BR'],
+  MMCLA: REGION_COUNTRIES.AMER.filter((c) => !['US', 'CA', 'BR'].includes(c)),
+  UKI: ['GB', 'IE'],
+  NER: ['SE', 'NO', 'DK', 'FI', 'IS', 'EE', 'LV', 'LT', 'PL'],
+  CER: ['DE', 'FR', 'NL', 'BE', 'LU', 'CH', 'AT', 'CZ', 'SK', 'HU'],
+  SER: REGION_COUNTRIES.EMEA.filter((c) => !['GB', 'IE', 'SE', 'NO', 'DK', 'FI', 'IS', 'EE', 'LV', 'LT', 'PL', 'DE', 'FR', 'NL', 'BE', 'LU', 'CH', 'AT', 'CZ', 'SK', 'HU'].includes(c)),
+  JPN: ['JP'],
+  KOR: ['KR'],
+  IND: ['IN'],
+  ANZ: ['AU', 'NZ', 'FJ', 'PG'],
+  SubAsia: ['PK', 'BD', 'LK', 'NP', 'MM', 'KH', 'LA', 'MN', 'AF', 'BN'],
+  CCC: REGION_COUNTRIES.APJ.filter((c) => !['JP', 'KR', 'IN', 'AU', 'NZ', 'FJ', 'PG', 'PK', 'BD', 'LK', 'NP', 'MM', 'KH', 'LA', 'MN', 'AF', 'BN'].includes(c)),
+};
+
+export const SUBREGIONS_BY_REGION = {
+  AMER: ['NA', 'Brazil', 'MMCLA'],
+  EMEA: ['UKI', 'NER', 'CER', 'SER'],
+  APJ: ['JPN', 'KOR', 'IND', 'ANZ', 'SubAsia', 'CCC'],
+};
+
+export const COUNTRY_SUBREGION = Object.keys(SUBREGION_MEMBERS).reduce((acc, sub) => {
+  SUBREGION_MEMBERS[sub].forEach((code) => { acc[code] = sub; });
+  return acc;
+}, {});
+
+// Sub-region accuracy is the average of its member countries' accuracy -
+// an aggregation of the existing per-country numbers, not a new random source.
+export const SUBREGION_ACC = Object.keys(SUBREGION_MEMBERS).reduce((acc, sub) => {
+  const members = SUBREGION_MEMBERS[sub].filter((code) => COUNTRY_ACC[code] != null);
+  acc[sub] = Math.round(members.reduce((s, code) => s + COUNTRY_ACC[code], 0) / members.length);
+  return acc;
+}, {});
+
 // Single source of truth for the accuracy color tiers shown on the geo map legend.
 export function accTier(val) {
   if (val >= 90) return 'excellent';

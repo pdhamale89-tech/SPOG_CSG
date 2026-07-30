@@ -84,11 +84,11 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">🌍 Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Country/Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
+          <div className="card-title">🌍 Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
           <div className="card-dd">
             <div className="plan-sel">
-              <button className={'plan-btn' + (geoView === 'country' ? ' active' : '')} onClick={() => setGeoView('country')}>Country</button>
               <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} onClick={() => setGeoView('region')}>Region</button>
+              <button className={'plan-btn' + (geoView === 'subregion' ? ' active' : '')} onClick={() => setGeoView('subregion')}>Sub Region</button>
             </div>
           </div>
         </div>

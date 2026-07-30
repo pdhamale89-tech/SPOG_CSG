@@ -2,12 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import jsVectorMap from 'jsvectormap';
 import 'jsvectormap/dist/maps/world.js';
 import 'jsvectormap/dist/jsvectormap.min.css';
-import { COUNTRY_REGION, REGION_ACC, COUNTRY_ACC, MAJOR_COUNTRIES, accTier } from '../../data/regions';
+import { COUNTRY_REGION, REGION_ACC, COUNTRY_SUBREGION, SUBREGION_ACC, accTier } from '../../data/regions';
 import { getColors } from '../../theme/colors';
 
-// Hand-picked on-land coordinates so region labels land in a recognizable spot
-// instead of at an arbitrary country's bounding-box center.
+// Hand-picked on-land coordinates so region/sub-region labels land in a
+// recognizable spot instead of at an arbitrary country's bounding-box center.
 const REGION_LABEL_COORDS = { AMER: [32, -97], EMEA: [50, 10], APJ: [19, 100] };
+const SUBREGION_LABEL_COORDS = {
+  NA: [45, -100], Brazil: [-10, -55], MMCLA: [15, -85],
+  UKI: [54, -3], NER: [60, 15], CER: [50, 10], SER: [40, 22],
+  JPN: [36, 138], KOR: [36, 128], IND: [22, 78], ANZ: [-25, 135], SubAsia: [28, 70], CCC: [25, 105],
+};
 
 function tierColor(val, c) {
   const scale = { excellent: c.accentGreen, good: c.accentBlue, fair: c.accentOrange, critical: c.accentRed };
@@ -25,26 +30,20 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
       mapRef.current = null;
     }
     setHover(null);
-    const isCountry = mode === 'country';
+    const isSubregion = mode === 'subregion';
+    const groupAcc = isSubregion ? SUBREGION_ACC : REGION_ACC;
+    const groupOf = isSubregion ? COUNTRY_SUBREGION : COUNTRY_REGION;
+    const labelCoords = isSubregion ? SUBREGION_LABEL_COORDS : REGION_LABEL_COORDS;
     const tierScale = { excellent: c.accentGreen, good: c.accentBlue, fair: c.accentOrange, critical: c.accentRed };
 
-    const seriesConfig = isCountry
-      ? {
-        attribute: 'fill',
-        scale: tierScale,
-        values: Object.keys(COUNTRY_ACC).reduce((acc, code) => {
-          acc[code] = accTier(COUNTRY_ACC[code]);
-          return acc;
-        }, {}),
-      }
-      : {
-        attribute: 'fill',
-        scale: Object.keys(REGION_ACC).reduce((acc, reg) => {
-          acc[reg] = tierScale[accTier(REGION_ACC[reg])];
-          return acc;
-        }, {}),
-        values: COUNTRY_REGION,
-      };
+    const seriesConfig = {
+      attribute: 'fill',
+      scale: Object.keys(groupAcc).reduce((acc, key) => {
+        acc[key] = tierScale[accTier(groupAcc[key])];
+        return acc;
+      }, {}),
+      values: groupOf,
+    };
 
     const labelHalo = { fill: '#fff', stroke: 'rgba(0,0,0,.6)', strokeWidth: 2, paintOrder: 'stroke', fontWeight: 700 };
 
@@ -66,22 +65,13 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
         hover: { r: 0, fill: 'transparent', stroke: 'transparent', cursor: 'default' },
       },
       series: { regions: [seriesConfig] },
-      markers: isCountry ? [] : Object.keys(REGION_LABEL_COORDS).map((reg) => ({ name: reg, coords: REGION_LABEL_COORDS[reg] })),
+      markers: Object.keys(labelCoords).map((key) => ({ name: key, coords: labelCoords[key] })),
       labels: {
-        regions: isCountry
-          ? {
-            render(code) {
-              return MAJOR_COUNTRIES.includes(code) && COUNTRY_ACC[code] != null ? `${COUNTRY_ACC[code]}%` : '';
-            },
-          }
-          : undefined,
-        markers: isCountry
-          ? undefined
-          : {
-            render(markerConfig) {
-              return `${markerConfig.name} ${REGION_ACC[markerConfig.name]}%`;
-            },
+        markers: {
+          render(markerConfig) {
+            return `${markerConfig.name} ${groupAcc[markerConfig.name]}%`;
           },
+        },
       },
       regionLabelStyle: { initial: { ...labelHalo, fontSize: 8 } },
       markerLabelStyle: { initial: { ...labelHalo, fontSize: 11 } },
@@ -89,16 +79,9 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
       // disabling showTooltip makes the library's own destroy() throw, since it
       // unconditionally calls the (then never-created) tooltip's .dispose().
       onRegionTooltipShow(event, tooltip, code) {
-        if (isCountry) {
-          const val = COUNTRY_ACC[code];
-          if (val == null) return;
-          const name = mapRef.current?._mapData?.paths?.[code]?.name || code;
-          setHover({ label: name, value: val });
-        } else {
-          const reg = COUNTRY_REGION[code];
-          if (!reg) return;
-          setHover({ label: reg, value: REGION_ACC[reg] });
-        }
+        const group = groupOf[code];
+        if (!group) return;
+        setHover({ label: group, value: groupAcc[group] });
       },
     });
 
