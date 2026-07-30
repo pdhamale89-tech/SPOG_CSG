@@ -32,6 +32,20 @@ const QUEUE_DETAIL_ROWS = [
   { id: 'Q-106', name: 'Commercial Chat', region: 'APJ', offering: 'Premium', segment: 'Commercial', forecast: 21200, actual: 20650 },
 ];
 
+// Same underlying queue detail, rolled up by segment (region/offering shown
+// as the distinct set contributing to that segment) instead of per queue.
+const SEGMENT_ORDER = ['Enterprise', 'Commercial', 'Consumer'];
+const SEGMENT_DETAIL_ROWS = SEGMENT_ORDER.map((segment) => {
+  const rows = QUEUE_DETAIL_ROWS.filter((q) => q.segment === segment);
+  return {
+    segment,
+    regions: [...new Set(rows.map((q) => q.region))].join(', '),
+    offerings: [...new Set(rows.map((q) => q.offering))].join(', '),
+    forecast: rows.reduce((s, q) => s + q.forecast, 0),
+    actual: rows.reduce((s, q) => s + q.actual, 0),
+  };
+});
+
 export default function ShipmentOverview() {
   const {
     theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartSubRegionFor, setChartSubRegion,
@@ -165,27 +179,27 @@ export default function ShipmentOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📋 Queue-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments broken out by queue, region, offering and segment." /></div>
+          <div className="card-title">📋 Segment-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments rolled up by segment, with the regions and offerings contributing to each." /></div>
           <DownloadBtn
-            filename="queue-wise-shipment-detail"
-            title="Download queue-wise shipment detail"
+            filename="segment-wise-shipment-detail"
+            title="Download segment-wise shipment detail"
             rows={[
-              ['Queue', 'Name', 'Region', 'Offering', 'Segment', 'Forecast', 'Actual', 'Adh%'],
-              ...QUEUE_DETAIL_ROWS.map((q) => [q.id, q.name, q.region, q.offering, q.segment, q.forecast, q.actual, ((q.actual / q.forecast) * 100).toFixed(1) + '%']),
+              ['Segment', 'Region', 'Offering', 'Forecast', 'Actual', 'Adh%'],
+              ...SEGMENT_DETAIL_ROWS.map((s) => [s.segment, s.regions, s.offerings, s.forecast, s.actual, ((s.actual / s.forecast) * 100).toFixed(1) + '%']),
             ]}
           />
         </div>
         <div className="tw">
           <table>
-            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Offering</th><th>Segment</th><th>Forecast</th><th>Actual</th><th>Adh%</th><th>St</th></tr></thead>
+            <thead><tr><th>Segment</th><th>Region</th><th>Offering</th><th>Forecast</th><th>Actual</th><th>Adh%</th><th>St</th></tr></thead>
             <tbody>
-              {QUEUE_DETAIL_ROWS.map((q) => {
-                const adh = (q.actual / q.forecast) * 100;
+              {SEGMENT_DETAIL_ROWS.map((s) => {
+                const adh = (s.actual / s.forecast) * 100;
                 const tier = adh >= 95 ? 'g' : adh >= 80 ? 'o' : 'r';
                 return (
-                  <tr key={q.id}>
-                    <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td><td>{q.offering}</td><td>{q.segment}</td>
-                    <td>{q.forecast.toLocaleString()}</td><td>{q.actual.toLocaleString()}</td>
+                  <tr key={s.segment}>
+                    <td>{s.segment}</td><td>{s.regions}</td><td>{s.offerings}</td>
+                    <td>{s.forecast.toLocaleString()}</td><td>{s.actual.toLocaleString()}</td>
                     <td style={tier === 'r' ? { color: 'var(--accent-red)' } : undefined}>{adh.toFixed(1)}%</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                   </tr>
