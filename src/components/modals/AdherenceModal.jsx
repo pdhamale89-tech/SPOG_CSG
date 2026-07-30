@@ -1,56 +1,37 @@
-import { useMemo, useState } from 'react';
+import { Fragment } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ADHERENCE_ROWS } from '../../data/adherenceDetail';
+import { ADHERENCE_MATRIX } from '../../data/adherenceDetail';
 import DownloadBtn from '../common/DownloadBtn';
 
-const ALL = 'All';
+const { regions, subsByRegion, groups, overall } = ADHERENCE_MATRIX;
 
-function uniqueSorted(values) {
-  return [...new Set(values)].sort();
+function cellClass(v) {
+  return v >= 0 ? 'mtx-pos' : 'mtx-neg';
 }
 
-function tierColor(v) {
-  if (v >= 90) return 'var(--accent-green)';
-  if (v >= 80) return 'var(--accent-blue)';
-  if (v >= 70) return 'var(--accent-orange)';
-  return 'var(--accent-red)';
+function buildCsvRows() {
+  const header = ['Offering', 'Segment'];
+  regions.forEach((r) => { subsByRegion[r].forEach((s) => header.push(`${r} ${s}`)); header.push(`${r} Total`); });
+  header.push('Grand Total');
+
+  const rowToCsv = (offeringLabel, row) => {
+    const cells = [offeringLabel, row.label];
+    regions.forEach((r) => {
+      subsByRegion[r].forEach((s) => cells.push(row.byRegion[r][s] + '%'));
+      cells.push(row.byRegion[r].Total + '%');
+    });
+    cells.push(row.grandTotal + '%');
+    return cells;
+  };
+
+  const rows = [header];
+  groups.forEach((g) => g.rows.forEach((row) => rows.push(rowToCsv(g.label, row))));
+  rows.push(rowToCsv('Overall', { label: '', ...overall }));
+  return rows;
 }
 
 export default function AdherenceModal() {
   const { adherenceModal, closeAdherence } = useApp();
-  const [region, setRegion] = useState(ALL);
-  const [subRegion, setSubRegion] = useState(ALL);
-  const [country, setCountry] = useState(ALL);
-  const [offering, setOffering] = useState(ALL);
-
-  const regionOptions = useMemo(() => uniqueSorted(ADHERENCE_ROWS.map((r) => r.region)), []);
-  const subRegionOptions = useMemo(
-    () => uniqueSorted(ADHERENCE_ROWS.filter((r) => region === ALL || r.region === region).map((r) => r.subRegion)),
-    [region],
-  );
-  const countryOptions = useMemo(
-    () => uniqueSorted(ADHERENCE_ROWS.filter((r) => (region === ALL || r.region === region) && (subRegion === ALL || r.subRegion === subRegion)).map((r) => r.country)),
-    [region, subRegion],
-  );
-  const offeringOptions = useMemo(() => uniqueSorted(ADHERENCE_ROWS.map((r) => r.offering)), []);
-
-  function handleRegionChange(v) {
-    setRegion(v);
-    setSubRegion(ALL);
-    setCountry(ALL);
-  }
-  function handleSubRegionChange(v) {
-    setSubRegion(v);
-    setCountry(ALL);
-  }
-
-  const rows = useMemo(() => ADHERENCE_ROWS
-    .filter((r) => region === ALL || r.region === region)
-    .filter((r) => subRegion === ALL || r.subRegion === subRegion)
-    .filter((r) => country === ALL || r.country === country)
-    .filter((r) => offering === ALL || r.offering === offering)
-    .slice()
-    .sort((a, b) => b.adherence - a.adherence), [region, subRegion, country, offering]);
 
   return (
     <div className={'modal-overlay' + (adherenceModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeAdherence(); }}>
@@ -61,62 +42,55 @@ export default function AdherenceModal() {
         </div>
         <div className="modal-body">
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
-            <DownloadBtn
-              filename="forecast-adherence"
-              title="Download forecast adherence"
-              rows={[
-                ['Region', 'Sub Region', 'Country', 'Offering', 'Adherence%'],
-                ...rows.map((r) => [r.region, r.subRegion, r.country, r.offering, r.adherence + '%']),
-              ]}
-            />
+            <DownloadBtn filename="forecast-adherence-matrix" title="Download forecast adherence matrix" rows={buildCsvRows()} />
           </div>
 
-          <div className="filter-grid" style={{ marginBottom: '10px' }}>
-            <div className="filter-group">
-              <label>Region</label>
-              <select value={region} onChange={(e) => handleRegionChange(e.target.value)}>
-                <option value={ALL}>All Regions</option>
-                {regionOptions.map((r) => <option key={r} value={r}>{r}</option>)}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Sub Region</label>
-              <select value={subRegion} onChange={(e) => handleSubRegionChange(e.target.value)}>
-                <option value={ALL}>All Sub-Regions</option>
-                {subRegionOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Country</label>
-              <select value={country} onChange={(e) => setCountry(e.target.value)}>
-                <option value={ALL}>All Countries</option>
-                {countryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Offering</label>
-              <select value={offering} onChange={(e) => setOffering(e.target.value)}>
-                <option value={ALL}>All Offerings</option>
-                {offeringOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div className="tw holiday-tbl-wrap">
-            <table>
+          <div className="matrix-wrap">
+            <table className="matrix-tbl">
               <thead>
-                <tr><th>Region</th><th>Sub Region</th><th>Country</th><th>Offering</th><th>Adherence%</th></tr>
+                <tr>
+                  <th colSpan={2}></th>
+                  {regions.map((r) => <th key={r} colSpan={subsByRegion[r].length + 1}>{r}</th>)}
+                  <th rowSpan={2}>TOTAL</th>
+                </tr>
+                <tr>
+                  <th></th><th></th>
+                  {regions.map((r) => (
+                    <Fragment key={r}>
+                      {subsByRegion[r].map((s) => <th key={r + s}>{s}</th>)}
+                      <th>Total</th>
+                    </Fragment>
+                  ))}
+                </tr>
               </thead>
               <tbody>
-                {rows.map((r, i) => (
-                  <tr key={i}>
-                    <td>{r.region}</td>
-                    <td>{r.subRegion}</td>
-                    <td>{r.country}</td>
-                    <td>{r.offering}</td>
-                    <td style={{ color: tierColor(r.adherence), fontWeight: 700 }}>{r.adherence}%</td>
+                {groups.map((g) => g.rows.map((row, i) => (
+                  <tr key={g.label + row.label}>
+                    {i === 0 && <th rowSpan={g.rows.length}>{g.label}</th>}
+                    <th>{row.label}</th>
+                    {regions.map((r) => (
+                      <Fragment key={r}>
+                        {subsByRegion[r].map((s) => (
+                          <td key={s} className={cellClass(row.byRegion[r][s])}>{row.byRegion[r][s]}%</td>
+                        ))}
+                        <td className={cellClass(row.byRegion[r].Total)}>{row.byRegion[r].Total}%</td>
+                      </Fragment>
+                    ))}
+                    <td className={cellClass(row.grandTotal)}>{row.grandTotal}%</td>
                   </tr>
-                ))}
+                )))}
+                <tr className="mtx-overall-row">
+                  <th colSpan={2}>Overall</th>
+                  {regions.map((r) => (
+                    <Fragment key={r}>
+                      {subsByRegion[r].map((s) => (
+                        <td key={s} className={cellClass(overall.byRegion[r][s])}>{overall.byRegion[r][s]}%</td>
+                      ))}
+                      <td className={cellClass(overall.byRegion[r].Total)}>{overall.byRegion[r].Total}%</td>
+                    </Fragment>
+                  ))}
+                  <td className={cellClass(overall.grandTotal)}>{overall.grandTotal}%</td>
+                </tr>
               </tbody>
             </table>
           </div>

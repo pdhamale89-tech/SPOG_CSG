@@ -1,25 +1,18 @@
-// Region / Sub Region / Country / Offering level forecast adherence for the
-// Forecast Adherence detail table. Countries and their region-level accuracy
-// already exist in regions.js — this only adds the two dimensions that
-// don't: a Sub Region bucket per country and a per-Offering split, both
-// deterministically derived (same hash-variance technique regions.js already
-// uses for COUNTRY_ACC) so numbers stay stable across renders.
-import { COUNTRY_ACC, COUNTRY_REGION, MAJOR_COUNTRIES } from './regions';
+// Pivot matrix for the Forecast Adherence detail view: Region -> Sub Region
+// columns (each region group ending in its own Total column, plus a grand
+// Total column) crossed with Offering -> Segment rows (Basic splits into
+// Cons/Comm/Overall, Premium and Prosupport are Overall-only), plus a bottom
+// Overall summary row. Values are deterministic (hash-derived, no
+// Math.random/Date.now) so they stay stable across renders.
 
-const SUB_REGIONS = {
-  AMER: ['NA', 'MMCLA', 'Brazil'],
-  EMEA: ['UKI', 'NER', 'SER', 'CER', 'EC'],
-  APJ: ['CCC', 'IN', 'JPN', 'KOR', 'SA', 'ANZ'],
+const REGION_SUBS = {
+  AMER: ['Brazil', 'MMCLA', 'NA'],
+  APJ: ['ANZ', 'CCC', 'IND', 'JPN', 'KOR', 'SA'],
+  EMEA: ['CER', 'NER', 'SER', 'UKI'],
 };
 
-const OFFERINGS = ['Pro', 'Premium', 'Basic', 'OOP'];
-
-const COUNTRY_NAMES = {
-  US: 'United States', CA: 'Canada', MX: 'Mexico', BR: 'Brazil', AR: 'Argentina',
-  GB: 'United Kingdom', DE: 'Germany', FR: 'France', ES: 'Spain', IT: 'Italy',
-  RU: 'Russia', CN: 'China', JP: 'Japan', IN: 'India', AU: 'Australia',
-  ZA: 'South Africa', SA: 'Saudi Arabia', KR: 'Korea', ID: 'Indonesia', NG: 'Nigeria',
-};
+export const MATRIX_REGIONS = Object.keys(REGION_SUBS);
+export const MATRIX_SUBS_BY_REGION = REGION_SUBS;
 
 function hashCode(str) {
   let h = 0;
@@ -27,27 +20,63 @@ function hashCode(str) {
   return Math.abs(h);
 }
 
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
+function avg(nums) {
+  return Math.round(nums.reduce((s, n) => s + n, 0) / nums.length);
 }
 
-function subRegionFor(code, region) {
-  const opts = SUB_REGIONS[region] || SUB_REGIONS.AMER;
-  return opts[hashCode(code) % opts.length];
+function leafValue(key) {
+  return (hashCode(key) % 121) - 77; // -77..43
 }
 
-export const ADHERENCE_ROWS = MAJOR_COUNTRIES.flatMap((code) => {
-  const region = COUNTRY_REGION[code];
-  const subRegion = subRegionFor(code, region);
-  const countryAcc = COUNTRY_ACC[code];
-  return OFFERINGS.map((offering) => {
-    const variance = (hashCode(code + offering) % 13) - 6; // -6..+6
-    return {
-      region,
-      subRegion,
-      country: COUNTRY_NAMES[code] || code,
-      offering,
-      adherence: clamp(countryAcc + variance, 25, 98),
-    };
+function buildLeafRow(rowKey) {
+  const byRegion = {};
+  const allSubValues = [];
+  MATRIX_REGIONS.forEach((region) => {
+    const subs = REGION_SUBS[region];
+    const vals = subs.map((sub) => leafValue(`${rowKey}|${region}|${sub}`));
+    const bySub = {};
+    subs.forEach((sub, i) => { bySub[sub] = vals[i]; });
+    byRegion[region] = { ...bySub, Total: avg(vals) };
+    allSubValues.push(...vals);
   });
-});
+  return { byRegion, grandTotal: avg(allSubValues) };
+}
+
+function buildDerivedRow(componentRows) {
+  const byRegion = {};
+  const allSubValues = [];
+  MATRIX_REGIONS.forEach((region) => {
+    const subs = REGION_SUBS[region];
+    const vals = subs.map((sub) => avg(componentRows.map((r) => r.byRegion[region][sub])));
+    const bySub = {};
+    subs.forEach((sub, i) => { bySub[sub] = vals[i]; });
+    byRegion[region] = { ...bySub, Total: avg(vals) };
+    allSubValues.push(...vals);
+  });
+  return { byRegion, grandTotal: avg(allSubValues) };
+}
+
+const basicCons = buildLeafRow('basic-cons');
+const basicComm = buildLeafRow('basic-comm');
+const basicOverall = buildDerivedRow([basicCons, basicComm]);
+const premiumOverall = buildLeafRow('premium-overall');
+const prosupportOverall = buildLeafRow('prosupport-overall');
+const grandOverall = buildDerivedRow([basicOverall, premiumOverall, prosupportOverall]);
+
+export const ADHERENCE_MATRIX = {
+  regions: MATRIX_REGIONS,
+  subsByRegion: REGION_SUBS,
+  groups: [
+    {
+      label: 'Basic',
+      rows: [
+        { label: 'Cons', ...basicCons },
+        { label: 'Comm', ...basicComm },
+        { label: 'Overall', ...basicOverall },
+      ],
+    },
+    { label: 'Premium', rows: [{ label: 'Overall', ...premiumOverall }] },
+    { label: 'Prosupport', rows: [{ label: 'Overall', ...prosupportOverall }] },
+  ],
+  overall: grandOverall,
+};
