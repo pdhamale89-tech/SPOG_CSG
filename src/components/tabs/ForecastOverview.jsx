@@ -11,6 +11,7 @@ import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
 import PartnerMinimum from './PartnerMinimum';
+import ContactVolumeDetail from './ContactVolumeDetail';
 import InsightBox from '../common/InsightBox';
 import {
   buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
@@ -268,6 +269,8 @@ export default function ForecastOverview() {
           <InsightBox text={dmsInsight(nDmsData)} />
         </div>
       </div>
+
+      <ContactVolumeDetail />
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
