@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ADHERENCE_MATRIX } from '../../data/adherenceDetail';
 import DownloadBtn from '../common/DownloadBtn';
@@ -32,6 +32,11 @@ function buildCsvRows() {
 
 export default function AdherenceModal() {
   const { adherenceModal, closeAdherence } = useApp();
+  const [expanded, setExpanded] = useState({});
+
+  function toggleGroup(key) {
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
   return (
     <div className={'modal-overlay' + (adherenceModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeAdherence(); }}>
@@ -64,21 +69,31 @@ export default function AdherenceModal() {
                 </tr>
               </thead>
               <tbody>
-                {groups.map((g) => g.rows.map((row, i) => (
-                  <tr key={g.label + row.label}>
-                    {i === 0 && <th rowSpan={g.rows.length}>{g.label}</th>}
-                    <th>{row.label}</th>
-                    {regions.map((r) => (
-                      <Fragment key={r}>
-                        {subsByRegion[r].map((s) => (
-                          <td key={s} className={cellClass(row.byRegion[r][s])}>{row.byRegion[r][s]}%</td>
-                        ))}
-                        <td className={cellClass(row.byRegion[r].Total)}>{row.byRegion[r].Total}%</td>
-                      </Fragment>
-                    ))}
-                    <td className={cellClass(row.grandTotal)}>{row.grandTotal}%</td>
-                  </tr>
-                )))}
+                {groups.map((g) => {
+                  const isOpen = !!expanded[g.key];
+                  const visibleRows = isOpen ? g.rows : g.rows.filter((row) => row.label === 'Overall');
+                  return visibleRows.map((row, i) => (
+                    <tr key={g.key + row.label}>
+                      {i === 0 && (
+                        <th rowSpan={visibleRows.length}>
+                          <button type="button" className="mtx-toggle" onClick={() => toggleGroup(g.key)} title={isOpen ? 'Collapse' : 'Expand to see Consumer/Commercial split'}>
+                            <span className="mtx-toggle-ic">{isOpen ? '▾' : '▸'}</span>{g.label}
+                          </button>
+                        </th>
+                      )}
+                      <th>{row.label}</th>
+                      {regions.map((r) => (
+                        <Fragment key={r}>
+                          {subsByRegion[r].map((s) => (
+                            <td key={s} className={cellClass(row.byRegion[r][s])}>{row.byRegion[r][s]}%</td>
+                          ))}
+                          <td className={cellClass(row.byRegion[r].Total)}>{row.byRegion[r].Total}%</td>
+                        </Fragment>
+                      ))}
+                      <td className={cellClass(row.grandTotal)}>{row.grandTotal}%</td>
+                    </tr>
+                  ));
+                })}
                 <tr className="mtx-overall-row">
                   <th colSpan={2}>Overall</th>
                   {regions.map((r) => (

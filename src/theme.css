@@ -70,6 +70,9 @@
 .matrix-tbl td.mtx-neg{background:#dc2626;color:#fff;font-weight:700;}
 .matrix-tbl tr.mtx-overall-row th{background:var(--table-header);font-weight:800;}
 .matrix-tbl tr.mtx-overall-row td{font-weight:800;border-top:2px solid var(--text-primary);}
+.mtx-toggle{background:none;border:none;padding:0;margin:0;color:inherit;font:inherit;font-weight:700;font-size:9px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.mtx-toggle:hover{opacity:.8;}
+.mtx-toggle-ic{font-size:7px;color:#8ab4ff;width:8px;display:inline-block;}
 .drilldown-subtitle{font-size:11px;color:var(--text-muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--border);}
 .drilldown-toggle{display:flex;gap:4px;margin-bottom:12px;}
 .drilldown-toggle-btn{padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;}
