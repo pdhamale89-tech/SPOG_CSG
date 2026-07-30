@@ -511,7 +511,10 @@ export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear) {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
         y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
       },
-      plugins: { legend: LP, datalabels: { display: false } },
+      plugins: {
+        legend: LP,
+        datalabels: { display: true, color: '#fff', font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', formatter: (v) => v },
+      },
     },
   };
 }
