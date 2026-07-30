@@ -71,6 +71,27 @@ export default function AsuOverview() {
 
       <div className="s-grid full">
         <div className="card">
+          <div className="card-header"><div className="card-title">📉 Exit Trend <InfoBtn tip="<strong>Purpose</strong>Total Expiring Assets and Total Shipment by fiscal year against ASU Exit Actual/FCST." /></div></div>
+          <ChartCanvas config={nExitTrendConfig} height="260px" />
+          <InsightBox text={exitTrendInsight()} />
+        </div>
+      </div>
+
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">📈 Contact volume vs ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div>
+            <div className="card-dd">
+              <MultiSelectDropdown options={PROJECTION_MONTHS} selected={projMonths} onChange={setProjMonths} suffix="Projection" />
+            </div>
+          </div>
+          <ChartCanvas config={nVolumeTrendConfig} height="360px" />
+          <InsightBox text={asuVolumeTrendInsight()} />
+        </div>
+      </div>
+
+      <div className="s-grid full">
+        <div className="card">
           <div className="card-header">
             <div className="card-title">🏷️ Tag Routed <InfoBtn tip="<strong>Purpose</strong>Offered vs total Tag Count with the resulting Tags% trend." /></div>
             <div className="card-dd">
@@ -89,27 +110,6 @@ export default function AsuOverview() {
           </div>
           <ChartCanvas config={nTag2Config} height="220px" />
           <InsightBox text={tagRouted2Insight(dNTag)} />
-        </div>
-      </div>
-
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header"><div className="card-title">📉 Exit Trend <InfoBtn tip="<strong>Purpose</strong>Total Expiring Assets and Total Shipment by fiscal year against ASU Exit Actual/FCST." /></div></div>
-          <ChartCanvas config={nExitTrendConfig} height="260px" />
-          <InsightBox text={exitTrendInsight()} />
-        </div>
-      </div>
-
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header">
-            <div className="card-title">📈 Contact volume vs ASU <InfoBtn tip="<strong>Purpose</strong>Actual vs projected contact volume against Tech Support ASU across the last 3 fiscal years." /></div>
-            <div className="card-dd">
-              <MultiSelectDropdown options={PROJECTION_MONTHS} selected={projMonths} onChange={setProjMonths} suffix="Projection" />
-            </div>
-          </div>
-          <ChartCanvas config={nVolumeTrendConfig} height="360px" />
-          <InsightBox text={asuVolumeTrendInsight()} />
         </div>
       </div>
     </div>
