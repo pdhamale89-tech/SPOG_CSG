@@ -10,14 +10,15 @@ import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
+import PartnerMinimum from './PartnerMinimum';
 import InsightBox from '../common/InsightBox';
 import {
   buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
-  buildDmsConfig, buildPartnerConfig, buildHistTrendConfig,
+  buildDmsConfig, buildHistTrendConfig,
 } from '../charts/chartConfigs';
 import {
   geoMapInsight, planOfferedInsight, callVolumeInsight, channelMixInsight, dbOspInsight, dmsInsight,
-  partnerInsight, histTrendInsight,
+  histTrendInsight,
 } from '../../utils/insights';
 
 const QUEUE_ROWS = [
@@ -32,7 +33,7 @@ const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1)
 export default function ForecastOverview() {
   const {
     theme, curPeriod, fiscalYear, curRegion, chartRegionFor, setChartRegion, chartCountryFor, setChartCountry,
-    curHistPlan, setCurHistPlan, openApproval, openPartnerRca, actionLog,
+    curHistPlan, setCurHistPlan, openApproval, actionLog,
   } = useApp();
   const [geoView, setGeoView] = useState('region');
   const [dmsDrill, setDmsDrill] = useState({ level: 'overall', country: '', offering: '' });
@@ -46,7 +47,6 @@ export default function ForecastOverview() {
   const regionH1 = chartRegionFor('h1');
   const regionC5 = chartRegionFor('c5');
   const regionNDms = chartRegionFor('nDms');
-  const regionNPartner = chartRegionFor('nPartner');
   const regionNHist = chartRegionFor('nHist');
 
   const dC0 = useMemo(() => ({ ...D[curPeriod][regionC0], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC0].labels.length) }), [curPeriod, regionC0, fiscalYear]);
@@ -54,7 +54,6 @@ export default function ForecastOverview() {
   const dH1 = useMemo(() => ({ ...D[curPeriod][regionH1], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionH1].labels.length) }), [curPeriod, regionH1, fiscalYear]);
   const dC5 = useMemo(() => ({ ...D[curPeriod][regionC5], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC5].labels.length) }), [curPeriod, regionC5, fiscalYear]);
   const dNDms = useMemo(() => ({ ...D[curPeriod][regionNDms], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNDms].labels.length) }), [curPeriod, regionNDms, fiscalYear]);
-  const dNPartner = useMemo(() => ({ ...D[curPeriod][regionNPartner], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNPartner].labels.length) }), [curPeriod, regionNPartner, fiscalYear]);
   const dNHist = useMemo(() => ({ ...D[curPeriod][regionNHist], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNHist].labels.length) }), [curPeriod, regionNHist, fiscalYear]);
 
   const c0Config = useMemo(() => buildPlanOfferedConfig(dC0, theme), [dC0, theme]);
@@ -68,7 +67,6 @@ export default function ForecastOverview() {
     return dNDms;
   }, [dmsDrill, dNDms, curPeriod, fiscalYear]);
   const nDmsConfig = useMemo(() => buildDmsConfig(nDmsData, theme), [nDmsData, theme]);
-  const nPartnerConfig = useMemo(() => buildPartnerConfig(dNPartner, theme), [dNPartner, theme]);
   const nHistConfig = useMemo(() => buildHistTrendConfig(dNHist, theme, curHistPlan), [dNHist, theme, curHistPlan]);
 
   function dmsDrillReset() {
@@ -215,18 +213,16 @@ export default function ForecastOverview() {
         </div>
       </div>
 
-      <div className="s-grid">
+      <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">📊 Partner Minimum <InfoBtn tip="<strong>Purpose</strong>Actual vs Forecast with % threshold. Click bar for RCA." /></div>
-            <div className="card-dd">
-              <RegionSelect value={regionNPartner} onChange={(v) => setChartRegion('nPartner', v)} />
-              <CountrySelect value={chartCountryFor('nPartner')} onChange={(v) => setChartCountry('nPartner', v)} />
-            </div>
+            <div className="card-title">📊 Partner Minimum <InfoBtn tip="<strong>Purpose</strong>Lock% by partner, drill into queues, compare periods against target." /></div>
           </div>
-          <ChartCanvas config={nPartnerConfig} height="210px" onClick={(evt, els) => { if (els.length) openPartnerRca(els[0].index); }} />
-          <InsightBox text={partnerInsight(dNPartner)} />
+          <PartnerMinimum />
         </div>
+      </div>
+
+      <div className="s-grid full">
         <div className="card">
           <div className="card-header">
             <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories. Drill into a country or offering." /></div>

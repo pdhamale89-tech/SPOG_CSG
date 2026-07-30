@@ -51,12 +51,6 @@ export function dmsInsight(d) {
   return `Unassisted resolution rose from ${first(d.dmsUn)}% to ${last(d.dmsUn)}% while Assisted fell from ${first(d.dmsAs)}% to ${last(d.dmsAs)}%, reflecting a steady shift toward self-service.`;
 }
 
-export function partnerInsight(d) {
-  const pct = d.partActual.map((a, i) => (d.partForecast[i] ? round((a / d.partForecast[i]) * 100) : 0));
-  const belowCount = pct.filter((p) => p < 80).length;
-  const worstIdx = minIdx(pct);
-  return `Actual/forecast attainment stayed below the 80% threshold in ${belowCount} of ${pct.length} periods, bottoming at ${pct[worstIdx]}% in ${labelAt(d.labels, worstIdx)}.`;
-}
 
 export function histTrendInsight(d, curHistPlan) {
   const planLabel = curHistPlan === 'plan1' ? 'Jul Pro' : curHistPlan === 'plan2' ? 'Jun Pro' : 'Aug Pro';

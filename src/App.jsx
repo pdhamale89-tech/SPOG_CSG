@@ -8,7 +8,6 @@ import Toast from './components/common/Toast';
 import DetailModal from './components/modals/DetailModal';
 import ApprovalModal from './components/modals/ApprovalModal';
 import ForwardModal from './components/modals/ForwardModal';
-import PartnerRcaModal from './components/modals/PartnerRcaModal';
 import DrillDownModal from './components/modals/DrillDownModal';
 
 import Home from './components/tabs/Home';
@@ -61,7 +60,6 @@ function DashboardShell() {
       <DetailModal />
       <ApprovalModal />
       <ForwardModal />
-      <PartnerRcaModal />
       <DrillDownModal />
       <Toast />
     </div>

@@ -217,29 +217,117 @@ export function buildDmsConfig(d, theme) {
   };
 }
 
-export function buildPartnerConfig(d, theme) {
-  const S = baseScales(theme);
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
-  const LP = legendPos(theme);
-  const pct = d.partActual.map((a, i) => (d.partForecast[i] ? Math.round((a / d.partForecast[i]) * 100) : 0));
+// Partner Minimum / Partner Lock: horizontal Lock% bars colored by threshold
+// (green ≥ target, orange ≥ 50%, red below), an optional translucent
+// Compare overlay for a second period, and a dashed per-row Target line.
+// data/compData come from partnerLockData.js's partnerAgg/queueAgg.
+export function buildPartnerLockConfig(data, compData, theme, isPartnerView) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, accentGreen, accentOrange, accentRed } = getColors(theme);
+  const hasCompare = !!compData;
+
+  function barColor(pct, target) {
+    if (pct >= target) return accentGreen;
+    if (pct >= 50) return accentOrange;
+    return accentRed;
+  }
+
+  const labels = data.map((d) => d.name);
+  const datasets = [
+    {
+      label: 'Lock%',
+      data: data.map((d) => d.pct),
+      backgroundColor: data.map((d) => barColor(d.pct, d.target)),
+      borderRadius: 5,
+      barPercentage: hasCompare ? 0.42 : 0.55,
+      categoryPercentage: 0.75,
+      datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
+    },
+  ];
+
+  if (hasCompare) {
+    const cMap = {};
+    compData.forEach((d) => { cMap[d.name] = d.pct; });
+    datasets.push({
+      label: 'Compare',
+      data: data.map((d) => cMap[d.name] || 0),
+      backgroundColor: 'rgba(96,165,250,.28)',
+      borderColor: 'rgba(96,165,250,.6)',
+      borderWidth: 1,
+      borderRadius: 5,
+      barPercentage: 0.42,
+      categoryPercentage: 0.75,
+      datalabels: { display: true, color: 'rgba(96,165,250,.9)', font: { size: 10 }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
+    });
+  }
+
+  datasets.push({
+    label: 'Target',
+    data: data.map((d) => d.target),
+    type: 'line',
+    borderColor: accentOrange,
+    borderWidth: 2,
+    borderDash: [6, 4],
+    pointBackgroundColor: accentOrange,
+    pointBorderColor: accentOrange,
+    pointRadius: 4,
+    pointHoverRadius: 6,
+    fill: false,
+    tension: 0,
+    datalabels: {
+      display: true, color: '#fff', font: { size: 9, weight: '600' }, anchor: 'center', align: 'top', offset: -2,
+      backgroundColor: 'rgba(0,0,0,.45)', borderRadius: 4, padding: { top: 2, bottom: 2, left: 5, right: 5 },
+      formatter: (v) => `T:${v}%`,
+    },
+  });
+
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Actual', data: d.partActual, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, order: 2 },
-        { label: 'Forecast', data: d.partForecast, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3, order: 3 },
-        { label: 'Actual/Forecast %', data: pct, type: 'line', borderColor: '#10b981', borderWidth: 2.5, pointRadius: 4, fill: false, yAxisID: 'y1', order: 1 },
-        { label: '80% Threshold', data: d.labels.map(() => 80), type: 'line', borderColor: '#ef4444', borderDash: [6, 3], borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y1', order: 0 },
-      ],
-    },
+    data: { labels, datasets },
     options: {
+      indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
-      scales: { x: S.x, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } }, y1: { position: 'right', ticks: { color: '#ef4444', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 40, max: 120 } },
-      plugins: { legend: LP, datalabels: { display: false } },
+      onHover: (evt, elements) => {
+        const overBar = elements.length > 0 && elements[0].datasetIndex === 0;
+        evt.native.target.style.cursor = isPartnerView && overBar ? 'pointer' : 'default';
+      },
+      scales: {
+        x: { min: 0, max: 110, grid: { color: gc }, ticks: { color: tc, font: { size: 9 }, stepSize: 20, callback: (v) => v + '%' } },
+        y: { grid: { display: false }, ticks: { color: tc, font: { size: isPartnerView ? 11 : 10 } } },
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => data[items[0].dataIndex].name,
+            label: () => '',
+            afterBody: (items) => {
+              const d = data[items[0].dataIndex];
+              const lines = [
+                `Lock Offered: ${d.lock.toLocaleString()}`,
+                `Actual Offered: ${d.actual.toLocaleString()}`,
+                `Lock%: ${d.pct}%`,
+                `Target: ${d.target}%`,
+              ];
+              if (d.queues) lines.push(`Queues: ${d.queues}`);
+              if (d.regions) lines.push(`Region(s): ${d.regions}`);
+              if (compData) {
+                const cMap = {};
+                compData.forEach((x) => { cMap[x.name] = x; });
+                const cd = cMap[d.name];
+                if (cd) {
+                  const diff = d.pct - cd.pct;
+                  lines.push(`Compare Lock%: ${cd.pct}%`);
+                  lines.push(`Δ Change: ${diff >= 0 ? '+' : ''}${diff}%`);
+                }
+              }
+              if (isPartnerView) lines.push('Click to drill down');
+              return lines;
+            },
+          },
+        },
+      },
     },
   };
 }

@@ -41,7 +41,6 @@ export function AppProvider({ children }) {
   const [detailModal, setDetailModal] = useState({ open: false, title: '', body: '' });
   const [approvalModal, setApprovalModal] = useState({ open: false, id: '', area: '', priority: 'Low', prefillRootCause: '' });
   const [forwardModal, setForwardModal] = useState({ open: false, step: 1, forRca: false });
-  const [partnerRcaModal, setPartnerRcaModal] = useState({ open: false, idx: 0 });
   const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [], tableRows: [] });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
@@ -140,9 +139,6 @@ export function AppProvider({ children }) {
     return true;
   }, [showToast]);
 
-  const openPartnerRca = useCallback((idx) => setPartnerRcaModal({ open: true, idx }), []);
-  const closePartnerRca = useCallback(() => setPartnerRcaModal((m) => ({ ...m, open: false })), []);
-
   const openDrillDown = useCallback((title, subtitle, panels, tableRows) => setDrillDownModal({ open: true, title, subtitle, panels, tableRows }), []);
   const closeDrillDown = useCallback(() => setDrillDownModal((m) => ({ ...m, open: false })), []);
 
@@ -155,7 +151,6 @@ export function AppProvider({ children }) {
         setApprovalModal((m) => ({ ...m, open: false }));
         setForwardModal((m) => ({ ...m, open: false }));
         setDetailModal((m) => ({ ...m, open: false }));
-        setPartnerRcaModal((m) => ({ ...m, open: false }));
         setDrillDownModal((m) => ({ ...m, open: false }));
       }
     }
@@ -179,7 +174,6 @@ export function AppProvider({ children }) {
     approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval,
     forwardModal, openForward, closeForward, submitForward,
-    partnerRcaModal, openPartnerRca, closePartnerRca,
     drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb,
@@ -189,7 +183,6 @@ export function AppProvider({ children }) {
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
-    partnerRcaModal, openPartnerRca, closePartnerRca,
     drillDownModal, openDrillDown, closeDrillDown, actionLog, logAction]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
