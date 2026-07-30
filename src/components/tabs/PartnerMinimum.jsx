@@ -91,7 +91,7 @@ export default function PartnerMinimum() {
 
       <div className="pm-summary">
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{totalQueues}</div><div className="pm-summary-lbl">Total Queues</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{data.length}</div><div className="pm-summary-lbl">{isPartnerView ? 'Partners' : 'Queues'}</div></div>
+        {isPartnerView && <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{data.length}</div><div className="pm-summary-lbl">Partners</div></div>}
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{totalLock.toLocaleString()}</div><div className="pm-summary-lbl">Lock Offered</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{totalActual.toLocaleString()}</div><div className="pm-summary-lbl">Actual Offered</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: overallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPct}%</div><div className="pm-summary-lbl">Lock%</div></div>
