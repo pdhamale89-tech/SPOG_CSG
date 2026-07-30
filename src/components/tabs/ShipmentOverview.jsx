@@ -12,7 +12,7 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildShipUppConfig, buildShipDrillConfig, buildShipmentTrendStaticConfig, buildSegmentSoldConfig,
-  buildProductTrendConfig, buildShipmentGrowthConfig,
+  buildProductTrendConfig, buildShipmentGrowthConfig, segmentSoldGrowthPct,
 } from '../charts/chartConfigs';
 import {
   shipUppInsight, shipDrillInsight, shipmentTrendInsight, segmentSoldInsight, productTrendInsight,
@@ -49,6 +49,7 @@ const SEGMENT_DETAIL_ROWS = SEGMENT_ORDER.map((segment) => {
 const TOTAL_FORECAST = QUEUE_DETAIL_ROWS.reduce((s, q) => s + q.forecast, 0);
 const TOTAL_ACTUAL = QUEUE_DETAIL_ROWS.reduce((s, q) => s + q.actual, 0);
 const SHIPMENT_ADHERENCE = Math.round((TOTAL_ACTUAL / TOTAL_FORECAST) * 1000) / 10;
+const SEGMENT_SOLD_GROWTH = segmentSoldGrowthPct();
 
 export default function ShipmentOverview() {
   const {
@@ -86,7 +87,11 @@ export default function ShipmentOverview() {
       <div className="kpi-grid">
         <KpiCard label="TOTAL SHIPMENTS" value={d.kpi.ship} delta="▼ 4% vs AOP" />
         <KpiCard label="SHIPMENT GROWTH" value={d.kpi.shgr} sub="YoY" />
-        <KpiCard label="SHIPMENT VARIANCE" value={d.kpi.shvar} sub="Plan vs Actual" />
+        <KpiCard
+          label="SEGMENT SOLD GROWTH"
+          value={`${SEGMENT_SOLD_GROWTH >= 0 ? '+' : ''}${SEGMENT_SOLD_GROWTH}%`}
+          delta={`${SEGMENT_SOLD_GROWTH >= 0 ? '▲' : '▼'} First vs Last Period`}
+        />
         <KpiCard label="SHIPMENT ADHERENCE" value={`${SHIPMENT_ADHERENCE}%`} delta="Actual vs Forecast" />
       </div>
 

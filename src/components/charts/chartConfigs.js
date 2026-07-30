@@ -491,6 +491,22 @@ export function buildShipDrillConfig(region, level, offering, theme, curPeriod, 
   };
 }
 
+export const SEGMENT_SOLD_DATA = {
+  Consumer: [18, 19, 17, 20, 21, 22, 20, 21],
+  Commercial: [22, 24, 22, 25, 26, 27, 24, 27],
+  Enterprise: [15, 15, 13, 15, 15, 16, 15, 16],
+};
+
+// Total segment-sold volume growth from the first to the last period in the
+// chart above (same source array, so the KPI card always matches the chart).
+export function segmentSoldGrowthPct() {
+  const n = SEGMENT_SOLD_DATA.Consumer.length;
+  const totalAt = (i) => SEGMENT_SOLD_DATA.Consumer[i] + SEGMENT_SOLD_DATA.Commercial[i] + SEGMENT_SOLD_DATA.Enterprise[i];
+  const first = totalAt(0);
+  const last = totalAt(n - 1);
+  return Math.round(((last - first) / first) * 1000) / 10;
+}
+
 export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
@@ -499,9 +515,9 @@ export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'Consumer', data: [18,19,17,20,21,22,20,21], backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 2 },
-        { label: 'Commercial', data: [22,24,22,25,26,27,24,27], backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 2 },
-        { label: 'Enterprise', data: [15,15,13,15,15,16,15,16], backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 2 },
+        { label: 'Consumer', data: SEGMENT_SOLD_DATA.Consumer, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 2 },
+        { label: 'Commercial', data: SEGMENT_SOLD_DATA.Commercial, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 2 },
+        { label: 'Enterprise', data: SEGMENT_SOLD_DATA.Enterprise, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 2 },
       ],
     },
     options: {
