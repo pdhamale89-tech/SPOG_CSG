@@ -4,7 +4,7 @@
 // don't: a Sub Region bucket per country and a per-Offering split, both
 // deterministically derived (same hash-variance technique regions.js already
 // uses for COUNTRY_ACC) so numbers stay stable across renders.
-import { REGION_ACC, COUNTRY_ACC, COUNTRY_REGION, MAJOR_COUNTRIES } from './regions';
+import { COUNTRY_ACC, COUNTRY_REGION, MAJOR_COUNTRIES } from './regions';
 
 const SUB_REGIONS = {
   AMER: ['NA', 'MMCLA', 'Brazil'],
@@ -51,7 +51,3 @@ export const ADHERENCE_ROWS = MAJOR_COUNTRIES.flatMap((code) => {
     };
   });
 });
-
-export const GLOBAL_ADHERENCE = Math.round(
-  Object.values(REGION_ACC).reduce((s, v) => s + v, 0) / Object.values(REGION_ACC).length,
-);

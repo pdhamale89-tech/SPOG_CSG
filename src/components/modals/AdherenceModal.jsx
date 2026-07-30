@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ADHERENCE_ROWS, GLOBAL_ADHERENCE } from '../../data/adherenceDetail';
+import { ADHERENCE_ROWS } from '../../data/adherenceDetail';
 import DownloadBtn from '../common/DownloadBtn';
 
 const ALL = 'All';
@@ -52,8 +52,6 @@ export default function AdherenceModal() {
     .slice()
     .sort((a, b) => b.adherence - a.adherence), [region, subRegion, country, offering]);
 
-  const filteredAvg = rows.length ? Math.round(rows.reduce((s, r) => s + r.adherence, 0) / rows.length) : 0;
-
   return (
     <div className={'modal-overlay' + (adherenceModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeAdherence(); }}>
       <div className="modal adherence-modal" onClick={(e) => e.stopPropagation()}>
@@ -62,14 +60,7 @@ export default function AdherenceModal() {
           <button className="modal-close" onClick={closeAdherence}>&times;</button>
         </div>
         <div className="modal-body">
-          <div className="pm-summary" style={{ marginBottom: '12px', paddingBottom: '12px' }}>
-            <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: tierColor(GLOBAL_ADHERENCE) }}>{GLOBAL_ADHERENCE}%</div><div className="pm-summary-lbl">Global Adherence</div></div>
-            <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: tierColor(filteredAvg) }}>{filteredAvg}%</div><div className="pm-summary-lbl">Filtered Avg</div></div>
-            <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{rows.length}</div><div className="pm-summary-lbl">Rows Shown</div></div>
-          </div>
-
-          <div className="card-header" style={{ marginBottom: '4px' }}>
-            <div className="card-title" style={{ fontSize: '11px' }}>Breakdown</div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
             <DownloadBtn
               filename="forecast-adherence"
               title="Download forecast adherence"
