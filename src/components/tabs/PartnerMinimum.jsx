@@ -48,7 +48,7 @@ export default function PartnerMinimum() {
     () => buildPartnerLockConfig(data, theme, isPartnerView, TARGET_PCT),
     [data, theme, isPartnerView],
   );
-  const height = Math.max(280, data.length * 55 + 60);
+  const height = Math.max(200, data.length * 30 + 40);
 
   const totalQueues = isPartnerView ? sum(data, 'queues') : data.length;
   const totalLock = sum(data, 'lock');
