@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PARTNER_PERIODS, partnerAgg, queueAgg } from '../../data/partnerLockData';
 import { buildPartnerLockConfig } from '../charts/chartConfigs';
 import ChartCanvas from '../charts/ChartCanvas';
+import InfoBtn from '../common/InfoBtn';
 
-const GRANULARITIES = [
-  { key: 'weekly', label: '📅 Weekly' },
-  { key: 'monthly', label: '📆 Monthly' },
-  { key: 'quarterly', label: '📊 Quarterly' },
-];
+// The chart follows the global Weekly/Monthly/QTR filter instead of owning
+// its own granularity tabs; PARTNER_PERIODS just uses "quarterly" as the key.
+const GRAN_MAP = { weekly: 'weekly', monthly: 'monthly', qtr: 'quarterly' };
+const TARGET_PCT = 80;
 
 function sum(arr, key) {
   return arr.reduce((s, x) => s + x[key], 0);
@@ -21,38 +21,41 @@ function changeTone(diff) {
 }
 
 export default function PartnerMinimum() {
-  const { theme } = useApp();
-  const [gran, setGran] = useState('weekly');
-  const [periodIdx, setPeriodIdx] = useState(PARTNER_PERIODS.weekly.default);
-  const [compareKey, setCompareKey] = useState('none');
+  const { theme, curPeriod } = useApp();
+  const gran = GRAN_MAP[curPeriod] || 'weekly';
+  const period = PARTNER_PERIODS[gran];
+  const [periodIdx, setPeriodIdx] = useState(period.default);
   const [view, setView] = useState('partner');
   const [selPartner, setSelPartner] = useState(null);
-
-  const period = PARTNER_PERIODS[gran];
-  const pKey = period.keys[periodIdx];
-  const cKey = compareKey === 'none' ? null : compareKey;
-  const prevKey = periodIdx > 0 ? period.keys[periodIdx - 1] : null;
   const isPartnerView = view === 'partner';
+
+  // Reset to this granularity's default period and back out of any queue
+  // drill-down whenever the global Weekly/Monthly/QTR toggle changes.
+  useEffect(() => {
+    setPeriodIdx(PARTNER_PERIODS[gran].default);
+    setView('partner');
+    setSelPartner(null);
+  }, [gran]);
+
+  const pKey = period.keys[periodIdx] ?? period.keys[period.default];
+  const prevKey = periodIdx > 0 ? period.keys[periodIdx - 1] : null;
 
   const data = useMemo(
     () => (isPartnerView ? partnerAgg(pKey) : queueAgg(pKey, selPartner)),
     [pKey, isPartnerView, selPartner],
   );
-  const compData = useMemo(
-    () => (cKey ? (isPartnerView ? partnerAgg(cKey) : queueAgg(cKey, selPartner)) : null),
-    [cKey, isPartnerView, selPartner],
-  );
   const config = useMemo(
-    () => buildPartnerLockConfig(data, compData, theme, isPartnerView),
-    [data, compData, theme, isPartnerView],
+    () => buildPartnerLockConfig(data, theme, isPartnerView, TARGET_PCT),
+    [data, theme, isPartnerView],
   );
   const height = Math.max(280, data.length * 55 + 60);
 
+  const totalQueues = isPartnerView ? sum(data, 'queues') : data.length;
   const totalLock = sum(data, 'lock');
   const totalActual = sum(data, 'actual');
   const overallPct = totalLock > 0 ? Math.round((totalActual / totalLock) * 100) : 0;
   const gap = totalLock - totalActual;
-  const meetTarget = data.filter((d) => d.pct >= d.target).length;
+  const meetTarget = data.filter((d) => d.pct >= TARGET_PCT).length;
 
   let change = null;
   if (prevKey) {
@@ -63,20 +66,8 @@ export default function PartnerMinimum() {
     change = { diff: overallPct - prevPct, ...changeTone(overallPct - prevPct) };
   }
 
-  const compareOptions = period.labels
-    .map((label, i) => ({ key: period.keys[i], label }))
-    .filter((_, i) => i !== periodIdx);
-
-  function switchGran(g) {
-    setGran(g);
-    setPeriodIdx(PARTNER_PERIODS[g].default);
-    setCompareKey('none');
-    setView('partner');
-    setSelPartner(null);
-  }
   function handlePeriodChange(e) {
     setPeriodIdx(Number(e.target.value));
-    setCompareKey('none');
   }
   function handleBarClick(evt, els) {
     if (isPartnerView && els.length && els[0].datasetIndex === 0) {
@@ -89,12 +80,24 @@ export default function PartnerMinimum() {
     setSelPartner(null);
   }
 
+  const tip = '<strong>Purpose</strong>Lock% by partner, drill into queues, compare periods against an 80% target.'
+    + (isPartnerView ? '<strong>Tip</strong>💡 Click a partner bar to drill down' : '');
+
   return (
     <div>
-      <div className="plan-sel" style={{ marginBottom: '10px' }}>
-        {GRANULARITIES.map((g) => (
-          <button key={g.key} className={'plan-btn' + (gran === g.key ? ' active' : '')} onClick={() => switchGran(g.key)}>{g.label}</button>
-        ))}
+      <div className="card-header">
+        <div className="card-title">📊 Partner Minimum <InfoBtn tip={tip} /></div>
+      </div>
+
+      <div className="pm-summary">
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{totalQueues}</div><div className="pm-summary-lbl">Total Queues</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{data.length}</div><div className="pm-summary-lbl">{isPartnerView ? 'Partners' : 'Queues'}</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{totalLock.toLocaleString()}</div><div className="pm-summary-lbl">Lock Offered</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{totalActual.toLocaleString()}</div><div className="pm-summary-lbl">Actual Offered</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: overallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPct}%</div><div className="pm-summary-lbl">Lock%</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: change ? change.color : 'var(--text-muted)' }}>{change ? `${change.symbol}${change.diff >= 0 ? '+' : ''}${change.diff}%` : '—'}</div><div className="pm-summary-lbl">vs Prev</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{gap.toLocaleString()}</div><div className="pm-summary-lbl">Gap</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: meetTarget >= data.length / 2 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{meetTarget}/{data.length}</div><div className="pm-summary-lbl">On Target</div></div>
       </div>
 
       <div className="drill-bc">
@@ -109,11 +112,6 @@ export default function PartnerMinimum() {
         <select className="f-sel" value={periodIdx} onChange={handlePeriodChange}>
           {period.labels.map((l, i) => <option key={l} value={i}>{l}</option>)}
         </select>
-        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginLeft: '6px' }}>Compare</span>
-        <select className="f-sel" value={compareKey} onChange={(e) => setCompareKey(e.target.value)}>
-          <option value="none">None</option>
-          {compareOptions.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-        </select>
         {!isPartnerView && <button className="btn-a" style={{ marginLeft: 'auto' }} onClick={goBack}>← Back to Partners</button>}
       </div>
 
@@ -123,19 +121,7 @@ export default function PartnerMinimum() {
         <div className="pm-legend-item"><span className="dot dot-g"></span>≥ Target</div>
         <div className="pm-legend-item"><span className="dot dot-o"></span>50%–Target</div>
         <div className="pm-legend-item"><span className="dot dot-r"></span>&lt; 50%</div>
-        {cKey && <div className="pm-legend-item"><span className="pm-swatch-compare"></span>Compare</div>}
-        <div className="pm-legend-item"><span className="pm-swatch-target"></span>Target</div>
-        {isPartnerView && <div className="pm-hint">💡 Click a partner bar to drill down</div>}
-      </div>
-
-      <div className="pm-summary">
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{data.length}</div><div className="pm-summary-lbl">{isPartnerView ? 'Partners' : 'Queues'}</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{totalLock.toLocaleString()}</div><div className="pm-summary-lbl">Lock Offered</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{totalActual.toLocaleString()}</div><div className="pm-summary-lbl">Actual Offered</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: overallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPct}%</div><div className="pm-summary-lbl">Lock%</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: change ? change.color : 'var(--text-muted)' }}>{change ? `${change.symbol}${change.diff >= 0 ? '+' : ''}${change.diff}%` : '—'}</div><div className="pm-summary-lbl">vs Prev</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{gap.toLocaleString()}</div><div className="pm-summary-lbl">Gap</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: meetTarget >= data.length / 2 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{meetTarget}/{data.length}</div><div className="pm-summary-lbl">On Target</div></div>
+        <div className="pm-legend-item"><span className="pm-swatch-target"></span>Target ({TARGET_PCT}%)</div>
       </div>
     </div>
   );

@@ -215,9 +215,6 @@ export default function ForecastOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header">
-            <div className="card-title">📊 Partner Minimum <InfoBtn tip="<strong>Purpose</strong>Lock% by partner, drill into queues, compare periods against target." /></div>
-          </div>
           <PartnerMinimum />
         </div>
       </div>

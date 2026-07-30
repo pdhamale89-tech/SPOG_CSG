@@ -217,16 +217,15 @@ export function buildDmsConfig(d, theme) {
   };
 }
 
-// Partner Minimum / Partner Lock: horizontal Lock% bars colored by threshold
-// (green ≥ target, orange ≥ 50%, red below), an optional translucent
-// Compare overlay for a second period, and a dashed per-row Target line.
-// data/compData come from partnerLockData.js's partnerAgg/queueAgg.
-export function buildPartnerLockConfig(data, compData, theme, isPartnerView) {
+// Partner Minimum / Partner Lock: horizontal Lock% bars colored by a flat
+// threshold (green ≥ target, orange ≥ 50%, red below) with a matching flat
+// dashed Target line. data comes from partnerLockData.js's
+// partnerAgg/queueAgg; targetPct is the single flat threshold (80%).
+export function buildPartnerLockConfig(data, theme, isPartnerView, targetPct) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, accentGreen, accentOrange, accentRed } = getColors(theme);
-  const hasCompare = !!compData;
 
-  function barColor(pct, target) {
-    if (pct >= target) return accentGreen;
+  function barColor(pct) {
+    if (pct >= targetPct) return accentGreen;
     if (pct >= 50) return accentOrange;
     return accentRed;
   }
@@ -236,49 +235,28 @@ export function buildPartnerLockConfig(data, compData, theme, isPartnerView) {
     {
       label: 'Lock%',
       data: data.map((d) => d.pct),
-      backgroundColor: data.map((d) => barColor(d.pct, d.target)),
+      backgroundColor: data.map((d) => barColor(d.pct)),
       borderRadius: 5,
-      barPercentage: hasCompare ? 0.42 : 0.55,
+      barPercentage: 0.55,
       categoryPercentage: 0.75,
       datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
     },
-  ];
-
-  if (hasCompare) {
-    const cMap = {};
-    compData.forEach((d) => { cMap[d.name] = d.pct; });
-    datasets.push({
-      label: 'Compare',
-      data: data.map((d) => cMap[d.name] || 0),
-      backgroundColor: 'rgba(96,165,250,.28)',
-      borderColor: 'rgba(96,165,250,.6)',
-      borderWidth: 1,
-      borderRadius: 5,
-      barPercentage: 0.42,
-      categoryPercentage: 0.75,
-      datalabels: { display: true, color: 'rgba(96,165,250,.9)', font: { size: 10 }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
-    });
-  }
-
-  datasets.push({
-    label: 'Target',
-    data: data.map((d) => d.target),
-    type: 'line',
-    borderColor: accentOrange,
-    borderWidth: 2,
-    borderDash: [6, 4],
-    pointBackgroundColor: accentOrange,
-    pointBorderColor: accentOrange,
-    pointRadius: 4,
-    pointHoverRadius: 6,
-    fill: false,
-    tension: 0,
-    datalabels: {
-      display: true, color: '#fff', font: { size: 9, weight: '600' }, anchor: 'center', align: 'top', offset: -2,
-      backgroundColor: 'rgba(0,0,0,.45)', borderRadius: 4, padding: { top: 2, bottom: 2, left: 5, right: 5 },
-      formatter: (v) => `T:${v}%`,
+    {
+      label: 'Target',
+      data: data.map(() => targetPct),
+      type: 'line',
+      borderColor: accentOrange,
+      borderWidth: 2,
+      borderDash: [6, 4],
+      pointBackgroundColor: accentOrange,
+      pointBorderColor: accentOrange,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      fill: false,
+      tension: 0,
+      datalabels: { display: false },
     },
-  });
+  ];
 
   return {
     type: 'bar',
@@ -308,20 +286,10 @@ export function buildPartnerLockConfig(data, compData, theme, isPartnerView) {
                 `Lock Offered: ${d.lock.toLocaleString()}`,
                 `Actual Offered: ${d.actual.toLocaleString()}`,
                 `Lock%: ${d.pct}%`,
-                `Target: ${d.target}%`,
+                `Target: ${targetPct}%`,
               ];
               if (d.queues) lines.push(`Queues: ${d.queues}`);
               if (d.regions) lines.push(`Region(s): ${d.regions}`);
-              if (compData) {
-                const cMap = {};
-                compData.forEach((x) => { cMap[x.name] = x; });
-                const cd = cMap[d.name];
-                if (cd) {
-                  const diff = d.pct - cd.pct;
-                  lines.push(`Compare Lock%: ${cd.pct}%`);
-                  lines.push(`Δ Change: ${diff >= 0 ? '+' : ''}${diff}%`);
-                }
-              }
               if (isPartnerView) lines.push('Click to drill down');
               return lines;
             },
