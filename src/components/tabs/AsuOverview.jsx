@@ -9,6 +9,7 @@ import KpiCard from '../common/KpiCard';
 import MultiSelectDropdown from '../common/MultiSelectDropdown';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
+import AsuRegionalMetrics from './AsuRegionalMetrics';
 import {
   buildAsuTrendConfig, buildAsuCpasuConfig, buildTagRouted2Config, buildExitTrendConfig,
   buildAsuVolumeTrendConfig, PROJECTION_MONTHS,
@@ -116,6 +117,8 @@ export default function AsuOverview() {
           </div>
         </div>
       )}
+
+      <AsuRegionalMetrics />
     </div>
   );
 }
