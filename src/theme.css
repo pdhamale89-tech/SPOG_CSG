@@ -87,15 +87,15 @@
 .matrix-wrap{overflow-x:auto;margin-top:2px;}
 .matrix-tbl{width:100%;min-width:920px;border-collapse:collapse;font-size:10px;}
 .matrix-tbl th,.matrix-tbl td{padding:6px 7px;text-align:center;border:1px solid var(--border);white-space:nowrap;}
-.matrix-tbl thead th{background:#1b2a4b;color:#fff;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.3px;}
-.matrix-tbl tbody th{background:var(--bg-card);color:var(--text-primary);text-align:left;font-weight:700;font-size:9px;}
-.matrix-tbl td.mtx-pos{background:#16a34a;color:#fff;font-weight:700;}
-.matrix-tbl td.mtx-neg{background:#dc2626;color:#fff;font-weight:700;}
+.matrix-tbl thead th{background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;font-weight:700;text-transform:uppercase;font-size:9px;letter-spacing:.3px;}
+.matrix-tbl tbody th{background:var(--table-header);color:var(--text-primary);text-align:left;font-weight:700;font-size:9px;}
+.matrix-tbl td.mtx-pos{background:var(--accent-green);color:#fff;font-weight:700;}
+.matrix-tbl td.mtx-neg{background:var(--accent-red);color:#fff;font-weight:700;}
 .matrix-tbl tr.mtx-overall-row th{background:var(--table-header);font-weight:800;}
 .matrix-tbl tr.mtx-overall-row td{font-weight:800;border-top:2px solid var(--text-primary);}
 .mtx-toggle{background:none;border:none;padding:0;margin:0;color:inherit;font:inherit;font-weight:700;font-size:9px;cursor:pointer;display:flex;align-items:center;gap:4px;}
 .mtx-toggle:hover{opacity:.8;}
-.mtx-toggle-ic{font-size:7px;color:#8ab4ff;width:8px;display:inline-block;}
+.mtx-toggle-ic{font-size:7px;color:var(--accent-blue);width:8px;display:inline-block;}
 .drilldown-subtitle{font-size:11px;color:var(--text-muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--border);}
 .drilldown-toggle{display:flex;gap:4px;margin-bottom:12px;}
 .drilldown-toggle-btn{padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;}
