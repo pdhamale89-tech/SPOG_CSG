@@ -200,9 +200,9 @@ export function buildDmsConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#10b981' },
-        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#3b82f6' },
-        { label: 'Assisted', data: d.dmsAs, backgroundColor: '#ef4444' },
+        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#F5E027' },
+        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#B3CBE8' },
+        { label: 'Assisted', data: d.dmsAs, backgroundColor: '#0D4C91' },
       ],
     },
     options: {
