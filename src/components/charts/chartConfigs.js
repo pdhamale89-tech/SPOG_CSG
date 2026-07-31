@@ -778,10 +778,18 @@ export function buildCapVolumeConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Jul DB', data: d.julDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
-        { label: 'Jul OSP', data: d.julOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
-        { label: 'Aug DB', data: d.augDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
-        { label: 'Aug OSP', data: d.augOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+        { label: `${d.periodA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
+        { label: `${d.periodA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
+        { label: `${d.periodB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
+        { label: `${d.periodB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+        {
+          label: `${d.periodA} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
+          borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
+        },
+        {
+          label: `${d.periodB} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
+          borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
+        },
       ],
     },
     options: {
@@ -789,29 +797,6 @@ export function buildCapVolumeConfig(d, theme) {
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
       scales: { x: S.x, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
-      plugins: { legend: LP, datalabels: DL },
-    },
-  };
-}
-
-export function buildCapVolumeTrendConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
-  const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
-  return {
-    type: 'line',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Jul Total Vol', data: d.julTotal, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
-        { label: 'Aug Total Vol', data: d.augTotal, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,.08)', fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2.5 },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: TOP_LABEL_LAYOUT,
-      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } } },
       plugins: { legend: LP, datalabels: DL },
     },
   };

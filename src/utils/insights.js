@@ -63,13 +63,9 @@ export function histTrendInsight(d, curHistPlan) {
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {
-  const julTotal = d.julDb.map((v, i) => v + d.julOsp[i]);
-  const augTotal = d.augDb.map((v, i) => v + d.augOsp[i]);
-  return `Aug projection volume runs ${round((1 - sum(augTotal) / sum(julTotal)) * 100)}% below the Jul plan across ${d.labels.length} quarters, with OSP carrying the majority of both DB/OSP splits.`;
-}
-
-export function capVolumeTrendInsight(d) {
-  return `Total volume fell from ${fK(first(d.julTotal))} (Jul) to ${fK(last(d.augTotal))} (Aug), a decline of ${round((1 - last(d.augTotal) / first(d.julTotal)) * 100)}% across the period.`;
+  const pctDiff = round((1 - sum(d.bTotal) / sum(d.aTotal)) * 100);
+  const dir = pctDiff >= 0 ? 'below' : 'above';
+  return `${d.periodB} projection volume runs ${Math.abs(pctDiff)}% ${dir} the ${d.periodA} plan across ${d.labels.length} periods, with OSP carrying the majority of both DB/OSP splits; total volume moved from ${fK(first(d.aTotal))} (${d.periodA}) to ${fK(last(d.bTotal))} (${d.periodB}).`;
 }
 
 export function capHcInsight(d) {

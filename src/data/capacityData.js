@@ -88,6 +88,15 @@ export const capC2 = {
   augTotal: [1220508, 1113560, 1063911, 1114005, 1128408, 1029793],
 };
 
+// Volume Comparison lets the user pick which two projection vintages to
+// compare (was hardcoded Jul vs Aug); this maps a vintage name to its
+// field names in capC1 (DB/OSP bars) and capC2 (Total Volume trend line).
+export const CAP_VOL_PERIODS = ['Jul', 'Aug'];
+export const CAP_VOL_KEYS = {
+  Jul: { db: 'julDb', osp: 'julOsp', total: 'julTotal' },
+  Aug: { db: 'augDb', osp: 'augOsp', total: 'augTotal' },
+};
+
 export const capC3 = {
   labels: CAP_Q8,
   augHcAvg: [247, 251, 247, 231, 217, 210, 205, 190],

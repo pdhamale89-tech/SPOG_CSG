@@ -7,7 +7,7 @@ import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
-  buildCapVolumeConfig, buildCapVolumeTrendConfig, buildCapHcConfig, buildCapExcessConfig,
+  buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
   buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapOspConfig, buildCapExitConfig,
   buildCapPopConfig, buildCapHiringPopConfig, buildCapPlannerGapConfig, buildCapTopGapsConfig,
   buildCapOfferingGapConfig, buildCapPlannerSubtotalsConfig, buildCapWeeklyGapConfig,
@@ -15,10 +15,10 @@ import {
 import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
   capA1, capA2, capA3, capA4, capA5, capA6, capA7, capWeeklyTable,
-  capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD,
+  capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_VOL_PERIODS, CAP_VOL_KEYS,
 } from '../../data/capacityData';
 import {
-  capVolumeInsight, capVolumeTrendInsight, capHcInsight, capExcessInsight, capHiringInsight,
+  capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
   capHiringBreakdownInsight, capCapOspInsight, capExitInsight, capPopInsight, capHiringPopInsight,
   capPlannerGapInsight, capTopGapsInsight, capOfferingGapInsight, capPlannerSubtotalsInsight,
   capWeeklyGapInsight,
@@ -30,6 +30,8 @@ export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear } = useApp();
   const [capTab, setCapTab] = useState('overview');
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
+  const [volPeriodA, setVolPeriodA] = useState(CAP_VOL_PERIODS[0]);
+  const [volPeriodB, setVolPeriodB] = useState(CAP_VOL_PERIODS[1]);
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -38,8 +40,17 @@ export default function CapacityOverview() {
   const L6 = useMemo(() => capLabelsFor(curPeriod, 6, fiscalYear), [curPeriod, fiscalYear]);
   const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
 
-  const dC1 = useMemo(() => ({ ...capC1, labels: L6 }), [L6]);
-  const dC2 = useMemo(() => ({ ...capC2, labels: L6 }), [L6]);
+  const dC1 = useMemo(() => {
+    const a = CAP_VOL_KEYS[volPeriodA];
+    const b = CAP_VOL_KEYS[volPeriodB];
+    return {
+      labels: L6,
+      periodA: volPeriodA,
+      periodB: volPeriodB,
+      aDb: capC1[a.db], aOsp: capC1[a.osp], bDb: capC1[b.db], bOsp: capC1[b.osp],
+      aTotal: capC2[a.total], bTotal: capC2[b.total],
+    };
+  }, [L6, volPeriodA, volPeriodB]);
   const dC3 = useMemo(() => ({ ...capC3, labels: L8 }), [L8]);
   const dC4 = useMemo(() => ({ ...capC4, labels: L8 }), [L8]);
   const dC5 = useMemo(() => ({ ...capC5, labels: L8 }), [L8]);
@@ -54,7 +65,6 @@ export default function CapacityOverview() {
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
   const c1Config = useMemo(() => buildCapVolumeConfig(dC1, theme), [dC1, theme]);
-  const c2Config = useMemo(() => buildCapVolumeTrendConfig(dC2, theme), [dC2, theme]);
   const c3Config = useMemo(() => buildCapHcConfig(dC3, theme), [dC3, theme]);
   const c4Config = useMemo(() => buildCapExcessConfig(dC4, theme), [dC4, theme]);
   const c5Config = useMemo(() => buildCapHiringConfig(dC5, theme), [dC5, theme]);
@@ -141,16 +151,21 @@ export default function CapacityOverview() {
 
       {capTab === 'overview' ? (
         <>
-          <div className="s-grid">
+          <div className="s-grid full">
             <div className="card">
-              <div className="card-header"><div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume comparison between the Jul and Aug projections." /></div></div>
+              <div className="card-header">
+                <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing two projection vintages you pick below." /></div>
+                <div className="card-dd">
+                  <select className="f-sel" value={volPeriodA} onChange={(e) => setVolPeriodA(e.target.value)}>
+                    {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                  <select className="f-sel" value={volPeriodB} onChange={(e) => setVolPeriodB(e.target.value)}>
+                    {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+              </div>
               <ChartCanvas config={c1Config} height="300px" />
               <InsightBox text={capVolumeInsight(dC1)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Total Volume Trend <InfoBtn tip="<strong>Purpose</strong>Total volume trend across Jul and Aug projections." /></div></div>
-              <ChartCanvas config={c2Config} height="300px" />
-              <InsightBox text={capVolumeTrendInsight(dC2)} />
             </div>
           </div>
 
