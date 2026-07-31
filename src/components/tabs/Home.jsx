@@ -1,4 +1,8 @@
+import { useApp } from '../../context/AppContext';
+
 export default function Home() {
+  const { goSub, showToast } = useApp();
+
   return (
     <div className="tab-panel active">
       <div className="ai-story">
@@ -7,6 +11,22 @@ export default function Home() {
           <div className="ai-story-title">Welcome</div>
           <div className="ai-story-text"><strong>SPOG</strong> consolidates Forecast, Shipment, ASU, and Capacity dashboards.</div>
         </div>
+      </div>
+
+      <div className="home-hero-grid">
+        <button type="button" className="home-hero-card csg" onClick={() => goSub('forecast-overview')}>
+          <span className="home-hero-ic">🏢</span>
+          <span className="home-hero-title">CSG</span>
+          <span className="home-hero-tag">Customer Support Group — open this dashboard</span>
+          <span className="home-hero-cta">Open dashboard →</span>
+        </button>
+        <button type="button" className="home-hero-card isg" onClick={() => showToast('ISG dashboard link coming soon', 'toast-info')}>
+          <span className="home-hero-badge">Link coming soon</span>
+          <span className="home-hero-ic">🏭</span>
+          <span className="home-hero-title">ISG</span>
+          <span className="home-hero-tag">Infrastructure Solutions Group dashboard</span>
+          <span className="home-hero-cta">Open dashboard →</span>
+        </button>
       </div>
     </div>
   );
