@@ -43,12 +43,17 @@ function buildCsvRows(visibleRegions, subRegion) {
 export default function AsuRegionalMetrics() {
   const [region, setRegion] = useState(ALL);
   const [subRegion, setSubRegion] = useState(ALL);
+  const [expanded, setExpanded] = useState({});
 
   const subRegionOptions = region === ALL ? ALL_SUBREGIONS : ASU_SUBREGIONS_BY_REGION[region];
 
   function handleRegionChange(v) {
     setRegion(v);
     setSubRegion(ALL);
+  }
+
+  function toggleRegion(reg) {
+    setExpanded((prev) => ({ ...prev, [reg]: prev[reg] === false ? true : false }));
   }
 
   const visibleRegions = region === ALL ? ASU_REGIONS : [region];
@@ -96,10 +101,17 @@ export default function AsuRegionalMetrics() {
             {visibleRegions.map((reg) => {
               const rows = ASU_ROWS.filter((r) => r.region === reg && (subRegion === ALL || r.subRegion === subRegion));
               if (!rows.length) return null;
+              const isOpen = expanded[reg] !== false;
               return (
                 <Fragment key={reg}>
-                  <tr className="arm-section-header"><td colSpan={7}>{reg}</td></tr>
-                  {rows.map((r) => (
+                  <tr className="arm-section-header">
+                    <td colSpan={7}>
+                      <button type="button" className="mtx-toggle" onClick={() => toggleRegion(reg)} title={isOpen ? 'Collapse' : 'Expand'}>
+                        <span className="mtx-toggle-ic">{isOpen ? '▾' : '▸'}</span>{reg}
+                      </button>
+                    </td>
+                  </tr>
+                  {isOpen && rows.map((r) => (
                     <tr key={r.subRegion}>
                       <td className="arm-label">{r.subRegion}</td>
                       {ASU_TIERS.map((t) => <Fragment key={t}>{tierCells(r[t])}</Fragment>)}
