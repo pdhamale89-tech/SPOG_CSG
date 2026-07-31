@@ -1,4 +1,4 @@
-import { uppData, drillData } from '../../data/forecastData';
+import { uppData } from '../../data/forecastData';
 import { getColors } from '../../theme/colors';
 import { buildPeriodLabels } from '../../utils/periodLabels';
 
@@ -460,45 +460,6 @@ export function buildShipUppConfig(region, theme, curPeriod, fiscalYear) {
         y: { title: { display: true, text: 'Thousands', color: tc, font: { size: 9 } }, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
       },
       plugins: { legend: LP, datalabels: DL },
-    },
-  };
-}
-
-const SHIP_DRILL_VIEWS = {
-  overall: [['overall', 'Overall']],
-  offering: [['pro', 'Pro'], ['premium', 'Premium'], ['basic', 'Basic'], ['oop', 'OOP']],
-  segment: [['consumer', 'Consumer'], ['commercial', 'Commercial'], ['enterprise', 'Enterprise']],
-};
-const SHIP_DRILL_COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
-
-export function buildShipDrillConfig(region, view, theme, curPeriod, fiscalYear) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
-  const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
-  const dd = drillData[region] || drillData.Global;
-  const series = SHIP_DRILL_VIEWS[view] || SHIP_DRILL_VIEWS.overall;
-
-  const datasets = [];
-  series.forEach(([key, label], i) => {
-    const sd = dd[key] || dd.overall;
-    const color = SHIP_DRILL_COLORS[i % SHIP_DRILL_COLORS.length];
-    datasets.push({ label: `${label} Ship_Actual`, data: sd.act, borderColor: color, borderWidth: 2, tension: 0.3, fill: false, pointRadius: 2 });
-    datasets.push({ label: `${label} Projection`, data: sd.proj, borderColor: color, borderWidth: 2, borderDash: [6, 3], tension: 0.3, fill: false, pointRadius: 2 });
-  });
-
-  return {
-    type: 'line',
-    data: {
-      labels: buildPeriodLabels(fiscalYear, curPeriod, datasets[0].data.length),
-      datasets,
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: TOP_LABEL_LAYOUT,
-      interaction: { mode: 'index', intersect: false },
-      scales: { x: { ticks: { color: tc, font: { size: 8 } }, grid: { color: gc } }, y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } } },
-      plugins: { legend: LP, datalabels: view === 'overall' ? DL : { display: false } },
     },
   };
 }

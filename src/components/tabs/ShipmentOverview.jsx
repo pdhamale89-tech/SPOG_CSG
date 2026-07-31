@@ -10,12 +10,13 @@ import KpiCard from '../common/KpiCard';
 import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
+import ShipmentAdherenceDetail from './ShipmentAdherenceDetail';
 import {
-  buildShipUppConfig, buildShipDrillConfig, buildShipmentTrendStaticConfig, buildSegmentSoldConfig,
+  buildShipUppConfig, buildShipmentTrendStaticConfig, buildSegmentSoldConfig,
   buildProductTrendConfig, buildShipmentGrowthConfig, segmentSoldGrowthPct,
 } from '../charts/chartConfigs';
 import {
-  shipUppInsight, shipDrillInsight, shipmentTrendInsight, segmentSoldInsight, productTrendInsight,
+  shipUppInsight, shipmentTrendInsight, segmentSoldInsight, productTrendInsight,
   shipmentGrowthInsight,
 } from '../../utils/insights';
 
@@ -53,17 +54,14 @@ export default function ShipmentOverview() {
     chartCountryFor, setChartCountry,
   } = useApp();
   const [prodView, setProdView] = useState('top5');
-  const [shipView, setShipView] = useState('overall');
   const [soldView, setSoldView] = useState('segment');
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
   const regionShipUpp = chartRegionFor('shipUpp');
-  const regionShipDrill = chartRegionFor('shipDrill');
   const regionS1 = chartRegionFor('s1');
 
   const shipUppConfig = useMemo(() => buildShipUppConfig(regionShipUpp, theme, curPeriod, fiscalYear), [regionShipUpp, theme, curPeriod, fiscalYear]);
-  const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, shipView, theme, curPeriod, fiscalYear), [regionShipDrill, shipView, theme, curPeriod, fiscalYear]);
   const s1Config = useMemo(() => buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s2Config = useMemo(() => buildSegmentSoldConfig(theme, curPeriod, fiscalYear, soldView), [theme, curPeriod, fiscalYear, soldView]);
   const s3Config = useMemo(() => buildProductTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
@@ -95,23 +93,7 @@ export default function ShipmentOverview() {
         <InsightBox text={shipUppInsight(regionShipUpp, shipUppConfig.data.labels)} />
       </div>
 
-      <div className="card" style={{ marginBottom: '14px' }}>
-        <div className="card-header">
-          <div className="card-title">📈 Overall Shipment <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
-          <div className="card-dd">
-            <select className="f-sel" value={shipView} onChange={(e) => setShipView(e.target.value)}>
-              <option value="overall">Overall</option>
-              <option value="offering">All Offerings</option>
-              <option value="segment">All Segments</option>
-            </select>
-            <RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} />
-            <SubRegionSelect value={chartSubRegionFor('shipDrill')} onChange={(v) => setChartSubRegion('shipDrill', v)} />
-            <CountrySelect value={chartCountryFor('shipDrill')} onChange={(v) => setChartCountry('shipDrill', v)} />
-          </div>
-        </div>
-        <ChartCanvas config={shipDrillConfig} height="260px" />
-        <InsightBox text={shipDrillInsight(regionShipDrill, shipView, shipDrillConfig.data.labels)} />
-      </div>
+      <ShipmentAdherenceDetail />
 
       <div className="s-grid">
         <div className="card">

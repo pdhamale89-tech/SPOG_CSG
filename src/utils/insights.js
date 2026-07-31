@@ -1,4 +1,4 @@
-import { uppData, drillData } from '../data/forecastData';
+import { uppData } from '../data/forecastData';
 import { REGION_ACC, accTier } from '../data/regions';
 
 function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
@@ -12,7 +12,6 @@ function labelAt(labels, i) { return labels?.[i] ?? `period ${i + 1}`; }
 // Mirrors chartConfigs.js's own fK() so insight numbers match what each chart already displays.
 function fK(v) { return Math.abs(v) >= 1000 ? `${Math.round(v / 1000)}K` : `${Math.round(v)}`; }
 const TIER_LABEL = { excellent: 'Excellent', good: 'Good', fair: 'Fair', critical: 'Critical' };
-const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
 
 // --- Forecast Overview ---
 
@@ -142,28 +141,6 @@ export function shipUppInsight(region, labels) {
   const upp2 = ud.upp2.filter((v) => v != null);
   const dir = last(upp2) > last(upp1) ? 'more optimistic' : 'more conservative';
   return `Projection ran furthest ahead of actual shipments (+${diffs[gapIdx]}K) in ${labelAt(labels, gapIdx)}; the UPP2 scenario ends ${dir} than UPP1 (${last(upp2)}K vs ${last(upp1)}K by the final period).`;
-}
-
-const SHIP_VIEW_KEYS = {
-  overall: ['overall'],
-  offering: ['pro', 'premium', 'basic', 'oop'],
-  segment: ['consumer', 'commercial', 'enterprise'],
-};
-
-export function shipDrillInsight(region, view, labels) {
-  const dd = drillData[region] || drillData.Global;
-  const keys = SHIP_VIEW_KEYS[view] || SHIP_VIEW_KEYS.overall;
-  if (keys.length === 1) {
-    const sd = dd[keys[0]];
-    const peakIdx = maxIdx(sd.act);
-    const dir = last(sd.proj) >= last(sd.act) ? 'above' : 'below';
-    return `Overall actuals peaked at ${sd.act[peakIdx]}K in ${labelAt(labels, peakIdx)} before falling to ${last(sd.act)}K by period-end, while projections stayed ${dir} actuals throughout.`;
-  }
-  const totals = keys.map((k) => ({ k, actTotal: sum(dd[k].act), projTotal: sum(dd[k].proj) }));
-  totals.sort((a, b) => b.actTotal - a.actTotal);
-  const top = totals[0];
-  const gapPct = round(((top.projTotal - top.actTotal) / top.actTotal) * 100);
-  return `${cap(top.k)} leads with ${top.actTotal}K in cumulative actuals across the period; its projection ran ${gapPct >= 0 ? `${gapPct}% above` : `${Math.abs(gapPct)}% below`} actuals.`;
 }
 
 // Static/hardcoded builders below mirror the fixed arrays in chartConfigs.js — the

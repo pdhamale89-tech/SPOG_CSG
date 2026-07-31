@@ -8,53 +8,6 @@ export const uppData = {
   APJ: { shipAct: [15,23,23,16,23,23,18,21,20,23,25,28,18,17,16,15,14,12], projection: [19,23,25,20,23,32,21,22,21,25,26,29,20,21,23,23,21,20], upp1: [null,null,null,null,null,null,null,null,null,null,null,null,17,16,16,16,15,15], upp2: [null,null,null,null,null,null,null,null,null,null,null,null,18,19,21,21,21,19] },
 };
 
-export const drillData = {
-  Global: {
-    overall: { act: [70,85,90,80,95,88,100,105,110,98,90,80,75,65,55,50], proj: [80,90,95,88,100,95,105,110,115,105,95,88,82,75,65,60] },
-    pro: { act: [25,30,32,28,34,31,36,38,40,35,32,28,27,23,20,18], proj: [29,32,34,31,36,34,38,40,42,38,34,31,29,27,23,21] },
-    premium: { act: [20,24,26,23,27,25,28,30,31,28,26,23,21,18,16,14], proj: [23,26,27,25,29,27,30,31,33,30,27,25,23,21,18,17] },
-    basic: { act: [15,18,19,17,20,19,21,22,23,21,19,17,16,14,11,10], proj: [17,19,20,19,21,20,22,23,24,22,20,19,17,15,14,12] },
-    oop: { act: [10,13,13,12,14,13,15,15,16,14,13,12,11,10,8,8], proj: [11,13,14,13,14,14,15,16,16,15,14,13,13,12,10,10] },
-  },
-  AMER: {
-    overall: { act: [30,38,40,35,42,39,44,46,48,43,40,35,33,28,24,22], proj: [35,40,42,39,44,42,46,48,50,46,42,39,36,33,28,26] },
-    pro: { act: [11,14,14,12,15,14,16,17,17,15,14,12,12,10,9,8], proj: [13,14,15,14,16,15,17,17,18,17,15,14,13,12,10,9] },
-    premium: { act: [9,11,12,10,12,11,13,13,14,12,12,10,10,8,7,6], proj: [10,12,12,11,13,12,13,14,14,13,12,11,10,10,8,7] },
-    basic: { act: [6,8,8,7,9,8,9,10,10,9,8,7,7,6,5,4], proj: [7,8,9,8,9,9,10,10,11,10,9,8,8,7,6,5] },
-    oop: { act: [4,5,6,6,6,6,6,6,7,7,6,6,4,4,3,4], proj: [5,6,6,6,6,6,6,7,7,6,6,6,5,4,4,5] },
-  },
-  EMEA: {
-    overall: { act: [22,27,29,26,30,28,32,34,36,32,29,26,24,21,18,16], proj: [25,29,31,28,32,30,34,36,37,34,31,28,27,23,20,18] },
-    pro: { act: [8,10,10,9,11,10,12,12,13,12,10,9,9,8,6,6], proj: [9,10,11,10,11,11,12,13,13,12,11,10,10,8,7,6] },
-    premium: { act: [6,8,8,7,9,8,9,10,10,9,8,7,7,6,5,5], proj: [7,8,9,8,9,9,10,10,11,10,9,8,8,7,6,5] },
-    basic: { act: [5,5,6,6,6,6,6,7,7,6,6,6,5,4,4,3], proj: [5,6,6,6,7,6,7,7,7,7,6,6,5,5,4,4] },
-    oop: { act: [3,4,5,4,4,4,5,5,6,5,5,4,3,3,3,2], proj: [4,5,5,4,5,4,5,6,6,5,5,4,4,3,3,3] },
-  },
-  APJ: {
-    overall: { act: [18,20,21,19,23,21,24,25,26,23,21,19,18,16,13,12], proj: [20,21,22,21,24,23,25,26,28,25,22,21,19,19,17,16] },
-    pro: { act: [6,7,8,7,8,7,8,9,9,8,8,7,6,5,5,4], proj: [7,8,8,7,9,8,9,9,10,9,8,8,7,7,6,6] },
-    premium: { act: [5,6,6,5,7,6,7,7,8,7,6,5,5,5,4,3], proj: [6,6,6,6,7,7,7,8,8,7,6,6,6,5,5,4] },
-    basic: { act: [4,4,4,4,5,4,5,5,5,5,4,4,4,3,2,3], proj: [4,4,5,5,5,5,5,6,6,5,5,4,4,4,3,3] },
-    oop: { act: [3,3,3,3,3,4,4,4,4,3,3,3,3,3,2,2], proj: [3,3,3,3,3,3,4,3,4,4,3,3,2,3,3,3] },
-  },
-};
-
-// Segment split of each region's "overall" Ship_Actual/Projection line
-// (no separate segment-level feed exists yet, so segments are a fixed share
-// of the same overall numbers - they sum back to ~the overall line).
-const SEGMENT_SHARE = { consumer: 0.27, commercial: 0.35, enterprise: 0.38 };
-Object.keys(drillData).forEach((region) => {
-  const overall = drillData[region].overall;
-  Object.entries(SEGMENT_SHARE).forEach(([seg, share]) => {
-    drillData[region][seg] = {
-      act: overall.act.map((v) => Math.round(v * share)),
-      proj: overall.proj.map((v) => Math.round(v * share)),
-    };
-  });
-});
-
-export const drillLabels = ['M01','M02','M03','M04','M05','M06','M07','M08','M09','M10','M11','M12','M01','M02','M03','M04'];
-
 // DMS Scorecard drill-down: disposition mix (Unassisted/Augmented/Assisted, must sum to 100
 // each month) broken out by country and by offering, drilled into from the region-level view.
 export const dmsDrillData = {
