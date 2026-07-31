@@ -12,6 +12,7 @@ import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
 import PartnerMinimum from './PartnerMinimum';
 import ContactVolumeDetail from './ContactVolumeDetail';
+import VolumeByPeriodTable from './VolumeByPeriodTable';
 import InsightBox from '../common/InsightBox';
 import {
   buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
@@ -269,6 +270,8 @@ export default function ForecastOverview() {
           <InsightBox text={dmsInsight(nDmsData)} />
         </div>
       </div>
+
+      <VolumeByPeriodTable />
 
       <ContactVolumeDetail />
 
