@@ -1,10 +1,11 @@
 import { Fragment, useMemo, useState } from 'react';
 import {
-  CONTACT_VOLUME_ROWS, CV_REGIONS, CV_SUBREGIONS, CV_OFFERINGS, CV_FY_KEYS, CV_FY_LABELS, CV_CHANNELS,
+  CONTACT_VOLUME_ROWS, CV_REGIONS, CV_OFFERINGS, CV_FY_KEYS, CV_FY_LABELS, CV_CHANNELS,
 } from '../../data/contactVolumeDetail';
 import InfoBtn from '../common/InfoBtn';
 import DownloadBtn from '../common/DownloadBtn';
-import MultiSelectDropdown from '../common/MultiSelectDropdown';
+
+const ALL = 'All';
 
 function buildCsvRows(rows) {
   const header = ['Region', 'Sub Region', 'Offering', 'Metric', ...CV_FY_LABELS];
@@ -19,34 +20,25 @@ function buildCsvRows(rows) {
 }
 
 export default function ContactVolumeDetail() {
-  const [selRegions, setSelRegions] = useState([]);
-  const [selSubRegions, setSelSubRegions] = useState([]);
-  const [selOfferings, setSelOfferings] = useState([]);
+  const [region, setRegion] = useState(ALL);
+  const [subRegion, setSubRegion] = useState(ALL);
+  const [offering, setOffering] = useState(ALL);
 
   const subRegionOptions = useMemo(() => {
-    const src = selRegions.length ? CONTACT_VOLUME_ROWS.filter((r) => selRegions.includes(r.region)) : CONTACT_VOLUME_ROWS;
+    const src = region === ALL ? CONTACT_VOLUME_ROWS : CONTACT_VOLUME_ROWS.filter((r) => r.region === region);
     return [...new Set(src.map((r) => r.subRegion))];
-  }, [selRegions]);
+  }, [region]);
 
-  function handleRegionChange(vals) {
-    setSelRegions(vals);
-    const validSubs = vals.length
-      ? [...new Set(CONTACT_VOLUME_ROWS.filter((r) => vals.includes(r.region)).map((r) => r.subRegion))]
-      : CV_SUBREGIONS;
-    setSelSubRegions((prev) => prev.filter((s) => validSubs.includes(s)));
+  function handleRegionChange(v) {
+    setRegion(v);
+    setSubRegion(ALL);
   }
 
   const filteredRows = useMemo(() => CONTACT_VOLUME_ROWS.filter((r) => (
-    (selRegions.length === 0 || selRegions.includes(r.region))
-    && (selSubRegions.length === 0 || selSubRegions.includes(r.subRegion))
-    && (selOfferings.length === 0 || selOfferings.includes(r.offering))
-  )), [selRegions, selSubRegions, selOfferings]);
-
-  const tags = [
-    ...selRegions.map((v) => ({ k: 'Region', v })),
-    ...selSubRegions.map((v) => ({ k: 'Sub Region', v })),
-    ...selOfferings.map((v) => ({ k: 'Offering', v })),
-  ];
+    (region === ALL || r.region === region)
+    && (subRegion === ALL || r.subRegion === subRegion)
+    && (offering === ALL || r.offering === offering)
+  )), [region, subRegion, offering]);
 
   return (
     <div className="card" style={{ marginBottom: '14px' }}>
@@ -56,30 +48,21 @@ export default function ContactVolumeDetail() {
           <InfoBtn tip="<strong>Purpose</strong>FY24-FY27 contact volume, channel mix, YoY% and partner mix by Region/Sub Region/Offering.<strong>Tip</strong>💡 FY27 is boxed as the current-year focus column." />
         </div>
         <div className="card-dd">
+          <select className="f-sel" value={region} onChange={(e) => handleRegionChange(e.target.value)}>
+            <option value={ALL}>Global</option>
+            {CV_REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+          </select>
+          <select className="f-sel" value={subRegion} onChange={(e) => setSubRegion(e.target.value)}>
+            <option value={ALL}>All Sub Regions</option>
+            {subRegionOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select className="f-sel" value={offering} onChange={(e) => setOffering(e.target.value)}>
+            <option value={ALL}>All Offerings</option>
+            {CV_OFFERINGS.map((o) => <option key={o} value={o}>{o}</option>)}
+          </select>
           <DownloadBtn filename="contact-volume-detail" title="Download contact volume detail" rows={buildCsvRows(filteredRows)} />
         </div>
       </div>
-
-      <div className="cv-filters">
-        <div className="cv-filter-group">
-          <label>Region</label>
-          <MultiSelectDropdown options={CV_REGIONS} selected={selRegions} onChange={handleRegionChange} />
-        </div>
-        <div className="cv-filter-group">
-          <label>Sub Region</label>
-          <MultiSelectDropdown options={subRegionOptions} selected={selSubRegions} onChange={setSelSubRegions} />
-        </div>
-        <div className="cv-filter-group">
-          <label>Offering</label>
-          <MultiSelectDropdown options={CV_OFFERINGS} selected={selOfferings} onChange={setSelOfferings} />
-        </div>
-      </div>
-
-      {tags.length > 0 && (
-        <div className="cv-tags">
-          {tags.map((t) => <span key={t.k + t.v} className="cv-tag">{t.k}: {t.v}</span>)}
-        </div>
-      )}
 
       <div className="cv-tbl-wrap">
         <table className="cv-tbl">
