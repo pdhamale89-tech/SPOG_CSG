@@ -509,8 +509,22 @@ export const SEGMENT_SOLD_DATA = {
   Enterprise: [15, 15, 13, 15, 15, 16, 15, 16],
 };
 
-// Total segment-sold volume growth from the first to the last period in the
-// chart above (same source array, so the KPI card always matches the chart).
+// Same total volume per period as SEGMENT_SOLD_DATA, split by offering
+// instead of segment, so the two toggle views stay on the same scale.
+export const OFFERING_SOLD_DATA = {
+  Pro: [16, 17, 15, 18, 19, 20, 18, 19],
+  Premium: [14, 15, 13, 15, 16, 17, 15, 16],
+  Basic: [17, 18, 16, 19, 19, 20, 18, 20],
+  OOP: [8, 8, 8, 8, 8, 8, 8, 9],
+};
+
+const SOLD_VIEW_DATA = {
+  segment: { data: SEGMENT_SOLD_DATA, colors: ['rgba(59,130,246,.6)', 'rgba(16,185,129,.6)', 'rgba(139,92,246,.6)'] },
+  offering: { data: OFFERING_SOLD_DATA, colors: ['rgba(59,130,246,.6)', 'rgba(139,92,246,.6)', 'rgba(16,185,129,.6)', 'rgba(245,158,11,.6)'] },
+};
+
+// Total sold volume growth from the first to the last period (same for
+// either view, since both split the same per-period totals).
 export function segmentSoldGrowthPct() {
   const n = SEGMENT_SOLD_DATA.Consumer.length;
   const totalAt = (i) => SEGMENT_SOLD_DATA.Consumer[i] + SEGMENT_SOLD_DATA.Commercial[i] + SEGMENT_SOLD_DATA.Enterprise[i];
@@ -519,18 +533,17 @@ export function segmentSoldGrowthPct() {
   return Math.round(((last - first) / first) * 1000) / 10;
 }
 
-export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear) {
+export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear, view = 'segment') {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
+  const { data, colors } = SOLD_VIEW_DATA[view] || SOLD_VIEW_DATA.segment;
   return {
     type: 'bar',
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
-      datasets: [
-        { label: 'Consumer', data: SEGMENT_SOLD_DATA.Consumer, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 2 },
-        { label: 'Commercial', data: SEGMENT_SOLD_DATA.Commercial, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 2 },
-        { label: 'Enterprise', data: SEGMENT_SOLD_DATA.Enterprise, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 2 },
-      ],
+      datasets: Object.entries(data).map(([label, values], i) => ({
+        label, data: values, backgroundColor: colors[i % colors.length], borderRadius: 2,
+      })),
     },
     options: {
       responsive: true,

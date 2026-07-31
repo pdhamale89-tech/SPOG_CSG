@@ -54,6 +54,7 @@ export default function ShipmentOverview() {
   } = useApp();
   const [prodView, setProdView] = useState('top5');
   const [shipView, setShipView] = useState('overall');
+  const [soldView, setSoldView] = useState('segment');
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
@@ -64,7 +65,7 @@ export default function ShipmentOverview() {
   const shipUppConfig = useMemo(() => buildShipUppConfig(regionShipUpp, theme, curPeriod, fiscalYear), [regionShipUpp, theme, curPeriod, fiscalYear]);
   const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, shipView, theme, curPeriod, fiscalYear), [regionShipDrill, shipView, theme, curPeriod, fiscalYear]);
   const s1Config = useMemo(() => buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
-  const s2Config = useMemo(() => buildSegmentSoldConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
+  const s2Config = useMemo(() => buildSegmentSoldConfig(theme, curPeriod, fiscalYear, soldView), [theme, curPeriod, fiscalYear, soldView]);
   const s3Config = useMemo(() => buildProductTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s5Config = useMemo(() => buildShipmentGrowthConfig(theme), [theme]);
 
@@ -126,9 +127,15 @@ export default function ShipmentOverview() {
           <InsightBox text={shipmentTrendInsight()} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Segment Sold <InfoBtn tip="<strong>Purpose</strong>Segment growth." /></div></div>
+          <div className="card-header">
+            <div className="card-title">{soldView === 'offering' ? 'Offering Sold' : 'Segment Sold'} <InfoBtn tip="<strong>Purpose</strong>Volume sold, split by segment or by offering." /></div>
+            <div className="plan-sel">
+              <button className={'plan-btn' + (soldView === 'segment' ? ' active' : '')} onClick={() => setSoldView('segment')}>Segment</button>
+              <button className={'plan-btn' + (soldView === 'offering' ? ' active' : '')} onClick={() => setSoldView('offering')}>Offering</button>
+            </div>
+          </div>
           <ChartCanvas config={s2Config} />
-          <InsightBox text={segmentSoldInsight()} />
+          <InsightBox text={segmentSoldInsight(soldView)} />
         </div>
       </div>
 

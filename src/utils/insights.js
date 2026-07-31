@@ -176,7 +176,12 @@ export function shipmentTrendInsight() {
   return `Actual shipments ran below AOP in every period, trailing by an average of ${avgGap}K units per month.`;
 }
 
-export function segmentSoldInsight() {
+export function segmentSoldInsight(view = 'segment') {
+  if (view === 'offering') {
+    const basic = [17, 18, 16, 19, 19, 20, 18, 20];
+    const oop = [8, 8, 8, 8, 8, 8, 8, 9];
+    return `Basic remains the largest offering (${first(basic)}K→${last(basic)}K) and grew fastest, while OOP stayed roughly flat (${first(oop)}K→${last(oop)}K).`;
+  }
   const commercial = [22, 24, 22, 25, 26, 27, 24, 27];
   const enterprise = [15, 15, 13, 15, 15, 16, 15, 16];
   return `Commercial remains the largest segment (${first(commercial)}K→${last(commercial)}K) and grew fastest, while Enterprise stayed roughly flat (${first(enterprise)}K→${last(enterprise)}K).`;
