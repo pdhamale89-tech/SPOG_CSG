@@ -54,12 +54,12 @@ export default function AdherenceModal() {
             <table className="matrix-tbl">
               <thead>
                 <tr>
-                  <th colSpan={2}></th>
+                  <th rowSpan={2}>Offering</th>
+                  <th rowSpan={2}>Segment</th>
                   {regions.map((r) => <th key={r} colSpan={subsByRegion[r].length + 1}>{r}</th>)}
                   <th rowSpan={2}>TOTAL</th>
                 </tr>
                 <tr>
-                  <th></th><th></th>
                   {regions.map((r) => (
                     <Fragment key={r}>
                       {subsByRegion[r].map((s) => <th key={r + s}>{s}</th>)}

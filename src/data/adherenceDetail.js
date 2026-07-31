@@ -71,8 +71,8 @@ const grandOverall = buildDerivedRow([basic.overall, premium.overall, prosupport
 
 function offeringRows(offering) {
   return [
-    { label: 'Cons', ...offering.cons },
-    { label: 'Comm', ...offering.comm },
+    { label: 'Consumer', ...offering.cons },
+    { label: 'Commercial', ...offering.comm },
     { label: 'Overall', ...offering.overall },
   ];
 }
