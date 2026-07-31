@@ -19,10 +19,6 @@ import {
   shipmentGrowthInsight,
 } from '../../utils/insights';
 
-const OFFERINGS = ['pro', 'premium', 'basic', 'oop'];
-const SEGMENTS = ['consumer', 'commercial', 'enterprise'];
-const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
 const QUEUE_DETAIL_ROWS = [
   { id: 'Q-101', name: 'Enterprise Voice T1', region: 'AMER', offering: 'Pro', segment: 'Enterprise', forecast: 42000, actual: 40320 },
   { id: 'Q-102', name: 'Commercial Voice T2', region: 'EMEA', offering: 'Premium', segment: 'Commercial', forecast: 28500, actual: 27100 },
@@ -54,9 +50,10 @@ const SEGMENT_SOLD_GROWTH = segmentSoldGrowthPct();
 export default function ShipmentOverview() {
   const {
     theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartSubRegionFor, setChartSubRegion,
-    chartCountryFor, setChartCountry, drill, setDrill,
+    chartCountryFor, setChartCountry,
   } = useApp();
   const [prodView, setProdView] = useState('top5');
+  const [shipView, setShipView] = useState('overall');
 
   const d = { ...D[curPeriod].Global, labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod].Global.labels.length) };
 
@@ -65,22 +62,11 @@ export default function ShipmentOverview() {
   const regionS1 = chartRegionFor('s1');
 
   const shipUppConfig = useMemo(() => buildShipUppConfig(regionShipUpp, theme, curPeriod, fiscalYear), [regionShipUpp, theme, curPeriod, fiscalYear]);
-  const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, drill.level, drill.offering, theme, curPeriod, fiscalYear), [regionShipDrill, drill.level, drill.offering, theme, curPeriod, fiscalYear]);
+  const shipDrillConfig = useMemo(() => buildShipDrillConfig(regionShipDrill, shipView, theme, curPeriod, fiscalYear), [regionShipDrill, shipView, theme, curPeriod, fiscalYear]);
   const s1Config = useMemo(() => buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s2Config = useMemo(() => buildSegmentSoldConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s3Config = useMemo(() => buildProductTrendConfig(theme, curPeriod, fiscalYear), [theme, curPeriod, fiscalYear]);
   const s5Config = useMemo(() => buildShipmentGrowthConfig(theme), [theme]);
-
-  function drillTo(offering) {
-    setDrill({ level: 'offering', offering, segment: '' });
-  }
-  function drillToSeg(offering, segment) {
-    setDrill({ level: 'segment', offering, segment });
-  }
-  function drillBack(target) {
-    if (target === 'overall') setDrill({ level: 'overall', offering: '', segment: '' });
-    else drillTo(target);
-  }
 
   return (
     <div className="tab-panel active">
@@ -112,37 +98,18 @@ export default function ShipmentOverview() {
         <div className="card-header">
           <div className="card-title">📈 Overall Shipment <InfoBtn tip="<strong>Purpose</strong>Drill-down: Overall → Offering → Segment." /></div>
           <div className="card-dd">
+            <select className="f-sel" value={shipView} onChange={(e) => setShipView(e.target.value)}>
+              <option value="overall">Overall</option>
+              <option value="offering">All Offerings</option>
+              <option value="segment">All Segments</option>
+            </select>
             <RegionSelect value={regionShipDrill} onChange={(v) => setChartRegion('shipDrill', v)} />
             <SubRegionSelect value={chartSubRegionFor('shipDrill')} onChange={(v) => setChartSubRegion('shipDrill', v)} />
             <CountrySelect value={chartCountryFor('shipDrill')} onChange={(v) => setChartCountry('shipDrill', v)} />
           </div>
         </div>
-        <div className="drill-bc">
-          {drill.level === 'overall' && <span className="current">Overall Shipment</span>}
-          {drill.level === 'offering' && (
-            <>
-              <span onClick={() => drillBack('overall')}>Overall</span><span className="sep">›</span>
-              <span className="current">{cap(drill.offering)}</span>
-            </>
-          )}
-          {drill.level === 'segment' && (
-            <>
-              <span onClick={() => drillBack('overall')}>Overall</span><span className="sep">›</span>
-              <span onClick={() => drillBack(drill.offering)}>{cap(drill.offering)}</span><span className="sep">›</span>
-              <span className="current">{cap(drill.segment)}</span>
-            </>
-          )}
-        </div>
-        <ChartCanvas config={shipDrillConfig} height="240px" />
-        <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap' }}>
-          {drill.level === 'overall' && OFFERINGS.map((o) => (
-            <button key={o} className="btn-a" onClick={() => drillTo(o)}>{o === 'oop' ? 'OOP' : cap(o)}</button>
-          ))}
-          {drill.level === 'offering' && SEGMENTS.map((s) => (
-            <button key={s} className="btn-a" onClick={() => drillToSeg(drill.offering, s)}>{cap(s)}</button>
-          ))}
-        </div>
-        <InsightBox text={shipDrillInsight(regionShipDrill, drill.level, drill.offering, shipDrillConfig.data.labels)} />
+        <ChartCanvas config={shipDrillConfig} height="260px" />
+        <InsightBox text={shipDrillInsight(regionShipDrill, shipView, shipDrillConfig.data.labels)} />
       </div>
 
       <div className="s-grid">

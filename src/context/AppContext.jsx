@@ -34,7 +34,6 @@ export function AppProvider({ children }) {
   const [chartSubRegions, setChartSubRegions] = useState({});
   const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
-  const [drill, setDrill] = useState({ level: 'overall', offering: '', segment: '' });
   const [rcaCollapsed, setRcaCollapsed] = useState(false);
 
   const [toast, setToast] = useState({ show: false, msg: '', cls: '' });
@@ -171,7 +170,6 @@ export function AppProvider({ children }) {
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
-    drill, setDrill,
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed,
     applyFilters, clearFilters,
     toast, showToast,
@@ -185,7 +183,7 @@ export function AppProvider({ children }) {
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb,
     curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
-    chartCountries, setChartCountry, chartCountryFor, curHistPlan, drill,
+    chartCountries, setChartCountry, chartCountryFor, curHistPlan,
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, adherenceModal, openAdherence, closeAdherence,
     approvalModal, openApproval, closeApproval, handleApproval,

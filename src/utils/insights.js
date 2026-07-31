@@ -148,13 +148,26 @@ export function shipUppInsight(region, labels) {
   return `Projection ran furthest ahead of actual shipments (+${diffs[gapIdx]}K) in ${labelAt(labels, gapIdx)}; the UPP2 scenario ends ${dir} than UPP1 (${last(upp2)}K vs ${last(upp1)}K by the final period).`;
 }
 
-export function shipDrillInsight(region, level, offering, labels) {
+const SHIP_VIEW_KEYS = {
+  overall: ['overall'],
+  offering: ['pro', 'premium', 'basic', 'oop'],
+  segment: ['consumer', 'commercial', 'enterprise'],
+};
+
+export function shipDrillInsight(region, view, labels) {
   const dd = drillData[region] || drillData.Global;
-  const key = level === 'overall' ? 'overall' : offering;
-  const sd = dd[key] || dd.overall;
-  const peakIdx = maxIdx(sd.act);
-  const dir = last(sd.proj) >= last(sd.act) ? 'above' : 'below';
-  return `${key === 'overall' ? 'Overall' : cap(key)} actuals peaked at ${sd.act[peakIdx]}K in ${labelAt(labels, peakIdx)} before falling to ${last(sd.act)}K by period-end, while projections stayed ${dir} actuals throughout.`;
+  const keys = SHIP_VIEW_KEYS[view] || SHIP_VIEW_KEYS.overall;
+  if (keys.length === 1) {
+    const sd = dd[keys[0]];
+    const peakIdx = maxIdx(sd.act);
+    const dir = last(sd.proj) >= last(sd.act) ? 'above' : 'below';
+    return `Overall actuals peaked at ${sd.act[peakIdx]}K in ${labelAt(labels, peakIdx)} before falling to ${last(sd.act)}K by period-end, while projections stayed ${dir} actuals throughout.`;
+  }
+  const totals = keys.map((k) => ({ k, actTotal: sum(dd[k].act), projTotal: sum(dd[k].proj) }));
+  totals.sort((a, b) => b.actTotal - a.actTotal);
+  const top = totals[0];
+  const gapPct = round(((top.projTotal - top.actTotal) / top.actTotal) * 100);
+  return `${cap(top.k)} leads with ${top.actTotal}K in cumulative actuals across the period; its projection ran ${gapPct >= 0 ? `${gapPct}% above` : `${Math.abs(gapPct)}% below`} actuals.`;
 }
 
 // Static/hardcoded builders below mirror the fixed arrays in chartConfigs.js — the

@@ -39,6 +39,20 @@ export const drillData = {
   },
 };
 
+// Segment split of each region's "overall" Ship_Actual/Projection line
+// (no separate segment-level feed exists yet, so segments are a fixed share
+// of the same overall numbers - they sum back to ~the overall line).
+const SEGMENT_SHARE = { consumer: 0.27, commercial: 0.35, enterprise: 0.38 };
+Object.keys(drillData).forEach((region) => {
+  const overall = drillData[region].overall;
+  Object.entries(SEGMENT_SHARE).forEach(([seg, share]) => {
+    drillData[region][seg] = {
+      act: overall.act.map((v) => Math.round(v * share)),
+      proj: overall.proj.map((v) => Math.round(v * share)),
+    };
+  });
+});
+
 export const drillLabels = ['M01','M02','M03','M04','M05','M06','M07','M08','M09','M10','M11','M12','M01','M02','M03','M04'];
 
 // DMS Scorecard drill-down: disposition mix (Unassisted/Augmented/Assisted, must sum to 100
