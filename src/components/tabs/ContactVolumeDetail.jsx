@@ -45,7 +45,7 @@ export default function ContactVolumeDetail() {
       <div className="card-header">
         <div className="card-title">
           📞 Contact Volume Detail
-          <InfoBtn tip="<strong>Purpose</strong>FY24-FY27 contact volume, channel mix, YoY% and partner mix by Region/Sub Region/Offering.<strong>Tip</strong>💡 FY27 is boxed as the current-year focus column." />
+          <InfoBtn tip="<strong>Purpose</strong>FY24-FY27 contact volume, channel mix, YoY% and partner mix by Region/Sub Region/Offering." />
         </div>
         <div className="card-dd">
           <select className="f-sel" value={region} onChange={(e) => handleRegionChange(e.target.value)}>
@@ -69,9 +69,7 @@ export default function ContactVolumeDetail() {
           <thead>
             <tr>
               <th className="cv-empty-header"></th>
-              {CV_FY_LABELS.map((fy, i) => (
-                <th key={fy} className={'cv-fy-header' + (i === CV_FY_LABELS.length - 1 ? ' cv-fy27-header' : '')}>{fy}</th>
-              ))}
+              {CV_FY_LABELS.map((fy) => <th key={fy} className="cv-fy-header">{fy}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -83,28 +81,28 @@ export default function ContactVolumeDetail() {
                 <tr className="cv-section-header"><td colSpan={5}>{row.region} › {row.subRegion} › {row.offering}</td></tr>
                 <tr>
                   <td className="cv-cat-label dark">Contact Volume</td>
-                  {CV_FY_KEYS.map((fy, i) => (
-                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy + (i === 3 ? ' cv-fy27-left cv-fy27-right' : '')}>{row.contactVolume[fy]}</td>
+                  {CV_FY_KEYS.map((fy) => (
+                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy}>{row.contactVolume[fy]}</td>
                   ))}
                 </tr>
                 {CV_CHANNELS.map((ch) => (
                   <tr key={ch}>
                     <td className="cv-cat-label">{ch}</td>
-                    {CV_FY_KEYS.map((fy, i) => (
-                      <td key={fy} className={'cv-data-cell cv-shade-' + fy + (i === 3 ? ' cv-fy27-left cv-fy27-right' : '')}>{row.channels[ch][fy]}</td>
+                    {CV_FY_KEYS.map((fy) => (
+                      <td key={fy} className={'cv-data-cell cv-shade-' + fy}>{row.channels[ch][fy]}</td>
                     ))}
                   </tr>
                 ))}
                 <tr>
                   <td className="cv-cat-label yoy">Vol YoY%</td>
-                  {CV_FY_KEYS.map((fy, i) => (
-                    <td key={fy} className={'cv-yoy-data cv-shade-' + fy + (i === 3 ? ' cv-fy27-left cv-fy27-right' : '')}>{row.volYoY[fy]}</td>
+                  {CV_FY_KEYS.map((fy) => (
+                    <td key={fy} className={'cv-yoy-data cv-shade-' + fy}>{row.volYoY[fy]}</td>
                   ))}
                 </tr>
                 <tr>
                   <td className="cv-cat-label dark">Partner Mix</td>
-                  {CV_FY_KEYS.map((fy, i) => (
-                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy + (i === 3 ? ' cv-fy27-left cv-fy27-right cv-fy27-bottom' : '')}>{row.partnerMix[fy]}</td>
+                  {CV_FY_KEYS.map((fy) => (
+                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy}>{row.partnerMix[fy]}</td>
                   ))}
                 </tr>
                 {idx < filteredRows.length - 1 && <tr className="cv-spacer"><td colSpan={5}></td></tr>}
