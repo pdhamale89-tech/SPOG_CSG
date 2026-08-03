@@ -36,9 +36,9 @@
   --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(96,165,250,0.18);
   --shadow-card-active: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.4), 0 0 24px rgba(96,165,250,0.1);
   --accent-contrast: #0f1117;
-  --bg-sidebar: #111528;
-  --bg-sidebar-hover: #1e2340;
-  --text-sidebar: #c7cad9;
+  --bg-sidebar: #0a0c14;
+  --bg-sidebar-hover: #181c2e;
+  --text-sidebar: #6b7280;
   color-scheme: dark;
 }
 
