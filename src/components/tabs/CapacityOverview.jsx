@@ -9,26 +9,22 @@ import InsightBox from '../common/InsightBox';
 import {
   buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
   buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig, buildCapExitConfig,
-  buildCapPopConfig, buildCapHiringPopConfig, buildCapPlannerGapConfig, buildCapTopGapsConfig,
-  buildCapOfferingGapConfig, buildCapPlannerSubtotalsConfig, buildCapWeeklyGapConfig,
+  buildCapPopConfig,
 } from '../charts/chartConfigs';
 import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
-  capA1, capA2, capA3, capA4, capA5, capA6, capA7, capWeeklyTable,
+  capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_VOL_PERIODS, CAP_VOL_KEYS,
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
-  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capExitInsight, capPopInsight, capHiringPopInsight,
-  capPlannerGapInsight, capTopGapsInsight, capOfferingGapInsight, capPlannerSubtotalsInsight,
-  capWeeklyGapInsight,
+  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capExitInsight, capPopInsight,
 } from '../../utils/insights';
 
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
 
 export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear } = useApp();
-  const [capTab, setCapTab] = useState('overview');
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
   const [planName2, setPlanName2] = useState(CAP_VOL_PERIODS[1]);
@@ -58,10 +54,6 @@ export default function CapacityOverview() {
   const dC7 = useMemo(() => ({ ...capC7, labels: L8 }), [L8]);
   const dC8 = useMemo(() => ({ ...capC8, labels: L8 }), [L8]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
-  const dA2 = useMemo(() => ({ ...capA2, labels: L8 }), [L8]);
-  const dA3 = useMemo(() => ({ ...capA3, labels: L6 }), [L6]);
-  const dA5 = useMemo(() => ({ ...capA5, labels: L8 }), [L8]);
-  const dA7 = useMemo(() => ({ ...capA7, labels: L6 }), [L6]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
   const c1Config = useMemo(() => buildCapVolumeConfig(dC1, theme), [dC1, theme]);
@@ -73,12 +65,6 @@ export default function CapacityOverview() {
   const c7bConfig = useMemo(() => buildCapOspMixConfig(dC7, theme), [dC7, theme]);
   const c8Config = useMemo(() => buildCapExitConfig(dC8, theme), [dC8, theme]);
   const a1Config = useMemo(() => buildCapPopConfig(dA1, theme), [dA1, theme]);
-  const a2Config = useMemo(() => buildCapHiringPopConfig(dA2, theme), [dA2, theme]);
-  const a3Config = useMemo(() => buildCapPlannerGapConfig(dA3, theme), [dA3, theme]);
-  const a4Config = useMemo(() => buildCapTopGapsConfig(capA4, theme), [theme]);
-  const a5Config = useMemo(() => buildCapOfferingGapConfig(dA5, theme), [dA5, theme]);
-  const a6Config = useMemo(() => buildCapPlannerSubtotalsConfig(capA6, theme), [theme]);
-  const a7Config = useMemo(() => buildCapWeeklyGapConfig(dA7, theme), [dA7, theme]);
 
   function toggleSort(col) {
     setSort((s) => ({ col, dir: s.col === col && s.dir === 'asc' ? 'desc' : 'asc' }));
@@ -139,11 +125,6 @@ export default function CapacityOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="plan-sel" style={{ marginBottom: '14px' }}>
-        <button className={'plan-btn' + (capTab === 'overview' ? ' active' : '')} onClick={() => setCapTab('overview')}>Overview</button>
-        <button className={'plan-btn' + (capTab === 'analytics' ? ' active' : '')} onClick={() => setCapTab('analytics')}>Analytics</button>
-      </div>
-
       <div className="cap-plan-filters">
         <span className="cap-plan-filters-title">🆚 Compare Plans</span>
         <div className="filter-group">
@@ -166,122 +147,77 @@ export default function CapacityOverview() {
         ))}
       </div>
 
-      {capTab === 'overview' ? (
-        <>
-          <div className="s-grid full">
-            <div className="card">
-              <div className="card-header">
-                <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing the Plan Name 1/Plan Name 2 selection above." /></div>
-              </div>
-              <ChartCanvas config={c1Config} height="300px" />
-              <InsightBox text={capVolumeInsight(dC1)} />
-            </div>
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing the Plan Name 1/Plan Name 2 selection above." /></div>
           </div>
+          <ChartCanvas config={c1Config} height="300px" />
+          <InsightBox text={capVolumeInsight(dC1)} />
+        </div>
+      </div>
 
-          <div className="mini-row">
-            {capMiniStats.map((m) => (
-              <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} />
-            ))}
-          </div>
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">HC Avg, Exit &amp; Total — Jul vs Aug <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend with total headcount overlay." /></div></div>
-              <ChartCanvas config={c3Config} height="300px" />
-              <InsightBox text={capHcInsight(dC3)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount alongside LOA exits and training load." /></div></div>
-              <ChartCanvas config={c4Config} height="300px" />
-              <InsightBox text={capExcessInsight(dC4)} />
-            </div>
-          </div>
+      <div className="mini-row">
+        {capMiniStats.map((m) => (
+          <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} />
+        ))}
+      </div>
+      <div className="s-grid">
+        <div className="card">
+          <div className="card-header"><div className="card-title">HC Avg, Exit &amp; Total — Jul vs Aug <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend with total headcount overlay." /></div></div>
+          <ChartCanvas config={c3Config} height="300px" />
+          <InsightBox text={capHcInsight(dC3)} />
+        </div>
+        <div className="card">
+          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount alongside LOA exits and training load." /></div></div>
+          <ChartCanvas config={c4Config} height="300px" />
+          <InsightBox text={capExcessInsight(dC4)} />
+        </div>
+      </div>
 
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">Hiring PoP — Old vs New + Annual ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Old vs new hiring plan comparison." /></div></div>
-              <ChartCanvas config={c5Config} height="300px" />
-              <InsightBox text={capHiringInsight(dC5)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line." /></div></div>
-              <ChartCanvas config={c6Config} height="300px" />
-              <InsightBox text={capHiringBreakdownInsight(dC6)} />
-            </div>
-          </div>
+      <div className="s-grid">
+        <div className="card">
+          <div className="card-header"><div className="card-title">Hiring PoP — Old vs New + Annual ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Old vs new hiring plan comparison." /></div></div>
+          <ChartCanvas config={c5Config} height="300px" />
+          <InsightBox text={capHiringInsight(dC5)} />
+        </div>
+        <div className="card">
+          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line." /></div></div>
+          <ChartCanvas config={c6Config} height="300px" />
+          <InsightBox text={capHiringBreakdownInsight(dC6)} />
+        </div>
+      </div>
 
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">Capacity % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % under the old vs new plan." /></div></div>
-              <ChartCanvas config={c7Config} height="300px" />
-              <InsightBox text={capCapacityInsight(dC7)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>OSP mix % under the old vs new plan." /></div></div>
-              <ChartCanvas config={c7bConfig} height="300px" />
-              <InsightBox text={capOspMixInsight(dC7)} />
-            </div>
-          </div>
+      <div className="s-grid">
+        <div className="card">
+          <div className="card-header"><div className="card-title">Capacity % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % under the old vs new plan." /></div></div>
+          <ChartCanvas config={c7Config} height="300px" />
+          <InsightBox text={capCapacityInsight(dC7)} />
+        </div>
+        <div className="card">
+          <div className="card-header"><div className="card-title">OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>OSP mix % under the old vs new plan." /></div></div>
+          <ChartCanvas config={c7bConfig} height="300px" />
+          <InsightBox text={capOspMixInsight(dC7)} />
+        </div>
+      </div>
 
-          <div className="s-grid full">
-            <div className="card">
-              <div className="card-header"><div className="card-title">L1 Exit HC + DB/OSP Split <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
-              <ChartCanvas config={c8Config} height="300px" />
-              <InsightBox text={capExitInsight(dC8)} />
-            </div>
-          </div>
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header"><div className="card-title">L1 Exit HC + DB/OSP Split <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
+          <ChartCanvas config={c8Config} height="300px" />
+          <InsightBox text={capExitInsight(dC8)} />
+        </div>
+      </div>
 
-          {cqnDetailCard}
-        </>
-      ) : (
-        <>
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Volume and headcount period-over-period % change." /></div></div>
-              <ChartCanvas config={a1Config} height="300px" />
-              <InsightBox text={capPopInsight(dA1)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Hiring PoP Absolute Change ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Absolute period-over-period hiring change." /></div></div>
-              <ChartCanvas config={a2Config} height="300px" />
-              <InsightBox text={capHiringPopInsight(dA2)} />
-            </div>
-          </div>
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Volume and headcount period-over-period % change." /></div></div>
+          <ChartCanvas config={a1Config} height="300px" />
+          <InsightBox text={capPopInsight(dA1)} />
+        </div>
+      </div>
 
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">Planner Gap Distribution + {periodWord} Trend <InfoBtn tip="<strong>Purpose</strong>Gap trend by planner across periods." /></div></div>
-              <ChartCanvas config={a3Config} height="360px" />
-              <InsightBox text={capPlannerGapInsight(dA3)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Top CQN Gaps <InfoBtn tip="<strong>Purpose</strong>Largest queue gaps this period." /></div></div>
-              <ChartCanvas config={a4Config} height="360px" />
-              <InsightBox text={capTopGapsInsight(capA4)} />
-            </div>
-          </div>
-
-          <div className="s-grid">
-            <div className="card">
-              <div className="card-header"><div className="card-title">Offering Gap + {periodWord} Breakdown <InfoBtn tip="<strong>Purpose</strong>Gap contribution by offering, stacked by period." /></div></div>
-              <ChartCanvas config={a5Config} height="300px" />
-              <InsightBox text={capOfferingGapInsight(dA5)} />
-            </div>
-            <div className="card">
-              <div className="card-header"><div className="card-title">Planner Queue Gaps + Subtotals <InfoBtn tip="<strong>Purpose</strong>Planner-level queue gap subtotals by period." /></div></div>
-              <ChartCanvas config={a6Config} height="360px" />
-              <InsightBox text={capPlannerSubtotalsInsight(capA6)} />
-            </div>
-          </div>
-
-          <div className="card" style={{ marginBottom: '14px' }}>
-            <div className="card-header"><div className="card-title">{periodWord} Gap Trend + Top Queue Breakdown <InfoBtn tip="<strong>Purpose</strong>Total gap trend with the top contributing queues overlaid." /></div></div>
-            <ChartCanvas config={a7Config} height="360px" />
-            <InsightBox text={capWeeklyGapInsight(dA7)} />
-          </div>
-
-          {cqnDetailCard}
-        </>
-      )}
+      {cqnDetailCard}
     </div>
   );
 }

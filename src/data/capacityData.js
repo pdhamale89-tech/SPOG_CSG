@@ -156,51 +156,6 @@ export const capA1 = {
   hcExitPop: [-86.9, -84.8, -85.6, -85.9, -86.2, -85.8, -86.5, -86.7],
 };
 
-export const capA2 = {
-  labels: CAP_Q8,
-  hiringPopDelta: [-41, -9, -88, -16, -48, -52, -47, -9],
-};
-
-export const capA3 = {
-  labels: CAP_Q6,
-  planners: [
-    { name: 'Geeta Tolani', data: [-449890, -390813, -382664, -436541, -436807, -376059] },
-    { name: 'Keser Singh', data: [-507767, -463583, -446079, -422334, -422601, -384782] },
-    { name: 'Manish G.', data: [-232366, -208743, -221380, -218435, -224693, -208866] },
-    { name: 'Michael Y.', data: [-313003, -293957, -309308, -293053, -300018, -286846] },
-  ],
-};
-
-export const capA4 = {
-  labels: ['ProSup IND OMNI', 'ProSup IND', 'Core Email CNX', 'Core CNX', 'SMB CGS', 'Core Chat CNX', 'LE-PUB', 'Comm OOP', 'Cons Retail', 'DSP CGS'],
-  gaps: [-93333, -73344, -47140, -43720, -32502, -28358, -26593, -20633, -18908, -13912],
-};
-
-export const capA5 = {
-  labels: ['Q1', 'Q2', 'Q3', 'Q4', 'FY28 Q1', 'FY28 Q2', 'FY28 Q3', 'FY28 Q4'],
-  pro: [-41, -9, -61, -16, -36, -41, -3, -8],
-  premium: [0, 0, -17, 0, 0, 0, 0, 0],
-  oop: [0, 0, -10, 0, -10, -10, -1, 0],
-  basic: [0, 0, 0, 0, -2, -1, -1, -1],
-};
-
-export const capA6 = {
-  labels: ['ProSup IND', 'India Premium', 'Pro/Core VN', 'ANZ/SA OMNI', 'ID AOH', 'ProSup TH', 'NA PON', 'ANZ Email', 'EMEA ProSupp', 'EMEA LCAT', 'UKI ProSupp'],
-  fy27Total: [-7, -3, 0, 0, -5, -5, -10, -1, -10, 0, -3],
-  fy28Q1: [0, 0, -1, -3, 0, -1, -10, 0, -7, -2, 0],
-  fy28Q2: [0, 0, -1, -4, 0, -2, -10, 0, -5, -6, 0],
-};
-
-export const capA7 = {
-  labels: CAP_WK6,
-  totalGap: [-146042, -144068, -145781, -145859, -150564, -150486],
-  commClientOop: [-787, -805, -804, -810, -803, -808],
-  coreEmail: [-717, -663, -651, -660, -653, -697],
-  techConsCnx: [-339, -336, -334, -339, -333, -328],
-  techConsEmail: [-253, -274, -258, -270, -268, -283],
-  commercial: [-266, -267, -261, -261, -263, -262],
-};
-
 export const capWeeklyTable = {
   cols: CAP_WK6,
   rows: [

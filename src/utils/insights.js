@@ -105,36 +105,6 @@ export function capPopInsight(d) {
   return `Total volume PoP% has stayed negative every quarter it's tracked, averaging ${round(avg(valid))}%, while HC Avg PoP% held steady near ${round(avg(d.hcAvgPop))}%.`;
 }
 
-export function capHiringPopInsight(d) {
-  const worstIdx = minIdx(d.hiringPopDelta);
-  return `Hiring PoP swung as low as ${d.hiringPopDelta[worstIdx]} in ${labelAt(d.labels, worstIdx)}, the sharpest quarter-over-quarter pullback in the series.`;
-}
-
-export function capPlannerGapInsight(d) {
-  const totals = d.planners.map((p) => sum(p.data));
-  const worstIdx = minIdx(totals);
-  return `${d.planners[worstIdx].name} carries the largest cumulative gap at ${fK(totals[worstIdx])} across the period, ahead of ${d.planners.length - 1} other planners tracked.`;
-}
-
-export function capTopGapsInsight(d) {
-  return `${d.labels[0]} leads all queues with a ${fK(d.gaps[0])} gap this quarter, more than double the tenth-ranked queue at ${fK(d.gaps[d.gaps.length - 1])}.`;
-}
-
-export function capOfferingGapInsight(d) {
-  return `Pro carries the bulk of the offering gap at ${sum(d.pro)} across all quarters, dwarfing Premium (${sum(d.premium)}), OOP (${sum(d.oop)}) and Basic (${sum(d.basic)}) combined.`;
-}
-
-export function capPlannerSubtotalsInsight(d) {
-  const totalFy27 = sum(d.fy27Total);
-  const totalFy28 = sum(d.fy28Q1) + sum(d.fy28Q2);
-  return `FY27 queue gaps total ${totalFy27} across these planners, with FY28 H1 already tracking ${totalFy28}; NA PON's -10 gap recurs as the largest single entry in FY27, FY28 Q1 and FY28 Q2.`;
-}
-
-export function capWeeklyGapInsight(d) {
-  const worstIdx = minIdx(d.totalGap);
-  return `Total weekly gap worsened to ${fK(d.totalGap[worstIdx])} in ${labelAt(d.labels, worstIdx)}, with Core Email and CommClient OOP the largest recurring contributors.`;
-}
-
 // --- Shipment / ASU ---
 
 export function shipUppInsight(region, labels) {
