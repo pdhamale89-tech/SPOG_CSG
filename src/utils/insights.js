@@ -87,9 +87,13 @@ export function capHiringBreakdownInsight(d) {
   return `Approved hiring accounts for ${approved} of the ${total} total hires tracked, versus ${nonApproved} still non-approved.`;
 }
 
-export function capCapOspInsight(d) {
+export function capCapacityInsight(d) {
+  return `Capacity% rose from ${first(d.capPctOld)}% to a peak of ${Math.max(...d.capPctNew)}% under the new plan.`;
+}
+
+export function capOspMixInsight(d) {
   const validOsp = d.ospPctNew.filter((v) => v != null);
-  return `Capacity% rose from ${first(d.capPctOld)}% to a peak of ${Math.max(...d.capPctNew)}% under the new plan, as OSP mix climbed to ${Math.max(...validOsp)}%.`;
+  return `OSP mix climbed to a peak of ${Math.max(...validOsp)}% under the new plan, versus ${Math.max(...d.ospPctOld.filter((v) => v != null))}% under the old plan.`;
 }
 
 export function capExitInsight(d) {

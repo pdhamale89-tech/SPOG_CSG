@@ -8,7 +8,7 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
-  buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapOspConfig, buildCapExitConfig,
+  buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig, buildCapExitConfig,
   buildCapPopConfig, buildCapHiringPopConfig, buildCapPlannerGapConfig, buildCapTopGapsConfig,
   buildCapOfferingGapConfig, buildCapPlannerSubtotalsConfig, buildCapWeeklyGapConfig,
 } from '../charts/chartConfigs';
@@ -19,7 +19,7 @@ import {
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
-  capHiringBreakdownInsight, capCapOspInsight, capExitInsight, capPopInsight, capHiringPopInsight,
+  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capExitInsight, capPopInsight, capHiringPopInsight,
   capPlannerGapInsight, capTopGapsInsight, capOfferingGapInsight, capPlannerSubtotalsInsight,
   capWeeklyGapInsight,
 } from '../../utils/insights';
@@ -69,7 +69,8 @@ export default function CapacityOverview() {
   const c4Config = useMemo(() => buildCapExcessConfig(dC4, theme), [dC4, theme]);
   const c5Config = useMemo(() => buildCapHiringConfig(dC5, theme), [dC5, theme]);
   const c6Config = useMemo(() => buildCapHiringBreakdownConfig(dC6, theme), [dC6, theme]);
-  const c7Config = useMemo(() => buildCapCapOspConfig(dC7, theme), [dC7, theme]);
+  const c7Config = useMemo(() => buildCapCapacityConfig(dC7, theme), [dC7, theme]);
+  const c7bConfig = useMemo(() => buildCapOspMixConfig(dC7, theme), [dC7, theme]);
   const c8Config = useMemo(() => buildCapExitConfig(dC8, theme), [dC8, theme]);
   const a1Config = useMemo(() => buildCapPopConfig(dA1, theme), [dA1, theme]);
   const a2Config = useMemo(() => buildCapHiringPopConfig(dA2, theme), [dA2, theme]);
@@ -210,10 +211,18 @@ export default function CapacityOverview() {
 
           <div className="s-grid">
             <div className="card">
-              <div className="card-header"><div className="card-title">Capacity % + OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % on the left axis, OSP mix % on the right." /></div></div>
+              <div className="card-header"><div className="card-title">Capacity % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % under the old vs new plan." /></div></div>
               <ChartCanvas config={c7Config} height="300px" />
-              <InsightBox text={capCapOspInsight(dC7)} />
+              <InsightBox text={capCapacityInsight(dC7)} />
             </div>
+            <div className="card">
+              <div className="card-header"><div className="card-title">OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>OSP mix % under the old vs new plan." /></div></div>
+              <ChartCanvas config={c7bConfig} height="300px" />
+              <InsightBox text={capOspMixInsight(dC7)} />
+            </div>
+          </div>
+
+          <div className="s-grid full">
             <div className="card">
               <div className="card-header"><div className="card-title">L1 Exit HC + DB/OSP Split <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
               <ChartCanvas config={c8Config} height="300px" />

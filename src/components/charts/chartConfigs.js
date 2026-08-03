@@ -855,7 +855,7 @@ export function buildCapHiringBreakdownConfig(d, theme) {
   };
 }
 
-export function buildCapCapOspConfig(d, theme) {
+export function buildCapCapacityConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const pctDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
@@ -864,10 +864,8 @@ export function buildCapCapOspConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Cap% Old', data: d.capPctOld, backgroundColor: 'rgba(59,130,246,.3)', yAxisID: 'y', borderRadius: 3 },
-        { label: 'Cap% New', data: d.capPctNew, backgroundColor: 'rgba(59,130,246,.8)', yAxisID: 'y', borderRadius: 3 },
-        { label: 'OSP% Old', data: d.ospPctOld, type: 'line', borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, yAxisID: 'y1' },
-        { label: 'OSP% New', data: d.ospPctNew, type: 'line', borderColor: '#10b981', pointRadius: 4, tension: 0.3, borderWidth: 2.5, yAxisID: 'y1' },
+        { label: 'Cap% Old', data: d.capPctOld, backgroundColor: 'rgba(59,130,246,.3)', borderRadius: 3 },
+        { label: 'Cap% New', data: d.capPctNew, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3 },
       ],
     },
     options: {
@@ -876,7 +874,32 @@ export function buildCapCapOspConfig(d, theme) {
       layout: TOP_LABEL_LAYOUT,
       scales: {
         y: { beginAtZero: true, max: 200, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, title: { display: true, text: 'Capacity %', color: tc, font: { size: 9 } } },
-        y1: { position: 'right', beginAtZero: true, max: 100, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, title: { display: true, text: 'OSP Mix %', color: tc, font: { size: 9 } } },
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: pctDL },
+    },
+  };
+}
+
+export function buildCapOspMixConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const LP = legendPos(theme);
+  const pctDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'OSP% Old', data: d.ospPctOld, borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5 },
+        { label: 'OSP% New', data: d.ospPctNew, borderColor: '#10b981', pointRadius: 4, tension: 0.3, borderWidth: 2.5 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: {
+        y: { beginAtZero: true, max: 100, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, title: { display: true, text: 'OSP Mix %', color: tc, font: { size: 9 } } },
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
       },
       plugins: { legend: LP, datalabels: pctDL },
