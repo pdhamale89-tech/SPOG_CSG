@@ -30,8 +30,8 @@ export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear } = useApp();
   const [capTab, setCapTab] = useState('overview');
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
-  const [volPeriodA, setVolPeriodA] = useState(CAP_VOL_PERIODS[0]);
-  const [volPeriodB, setVolPeriodB] = useState(CAP_VOL_PERIODS[1]);
+  const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
+  const [planName2, setPlanName2] = useState(CAP_VOL_PERIODS[1]);
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -41,16 +41,16 @@ export default function CapacityOverview() {
   const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
 
   const dC1 = useMemo(() => {
-    const a = CAP_VOL_KEYS[volPeriodA];
-    const b = CAP_VOL_KEYS[volPeriodB];
+    const a = CAP_VOL_KEYS[planName1];
+    const b = CAP_VOL_KEYS[planName2];
     return {
       labels: L6,
-      periodA: volPeriodA,
-      periodB: volPeriodB,
+      periodA: planName1,
+      periodB: planName2,
       aDb: capC1[a.db], aOsp: capC1[a.osp], bDb: capC1[b.db], bOsp: capC1[b.osp],
       aTotal: capC2[a.total], bTotal: capC2[b.total],
     };
-  }, [L6, volPeriodA, volPeriodB]);
+  }, [L6, planName1, planName2]);
   const dC3 = useMemo(() => ({ ...capC3, labels: L8 }), [L8]);
   const dC4 = useMemo(() => ({ ...capC4, labels: L8 }), [L8]);
   const dC5 = useMemo(() => ({ ...capC5, labels: L8 }), [L8]);
@@ -143,6 +143,22 @@ export default function CapacityOverview() {
         <button className={'plan-btn' + (capTab === 'analytics' ? ' active' : '')} onClick={() => setCapTab('analytics')}>Analytics</button>
       </div>
 
+      <div className="cap-plan-filters">
+        <span className="cap-plan-filters-title">🆚 Compare Plans</span>
+        <div className="filter-group">
+          <label>Plan Name 1</label>
+          <select value={planName1} onChange={(e) => setPlanName1(e.target.value)}>
+            {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div className="filter-group">
+          <label>Plan Name 2</label>
+          <select value={planName2} onChange={(e) => setPlanName2(e.target.value)}>
+            {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      </div>
+
       <div className="kpi-grid">
         {capKpis.map((k) => (
           <KpiCard key={k.label} label={k.label} value={k.value} delta={DIR_ARROW[k.dir] + k.delta} sub={k.sub} />
@@ -154,15 +170,7 @@ export default function CapacityOverview() {
           <div className="s-grid full">
             <div className="card">
               <div className="card-header">
-                <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing two projection vintages you pick below." /></div>
-                <div className="card-dd">
-                  <select className="f-sel" value={volPeriodA} onChange={(e) => setVolPeriodA(e.target.value)}>
-                    {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                  <select className="f-sel" value={volPeriodB} onChange={(e) => setVolPeriodB(e.target.value)}>
-                    {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
+                <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing the Plan Name 1/Plan Name 2 selection above." /></div>
               </div>
               <ChartCanvas config={c1Config} height="300px" />
               <InsightBox text={capVolumeInsight(dC1)} />
