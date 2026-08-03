@@ -1,4 +1,5 @@
 import { useApp } from '../../context/AppContext';
+import ComingSoonOverlay from '../common/ComingSoonOverlay';
 
 export default function RCAPanel() {
   const { showRCA, rcaCollapsed, toggleRcaCollapsed, handleRCAApproval, openForward } = useApp();
@@ -8,7 +9,7 @@ export default function RCAPanel() {
         {rcaCollapsed ? '◂' : '▸'}
       </button>
       {!rcaCollapsed && (
-        <>
+        <ComingSoonOverlay>
           <div className="rca-panel-title">✦ RCA &amp; CLCA</div>
           <div>
             <div className="rca-section">
@@ -28,7 +29,7 @@ export default function RCAPanel() {
               <button className="rca-btn rca-btn-forward" onClick={openForward}>→ Forward</button>
             </div>
           </div>
-        </>
+        </ComingSoonOverlay>
       )}
     </div>
   );

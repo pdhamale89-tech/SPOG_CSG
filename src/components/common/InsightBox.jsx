@@ -1,8 +1,12 @@
+import ComingSoonOverlay from './ComingSoonOverlay';
+
 export default function InsightBox({ text }) {
   return (
-    <div className="insight-box">
-      <span className="ins-ic">✦</span>
-      <span>{text}</span>
-    </div>
+    <ComingSoonOverlay>
+      <div className="insight-box">
+        <span className="ins-ic">✦</span>
+        <span>{text}</span>
+      </div>
+    </ComingSoonOverlay>
   );
 }

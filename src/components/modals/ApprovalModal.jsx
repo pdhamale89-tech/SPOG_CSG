@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import ComingSoonOverlay from '../common/ComingSoonOverlay';
 
 const ROOT_CAUSES = ['Demand Surge', 'OSP Staffing Gap', 'Seasonality Impact', 'Model Drift', 'Data Quality Issue', 'Other'];
 const PRIORITY_CLASSES = ['high', 'medium', 'low'];
@@ -40,6 +41,7 @@ export default function ApprovalModal() {
           <h2>📋 RCA/CLCA</h2>
           <button className="approval-close" onClick={closeApproval}>&times;</button>
         </div>
+        <ComingSoonOverlay>
         <div className="approval-body">
           {existing?.type === 'clca' && (
             <div className="insight-box" style={{ marginBottom: '10px' }}>
@@ -94,6 +96,7 @@ export default function ApprovalModal() {
             </div>
           </div>
         </div>
+        </ComingSoonOverlay>
       </div>
     </div>
   );
