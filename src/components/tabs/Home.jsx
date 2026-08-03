@@ -1,7 +1,9 @@
 import { useApp } from '../../context/AppContext';
 
+const ISG_URL = `${import.meta.env.BASE_URL}isg/`;
+
 export default function Home() {
-  const { goSub, showToast } = useApp();
+  const { goSub } = useApp();
 
   return (
     <div className="tab-panel active">
@@ -20,8 +22,7 @@ export default function Home() {
           <span className="home-hero-tag">Customer Support Group — open this dashboard</span>
           <span className="home-hero-cta">Open dashboard →</span>
         </button>
-        <button type="button" className="home-hero-card isg" onClick={() => showToast('ISG dashboard link coming soon', 'toast-info')}>
-          <span className="home-hero-badge">Link coming soon</span>
+        <button type="button" className="home-hero-card isg" onClick={() => { window.location.href = ISG_URL; }}>
           <span className="home-hero-ic">🏭</span>
           <span className="home-hero-title">ISG</span>
           <span className="home-hero-tag">Infrastructure Solutions Group dashboard</span>

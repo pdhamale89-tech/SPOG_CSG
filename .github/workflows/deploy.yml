@@ -21,17 +21,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ISG dashboard (separate app, lives on the ISG_SPOG branch under
+      # ISG_SPOG/) gets built alongside CSG and merged into dist/isg/, so
+      # both dashboards ship from this one GitHub Pages site.
+      - name: Checkout ISG dashboard (ISG_SPOG branch)
+        uses: actions/checkout@v4
+        with:
+          ref: ISG_SPOG
+          path: isg-src
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies (CSG)
         run: npm ci
 
-      - name: Build
+      - name: Build (CSG)
         run: npm run build
+
+      - name: Install dependencies (ISG)
+        run: npm ci
+        working-directory: isg-src/ISG_SPOG
+
+      - name: Build (ISG)
+        run: npm run build
+        working-directory: isg-src/ISG_SPOG
+
+      - name: Merge ISG build into dist/isg
+        run: |
+          mkdir -p dist/isg
+          cp -r isg-src/ISG_SPOG/dist/. dist/isg/
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
