@@ -51,7 +51,7 @@ const SEGMENT_SOLD_GROWTH = segmentSoldGrowthPct();
 export default function ShipmentOverview() {
   const {
     theme, curPeriod, fiscalYear, chartRegionFor, setChartRegion, chartSubRegionFor, setChartSubRegion,
-    chartCountryFor, setChartCountry,
+    chartCountryFor, setChartCountry, openSegmentGrowth,
   } = useApp();
   const [prodView, setProdView] = useState('top5');
   const [soldView, setSoldView] = useState('segment');
@@ -76,6 +76,7 @@ export default function ShipmentOverview() {
           label="SEGMENT SOLD GROWTH"
           value={`${SEGMENT_SOLD_GROWTH >= 0 ? '+' : ''}${SEGMENT_SOLD_GROWTH}%`}
           delta={`${SEGMENT_SOLD_GROWTH >= 0 ? '▲' : '▼'} First vs Last Period`}
+          onClick={openSegmentGrowth}
         />
         <KpiCard label="SHIPMENT ADHERENCE" value={`${SHIPMENT_ADHERENCE}%`} delta="Actual vs Forecast" />
       </div>
