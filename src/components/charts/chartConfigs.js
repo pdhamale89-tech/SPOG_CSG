@@ -515,7 +515,17 @@ export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear, view = 'seg
       },
       plugins: {
         legend: LP,
-        datalabels: { display: true, color: '#fff', font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', formatter: (v) => v },
+        datalabels: {
+          display: true,
+          color: '#fff',
+          font: { size: 9, weight: 'bold' },
+          anchor: 'center',
+          align: 'center',
+          formatter: (v, ctx) => {
+            const total = ctx.chart.data.datasets.reduce((s, ds) => s + ds.data[ctx.dataIndex], 0);
+            return total ? `${Math.round((v / total) * 100)}%` : '';
+          },
+        },
       },
     },
   };
