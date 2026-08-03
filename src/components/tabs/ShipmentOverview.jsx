@@ -137,7 +137,7 @@ export default function ShipmentOverview() {
           <InsightBox text={productTrendInsight()} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Shipment Growth <InfoBtn tip="<strong>Purpose</strong>Growth by region." /></div></div>
+          <div className="card-header"><div className="card-title">Shipment Mix <InfoBtn tip="<strong>Purpose</strong>Shipment mix by region." /></div></div>
           <ChartCanvas config={s5Config} />
           <InsightBox text={shipmentGrowthInsight()} />
         </div>
