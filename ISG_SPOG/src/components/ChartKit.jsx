@@ -12,9 +12,9 @@ import MultiSelectField from './MultiSelectField'
 // Same color-role convention established on the Forecasting page: blue/orange compare
 // two neutral quantities, violet is a neutral trend line, green/red mean ahead/behind.
 export const C = {
-  metric1: '#38bdf8', metric2: '#fb923c', trend: '#a78bfa',
-  ahead: '#34d399', behind: '#f87171',
-  grid: 'var(--chart-grid)', tick: '#4a6a85',
+  metric1: '#3b82f6', metric2: '#f59e0b', trend: '#8b5cf6',
+  ahead: '#10b981', behind: '#ef4444',
+  grid: 'var(--chart-grid)', tick: '#6b7280',
 }
 
 // Color for the Nth "extra Plan" series once a Plan Name dropdown allows selecting
@@ -64,7 +64,7 @@ export function GraphInsightButton({ rca, clca, align = 'left' }) {
         title="RCA / CLCA for this graph"
         aria-label="RCA / CLCA for this graph"
         style={{
-          width: 17, height: 17, borderRadius: '50%', border: '1px solid rgba(56,189,248,0.35)',
+          width: 17, height: 17, borderRadius: '50%', border: '1px solid rgba(59,130,246,0.35)',
           background: open ? 'var(--accent)' : 'var(--bg-inset)', color: open ? 'var(--accent-contrast)' : 'var(--accent)',
           fontSize: 9, fontWeight: 700, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', padding: 0, fontStyle: 'italic',
@@ -77,13 +77,13 @@ export function GraphInsightButton({ rca, clca, align = 'left' }) {
         }}>
           {rca && (
             <>
-              <p style={{ fontSize: 8.5, fontWeight: 700, color: '#38bdf8', letterSpacing: '0.04em' }}>RCA</p>
+              <p style={{ fontSize: 8.5, fontWeight: 700, color: '#3b82f6', letterSpacing: '0.04em' }}>RCA</p>
               <p style={{ fontSize: 10, color: 'var(--text-secondary)', lineHeight: 1.35, marginTop: 1, marginBottom: clca ? 6 : 0 }}>{rca}</p>
             </>
           )}
           {clca && (
             <>
-              <p style={{ fontSize: 8.5, fontWeight: 700, color: '#34d399', letterSpacing: '0.04em' }}>CLCA</p>
+              <p style={{ fontSize: 8.5, fontWeight: 700, color: '#10b981', letterSpacing: '0.04em' }}>CLCA</p>
               <p style={{ fontSize: 10, color: 'var(--text-secondary)', lineHeight: 1.35, marginTop: 1 }}>{clca}</p>
             </>
           )}
@@ -158,7 +158,7 @@ export function ComingSoonOverlay({ children }) {
       }}>
         <span style={{
           fontSize: 19, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase',
-          color: '#fff', background: 'rgba(56,189,248,0.16)', border: '1px solid rgba(56,189,248,0.5)',
+          color: '#fff', background: 'rgba(59,130,246,0.16)', border: '1px solid rgba(59,130,246,0.5)',
           padding: '8px 22px', borderRadius: 999, textShadow: '0 1px 8px rgba(0,0,0,0.4)',
           boxShadow: '0 8px 24px rgba(0,0,0,0.35)', height: 'fit-content',
         }}>
@@ -219,8 +219,8 @@ export function InfoButton({ info, align = 'left' }) {
         title="What this shows"
         aria-label="What this shows"
         style={{
-          width: 15, height: 15, borderRadius: '50%', border: '1px solid rgba(167,139,250,0.45)',
-          background: open ? '#a78bfa' : 'var(--bg-inset)', color: open ? '#0b1220' : '#a78bfa',
+          width: 15, height: 15, borderRadius: '50%', border: '1px solid rgba(139,92,246,0.45)',
+          background: open ? '#8b5cf6' : 'var(--bg-inset)', color: open ? '#0b1220' : '#8b5cf6',
           fontSize: 8.5, fontWeight: 700, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', padding: 0, fontStyle: 'italic', flexShrink: 0,
         }}
@@ -240,8 +240,8 @@ export function InfoButton({ info, align = 'left' }) {
 export function PillButton({ children, onClick }) {
   return (
     <button onClick={onClick} style={{
-      fontSize: 10, fontWeight: 600, color: 'var(--accent)', background: 'rgba(56,189,248,0.08)',
-      border: '1px solid rgba(56,189,248,0.25)', borderRadius: 14, padding: '3px 11px', cursor: 'pointer',
+      fontSize: 10, fontWeight: 600, color: 'var(--accent)', background: 'rgba(59,130,246,0.08)',
+      border: '1px solid rgba(59,130,246,0.25)', borderRadius: 14, padding: '3px 11px', cursor: 'pointer',
     }}>
       {children}
     </button>

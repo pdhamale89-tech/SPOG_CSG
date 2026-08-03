@@ -7,63 +7,64 @@
    <html> overrides. Only "chrome" tokens (backgrounds/borders/neutral
    text) switch between themes — accent and all data/status colors
    (chart series, ahead/behind, region palettes, accuracy scale) stay
-   constant across both, same convention most ops dashboards use. */
+   constant across both, same convention most ops dashboards use.
+   Palette matches the CSG (SPOG) dashboard's theme.css tokens 1:1. */
 :root {
-  --bg-page: #070f1a;
-  --bg-panel: #0c1929;
-  --bg-raised: #111f33;
-  --bg-inset: #0a1522;
-  --border-subtle: rgba(255,255,255,0.06);
+  --bg-page: #0f1117;
+  --bg-panel: #1a1d2e;
+  --bg-raised: #1e2235;
+  --bg-inset: #161929;
+  --border-subtle: rgba(255,255,255,0.05);
   --border-default: rgba(255,255,255,0.09);
   --border-strong: rgba(255,255,255,0.16);
-  --text-primary: #e6f1ff;
-  --text-secondary: #cfe8fb;
-  --text-dim: #7fa8cc;
-  --text-faint: #5a8bb0;
-  --text-muted: #3d607a;
-  --accent: #38bdf8;
-  --accent-dim: rgba(56,189,248,0.12);
-  --accent-glow: rgba(56,189,248,0.30);
-  --tooltip-bg: rgba(12,25,41,0.96);
-  --scrollbar-track: #0c1929;
-  --scrollbar-thumb: #1a3050;
-  --scrollbar-thumb-hover: #2a5298;
-  --chart-grid: rgba(148,163,184,0.22);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-dim: #8a97a8;
+  --text-faint: #7c8797;
+  --text-muted: #6b7280;
+  --accent: #60a5fa;
+  --accent-dim: rgba(96,165,250,0.12);
+  --accent-glow: rgba(96,165,250,0.30);
+  --tooltip-bg: rgba(49,46,129,0.96);
+  --scrollbar-track: #161929;
+  --scrollbar-thumb: #2d3148;
+  --scrollbar-thumb-hover: #60a5fa;
+  --chart-grid: rgba(255,255,255,0.06);
   --select-bg: rgba(255,255,255,0.025);
-  --select-bg-hover: rgba(56,189,248,0.05);
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
-  --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.6), 0 0 0 1px rgba(56,189,248,0.18);
-  --shadow-card-active: 0 4px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(56,189,248,0.4), 0 0 24px rgba(56,189,248,0.1);
-  --accent-contrast: #070f1a;
+  --select-bg-hover: rgba(96,165,250,0.05);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(96,165,250,0.18);
+  --shadow-card-active: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.4), 0 0 24px rgba(96,165,250,0.1);
+  --accent-contrast: #0f1117;
   color-scheme: dark;
 }
 
 [data-theme='light'] {
-  --bg-page: #f3f6fb;
+  --bg-page: #f5f7fa;
   --bg-panel: #ffffff;
   --bg-raised: #ffffff;
-  --bg-inset: #eef2f8;
+  --bg-inset: #eef1f6;
   --border-subtle: rgba(15,23,42,0.08);
   --border-default: rgba(15,23,42,0.13);
   --border-strong: rgba(15,23,42,0.22);
-  --text-primary: #0f1b2d;
-  --text-secondary: #23405e;
-  --text-dim: #46617f;
-  --text-faint: #5c7593;
-  --text-muted: #7488a3;
-  --accent: #0284c7;
-  --accent-dim: rgba(2,132,199,0.09);
-  --accent-glow: rgba(2,132,199,0.22);
-  --tooltip-bg: rgba(255,255,255,0.98);
-  --scrollbar-track: #eef2f8;
-  --scrollbar-thumb: #c3d0e0;
-  --scrollbar-thumb-hover: #9fb2c9;
-  --chart-grid: rgba(71,94,122,0.18);
+  --text-primary: #1a1f36;
+  --text-secondary: #6b7280;
+  --text-dim: #7d8794;
+  --text-faint: #8b93a0;
+  --text-muted: #9ca3af;
+  --accent: #3b82f6;
+  --accent-dim: rgba(59,130,246,0.09);
+  --accent-glow: rgba(59,130,246,0.22);
+  --tooltip-bg: rgba(30,41,59,0.98);
+  --scrollbar-track: #eef1f6;
+  --scrollbar-thumb: #e5e7eb;
+  --scrollbar-thumb-hover: #3b82f6;
+  --chart-grid: rgba(0,0,0,0.06);
   --select-bg: rgba(15,23,42,0.03);
-  --select-bg-hover: rgba(2,132,199,0.06);
-  --shadow-card: 0 1px 3px rgba(15,23,42,0.07), inset 0 1px 0 rgba(255,255,255,0.6);
-  --shadow-card-hover: 0 4px 16px rgba(15,23,42,0.1), 0 0 0 1px rgba(2,132,199,0.18);
-  --shadow-card-active: 0 4px 24px rgba(15,23,42,0.12), 0 0 0 1px rgba(2,132,199,0.4), 0 0 24px rgba(2,132,199,0.08);
+  --select-bg-hover: rgba(59,130,246,0.06);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.12), 0 0 0 1px rgba(59,130,246,0.18);
+  --shadow-card-active: 0 10px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(59,130,246,0.4), 0 0 24px rgba(59,130,246,0.08);
   --accent-contrast: #ffffff;
   color-scheme: light;
 }
@@ -77,7 +78,7 @@
     margin: 0;
     background-color: var(--bg-page);
     color: var(--text-primary);
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
@@ -119,7 +120,7 @@
     transition: left 0.25s ease, right 0.25s ease, opacity 0.25s ease;
   }
   .card-panel:hover {
-    border-color: rgba(56,189,248,0.3);
+    border-color: rgba(59,130,246,0.3);
     box-shadow: var(--shadow-card-hover);
   }
   .card-panel:hover::before {
@@ -127,13 +128,13 @@
     opacity: 0.85;
   }
   .card-panel.active {
-    border-color: rgba(56,189,248,0.5);
+    border-color: rgba(59,130,246,0.5);
     box-shadow: var(--shadow-card-active);
   }
   .card-panel.active::before {
     left: 0; right: 0;
     opacity: 1;
-    box-shadow: 0 0 10px rgba(56,189,248,0.6);
+    box-shadow: 0 0 10px rgba(59,130,246,0.6);
   }
 
   /* ── Chart/visual panel ─────────────────────────────────────────── */
@@ -151,14 +152,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px;
-    background: linear-gradient(90deg, rgba(56,189,248,0.06) 0%, transparent 55%);
+    background: linear-gradient(90deg, rgba(59,130,246,0.06) 0%, transparent 55%);
     border-left: 2px solid var(--accent);
     cursor: pointer;
     transition: background 0.15s ease;
     user-select: none;
   }
   .layer-header:hover {
-    background: linear-gradient(90deg, rgba(56,189,248,0.1) 0%, transparent 55%);
+    background: linear-gradient(90deg, rgba(59,130,246,0.1) 0%, transparent 55%);
   }
 
   /* ── Field select ───────────────────────────────────────────────── */
@@ -185,7 +186,7 @@
     transition: border-color 0.15s ease, background-color 0.15s ease;
     outline: none;
   }
-  .select-dark:hover  { border-bottom-color: rgba(56,189,248,0.5); background-color: var(--select-bg-hover); }
+  .select-dark:hover  { border-bottom-color: rgba(59,130,246,0.5); background-color: var(--select-bg-hover); }
   .select-dark:focus  { border-bottom-color: var(--accent); background-color: var(--select-bg-hover); box-shadow: 0 1px 0 0 var(--accent); }
   .select-dark option { background: var(--bg-panel); color: var(--text-primary); }
 
@@ -210,7 +211,7 @@
     outline: none;
     text-align: left;
   }
-  .ms-field:hover  { border-bottom-color: rgba(56,189,248,0.5); background-color: var(--select-bg-hover); }
+  .ms-field:hover  { border-bottom-color: rgba(59,130,246,0.5); background-color: var(--select-bg-hover); }
   .ms-field:focus  { border-bottom-color: var(--accent); background-color: var(--select-bg-hover); box-shadow: 0 1px 0 0 var(--accent); }
   .ms-field-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -221,9 +222,9 @@
     z-index: 50;
     width: max(100%, 220px);
     background: var(--bg-panel);
-    border: 1px solid rgba(56,189,248,0.3);
+    border: 1px solid rgba(59,130,246,0.3);
     border-radius: 8px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.2), 0 0 20px rgba(56,189,248,0.08);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2), 0 0 20px rgba(59,130,246,0.08);
     padding: 8px;
   }
   .ms-search {
@@ -237,7 +238,7 @@
     outline: none;
     box-sizing: border-box;
   }
-  .ms-search:focus { border-color: rgba(56,189,248,0.5); }
+  .ms-search:focus { border-color: rgba(59,130,246,0.5); }
   .ms-actions {
     display: flex;
     justify-content: space-between;
@@ -271,7 +272,7 @@
     color: var(--text-secondary);
     cursor: pointer;
   }
-  .ms-option:hover { background: rgba(56,189,248,0.08); }
+  .ms-option:hover { background: rgba(59,130,246,0.08); }
   .ms-option input { flex-shrink: 0; cursor: pointer; }
   .ms-option span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ms-empty { font-size: 10.5px; color: var(--text-muted); padding: 8px 6px; text-align: center; }
@@ -282,14 +283,14 @@
     align-items: center;
     gap: 5px;
     background: var(--accent-dim);
-    border: 1px solid rgba(56,189,248,0.25);
+    border: 1px solid rgba(59,130,246,0.25);
     border-radius: 20px;
     padding: 2px 6px 2px 10px;
     font-size: 10.5px;
     color: var(--text-secondary);
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .filter-chip:hover { border-color: rgba(56,189,248,0.5); box-shadow: 0 0 8px rgba(56,189,248,0.25); }
+  .filter-chip:hover { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 8px rgba(59,130,246,0.25); }
   .filter-chip button {
     background: none;
     border: none;
@@ -299,7 +300,7 @@
     cursor: pointer;
     padding: 0 2px;
   }
-  .filter-chip button:hover { color: #f87171; }
+  .filter-chip button:hover { color: #ef4444; }
 
   /* ── Pill toggle (FY / Quarter / Week) ─────────────────────────── */
   .drill-toggle {
@@ -328,7 +329,7 @@
   /* ── Tooltip ─────────────────────────────────────────────────────── */
   .chart-tooltip {
     background: var(--tooltip-bg);
-    border: 1px solid rgba(56,189,248,0.25);
+    border: 1px solid rgba(59,130,246,0.25);
     border-radius: 7px;
     padding: 8px 11px;
     font-size: 11px;
@@ -338,9 +339,9 @@
 
   /* ── Status badge ─────────────────────────────────────────────────── */
   .badge { padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
-  .badge-good { background: rgba(52,211,153,0.15); color: #34d399; }
-  .badge-warn { background: rgba(251,191,36,0.15);  color: #fbbf24; }
-  .badge-bad  { background: rgba(248,113,113,0.15); color: #f87171; }
+  .badge-good { background: rgba(16,185,129,0.15); color: #10b981; }
+  .badge-warn { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+  .badge-bad  { background: rgba(239,68,68,0.15); color: #ef4444; }
 }
 
 @layer utilities {

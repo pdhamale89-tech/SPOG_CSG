@@ -117,7 +117,7 @@ function MainChart({ filters, granularity, plansA, plansB }) {
           <XAxis dataKey={xKey} tick={{ fill: C.tick, fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="l" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.trend, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <ReferenceLine yAxisId="r" y={0} stroke="rgba(255,255,255,0.1)" />
           {aPlans.map((p, pi) => {
@@ -193,7 +193,7 @@ function LobVarianceChart({ filters, plansA, plansB }) {
           <XAxis type="number" domain={[-domainMax, domainMax]} ticks={ticks} tick={{ fill: C.tick, fontSize: 9 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
           <YAxis type="category" dataKey="name" tick={<CategoryTick />} width={150} axisLine={false} tickLine={false} />
-          <Tooltip content={<LobTip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<LobTip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <ReferenceLine x={0} stroke="rgba(255,255,255,0.15)" />
           <Bar dataKey="variance" name="Variance %" radius={[3,3,3,3]} maxBarSize={18}>
             {data.map((d, i) => <Cell key={i} fill={d.variance >= 0 ? C.ahead : C.behind} opacity={0.9} />)}
@@ -224,11 +224,11 @@ export default function PlanOverPlanVariationLayer({ filters, granularity }) {
     <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-subtle)', borderRadius: 10, overflow: 'hidden' }}>
       <div className="layer-header" onClick={() => setOpen(o => !o)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#070f1a', background: '#34d399', borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em' }}>02</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#0f1117', background: '#10b981', borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em' }}>02</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Plan over Plan Variation</span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>— headcount plan variance by region &amp; LOB</span>
         </div>
-        <span style={{ fontSize: 11, color: '#34d399', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
+        <span style={{ fontSize: 11, color: '#10b981', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
       </div>
       {open && (
         <>

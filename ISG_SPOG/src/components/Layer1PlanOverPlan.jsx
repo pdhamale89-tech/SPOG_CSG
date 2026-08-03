@@ -14,7 +14,7 @@ const PLANS = PLAN_NAMES.filter(p => p !== 'Actual')
 // Blue/orange compare two neutral quantities (Plan A vs Plan B); violet is a neutral
 // analytical trend (the variance line isn't inherently good or bad on its own);
 // green/red are reserved for the diverging chart, where they mean ahead/behind.
-const C = { plan1: '#38bdf8', plan2: '#fb923c', variance: '#a78bfa', ahead: '#34d399', behind: '#f87171', grid: 'var(--chart-grid)', tick: '#4a6a85' }
+const C = { plan1: '#3b82f6', plan2: '#f59e0b', variance: '#8b5cf6', ahead: '#10b981', behind: '#ef4444', grid: 'var(--chart-grid)', tick: '#6b7280' }
 
 // Local PlanDropdowns duplicate removed 2026-07-31 in favor of the shared,
 // now-multi-select ChartKit.jsx PlanDropdowns (same precedent as Layer2ActualVsPlan's
@@ -118,7 +118,7 @@ function Visual1({ filters, granularity, plansA, plansB, onPlansChange }) {
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.variance, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <ReferenceLine yAxisId="r" y={0} stroke="rgba(255,255,255,0.1)" />
           {aPlans.map((p, pi) => {
@@ -165,7 +165,7 @@ function Visual2({ filters, plansA, plansB, onPlansChange }) {
             tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.variance, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <ReferenceLine yAxisId="r" y={0} stroke="rgba(255,255,255,0.1)" />
           <Bar yAxisId="l" dataKey="plan1" name={planA || 'Plan A'} fill={C.plan1} opacity={0.8} radius={[3,3,0,0]} maxBarSize={50} />
@@ -220,7 +220,7 @@ function Visual3({ filters, plansA, plansB, onPlansChange }) {
           <XAxis type="number" domain={[-domainMax, domainMax]} ticks={ticks} tick={{ fill: C.tick, fontSize: 9 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
           <YAxis type="category" dataKey="cqn" tick={<QueueTick />} width={148} axisLine={false} tickLine={false} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <ReferenceLine x={0} stroke="rgba(255,255,255,0.15)" />
           <Bar dataKey="variance" name="Variance %" radius={[3,3,3,3]} maxBarSize={20}>
             {data.map((d, i) => <Cell key={i} fill={d.variance >= 0 ? C.ahead : C.behind} opacity={0.9} />)}
@@ -261,7 +261,7 @@ export default function Layer1PlanOverPlan({ filters, granularity }) {
       <div className="layer-header" onClick={() => setOpen(o => !o)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{
-            fontSize: 9, fontWeight: 700, color: '#070f1a', background: '#38bdf8',
+            fontSize: 9, fontWeight: 700, color: '#0f1117', background: '#3b82f6',
             borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em',
           }}>01</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -269,7 +269,7 @@ export default function Layer1PlanOverPlan({ filters, granularity }) {
           </span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>— variance analysis</span>
         </div>
-        <span style={{ fontSize: 11, color: '#38bdf8', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
+        <span style={{ fontSize: 11, color: '#3b82f6', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
       </div>
       {open && (
         <div style={{ padding: 12, display: 'flex', gap: 10 }}>

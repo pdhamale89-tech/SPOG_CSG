@@ -2,14 +2,14 @@ import React from 'react'
 import { FISCAL_CALENDAR, FISCAL_YEAR_LABEL, FISCAL_YEAR_RANGE, DOW_LABELS } from '../data/planningCalendarData'
 
 const TYPE_STYLE = {
-  sco: { background: 'rgba(251,191,36,0.22)', color: '#92620a', fontWeight: 700 },
-  holiday: { background: 'rgba(52,211,153,0.22)', color: '#0d5a3f', fontWeight: 600 },
+  sco: { background: 'rgba(245,158,11,0.22)', color: '#92620a', fontWeight: 700 },
+  holiday: { background: 'rgba(16,185,129,0.22)', color: '#0d5a3f', fontWeight: 600 },
   payDate: { border: '1.5px solid var(--accent)', color: 'var(--accent)', fontWeight: 700, borderRadius: 4 },
 }
 
 const LEGEND = [
-  { key: 'sco', label: 'SCO', swatch: { background: 'rgba(251,191,36,0.5)' } },
-  { key: 'holiday', label: 'Holiday', swatch: { background: 'rgba(52,211,153,0.5)' } },
+  { key: 'sco', label: 'SCO', swatch: { background: 'rgba(245,158,11,0.5)' } },
+  { key: 'holiday', label: 'Holiday', swatch: { background: 'rgba(16,185,129,0.5)' } },
   { key: 'payDate', label: 'Pay Date', swatch: { border: '1.5px solid var(--accent)' } },
 ]
 

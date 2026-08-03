@@ -31,7 +31,7 @@ function Cluster({ icon, children }) {
 }
 
 function ClusterDivider() {
-  return <div style={{ width: 1, alignSelf: 'stretch', background: 'linear-gradient(180deg, transparent, rgba(56,189,248,0.18) 30%, rgba(56,189,248,0.18) 70%, transparent)', margin: '0 14px' }} />
+  return <div style={{ width: 1, alignSelf: 'stretch', background: 'linear-gradient(180deg, transparent, rgba(59,130,246,0.18) 30%, rgba(59,130,246,0.18) 70%, transparent)', margin: '0 14px' }} />
 }
 
 export default function FilterPanel({ filters, onChange, granularity, onGranularityChange }) {

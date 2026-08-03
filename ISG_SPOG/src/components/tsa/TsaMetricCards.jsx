@@ -11,7 +11,7 @@ import { C, Tip, Modal, InfoButton } from './TsaChartKit'
 const CHART_BOX = { maxWidth: 620, margin: '0 auto' }
 // Same region palette as the Forecasting page's Total Queues donut (MetricCards.jsx)
 // — regions should look the same everywhere in the app, not just on this page.
-const REGION_COLORS = { APJ: 'var(--accent)', EMEA: '#fb923c', Global: '#a78bfa', LATAM: '#22d3ee', NAMER: '#fbbf24' }
+const REGION_COLORS = { APJ: 'var(--accent)', EMEA: '#f59e0b', Global: '#8b5cf6', LATAM: '#06b6d4', NAMER: '#ef4444' }
 
 function fmt(n) {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
@@ -23,8 +23,8 @@ function StatusPip({ ok }) {
   return (
     <span style={{
       display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
-      background: ok ? '#34d399' : '#f87171',
-      boxShadow: ok ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(248,113,113,0.7)',
+      background: ok ? '#10b981' : '#ef4444',
+      boxShadow: ok ? '0 0 6px rgba(16,185,129,0.7)' : '0 0 6px rgba(239,68,68,0.7)',
       flexShrink: 0,
     }} />
   )
@@ -75,7 +75,7 @@ function AsuTrendChart({ filters, granularity }) {
           <CartesianGrid strokeDasharray="2 4" stroke={C.grid} />
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Line type="monotone" dataKey="actual" name="ASU Actuals" stroke={C.metric1} strokeWidth={2.5} dot={{ r: 3, fill: C.metric1, strokeWidth: 0 }} activeDot={{ r: 5 }} />
         </LineChart>
@@ -95,7 +95,7 @@ function SrDbOspChart({ filters, granularity }) {
           <CartesianGrid strokeDasharray="2 4" stroke={C.grid} />
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar dataKey="db" name="DB" fill={C.metric1} opacity={0.85} radius={[3,3,0,0]} maxBarSize={44} />
           <Bar dataKey="osp" name="OSP" fill={C.metric2} opacity={0.85} radius={[3,3,0,0]} maxBarSize={44} />
@@ -116,7 +116,7 @@ function CpasuChart({ filters, granularity }) {
           <CartesianGrid strokeDasharray="2 4" stroke={C.grid} />
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.trend, fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Line type="monotone" dataKey="cpasu" name="CPASU" stroke={C.trend} strokeWidth={2.5} dot={{ r: 3, fill: C.trend, strokeWidth: 0 }} activeDot={{ r: 5 }} />
         </LineChart>
@@ -135,7 +135,7 @@ function CurrentUcrChart({ filters, granularity }) {
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="l" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} domain={[0,100]} tickFormatter={v => `${v}%`} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.trend, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="current" name="Current" fill={C.metric1} opacity={0.85} radius={[3,3,0,0]} maxBarSize={54} />
           <Bar yAxisId="l" dataKey="target" name="Target" fill={C.metric2} opacity={0.85} radius={[3,3,0,0]} maxBarSize={54} />
@@ -213,7 +213,7 @@ function QueueTable({ rows }) {
         <tbody>
           {rows.map((q, i) => (
             <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.05)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               <td style={{ padding: '5px 12px 5px 0', fontFamily: 'monospace', fontSize: 10, color: 'var(--text-dim)' }}>{q.name}</td>
               <td style={{ padding: '5px 0', textAlign: 'right', color: 'var(--text-muted)' }}>{q.region}</td>

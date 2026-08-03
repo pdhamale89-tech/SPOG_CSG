@@ -131,15 +131,15 @@ export default function App() {
           {/* Logo mark */}
           <div style={{
             width: 32, height: 32, borderRadius: 7,
-            background: 'linear-gradient(135deg, #1e3f6e 0%, #38bdf8 100%)',
+            background: 'linear-gradient(135deg, #1e3f6e 0%, #3b82f6 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(56,189,248,0.3)',
+            boxShadow: '0 0 12px rgba(59,130,246,0.3)',
           }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect x="2" y="9" width="3" height="5" rx="1" fill="white" opacity="0.7"/>
               <rect x="6.5" y="5" width="3" height="9" rx="1" fill="white" opacity="0.85"/>
               <rect x="11" y="2" width="3" height="12" rx="1" fill="white"/>
-              <path d="M3.5 7 L8 4 L12.5 1.5" stroke="rgba(56,189,248,0.8)" strokeWidth="1.2" strokeLinecap="round"/>
+              <path d="M3.5 7 L8 4 L12.5 1.5" stroke="rgba(59,130,246,0.8)" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
           </div>
           <div>
@@ -157,15 +157,15 @@ export default function App() {
           <ThemeToggle theme={theme} onToggle={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
           <div style={{ fontSize: 10, color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#34d399',
-              display: 'inline-block', boxShadow: '0 0 6px #34d399',
+              width: 6, height: 6, borderRadius: '50%', background: '#10b981',
+              display: 'inline-block', boxShadow: '0 0 6px #10b981',
             }} className="animate-pulse-soft" />
             Live · FY27
           </div>
           {isBusiness && (
             <div style={{
               fontSize: 10, fontWeight: 600, color: 'var(--accent)',
-              background: 'var(--accent-dim)', border: '1px solid rgba(56,189,248,0.2)',
+              background: 'var(--accent-dim)', border: '1px solid rgba(59,130,246,0.2)',
               borderRadius: 5, padding: '3px 9px',
             }}>
               {meta.badge}
@@ -175,7 +175,7 @@ export default function App() {
       </header>
 
       {/* Accent line under header */}
-      <div style={{ height: 1, background: 'linear-gradient(90deg, var(--accent) 0%, rgba(56,189,248,0.1) 40%, transparent 70%)' }} />
+      <div style={{ height: 1, background: 'linear-gradient(90deg, var(--accent) 0%, rgba(59,130,246,0.1) 40%, transparent 70%)' }} />
 
       {/* PlanningSidebar is mounted once here, outside the page conditionals below,
           so its expand/collapse state persists across every page/tab switch —

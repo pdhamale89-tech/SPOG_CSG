@@ -12,14 +12,14 @@ import { InfoButton } from './ChartKit'
 
 // pct: violet for the "% trend line" role — matches the app-wide convention that
 // neutral analytical lines get violet, since green/handled already means something else here.
-const C = { offered: 'var(--accent)', handled: '#34d399', db: 'var(--accent)', osp: '#fb923c', actual: 'var(--accent)', forecast: '#fb923c', line: '#34d399', pct: '#a78bfa', grid: 'var(--chart-grid)', tick: '#4a6a85' }
+const C = { offered: 'var(--accent)', handled: '#10b981', db: 'var(--accent)', osp: '#f59e0b', actual: 'var(--accent)', forecast: '#f59e0b', line: '#10b981', pct: '#8b5cf6', grid: 'var(--chart-grid)', tick: '#6b7280' }
 // Chart drill-downs are capped and centered so 3-5 categories don't stretch across the
 // full dashboard width with huge gaps between bar groups.
 const CHART_BOX = { maxWidth: 620, margin: '0 auto' }
 const BAR_GAPS = { barCategoryGap: '20%', barGap: 6 }
 // Distinct categorical colors for the region donut — deliberately avoids green/red,
 // which are reserved elsewhere for ahead-of-plan/behind-plan semantics.
-const REGION_COLORS = { APJ: 'var(--accent)', EMEA: '#fb923c', Global: '#a78bfa', LATAM: '#22d3ee', NAMER: '#fbbf24' }
+const REGION_COLORS = { APJ: 'var(--accent)', EMEA: '#f59e0b', Global: '#8b5cf6', LATAM: '#06b6d4', NAMER: '#ef4444' }
 
 function fmt(n) {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
@@ -31,8 +31,8 @@ function StatusPip({ ok }) {
   return (
     <span style={{
       display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
-      background: ok ? '#34d399' : '#f87171',
-      boxShadow: ok ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(248,113,113,0.7)',
+      background: ok ? '#10b981' : '#ef4444',
+      boxShadow: ok ? '0 0 6px rgba(16,185,129,0.7)' : '0 0 6px rgba(239,68,68,0.7)',
       flexShrink: 0,
     }} />
   )
@@ -151,7 +151,7 @@ function QueuesByRegionChart({ rows, allRows, selectedRegion, onSelectRegion }) 
                 <p style={{ fontSize: 10, fontWeight: 700, color: REGION_COLORS[region] || 'var(--accent)', marginBottom: 3 }}>{region}</p>
                 <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{count} queues <span style={{ color: 'var(--text-faint)' }}>({total ? Math.round(count / total * 100) : 0}%)</span></p>
                 <p style={{ fontSize: 10, color: 'var(--text-faint)', marginTop: 3, paddingTop: 3, borderTop: '1px solid var(--border-subtle)' }}>
-                  Active <span style={{ color: '#34d399', fontWeight: 600 }}>{bd.active}</span> · Inactive <span style={{ color: '#f87171', fontWeight: 600 }}>{bd.inactive}</span>
+                  Active <span style={{ color: '#10b981', fontWeight: 600 }}>{bd.active}</span> · Inactive <span style={{ color: '#ef4444', fontWeight: 600 }}>{bd.inactive}</span>
                 </p>
               </div>
             )
@@ -177,8 +177,8 @@ function QueuesByRegionChart({ rows, allRows, selectedRegion, onSelectRegion }) 
         <p className="num" style={{ fontSize: 19, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{centerCount}</p>
         <p style={{ fontSize: 9, color: 'var(--text-faint)', marginTop: 2 }}>{selectedRegion || 'Queues'}</p>
         <p style={{ fontSize: 8.5, color: 'var(--text-faint)', marginTop: 3 }}>
-          <span style={{ color: '#34d399', fontWeight: 600 }}>{centerBreakdown.active}</span> active ·{' '}
-          <span style={{ color: '#f87171', fontWeight: 600 }}>{centerBreakdown.inactive}</span> inactive
+          <span style={{ color: '#10b981', fontWeight: 600 }}>{centerBreakdown.active}</span> active ·{' '}
+          <span style={{ color: '#ef4444', fontWeight: 600 }}>{centerBreakdown.inactive}</span> inactive
         </p>
       </div>
     </div>
@@ -239,7 +239,7 @@ function QueueTable({ rows }) {
         <tbody>
           {rows.map((q, i) => (
             <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.05)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               <td style={{ padding: '5px 12px 5px 0', fontFamily: 'monospace', fontSize: 10, color: 'var(--text-dim)' }}>{q.name}</td>
               <td style={{ padding: '5px 12px 5px 0', color: 'var(--text-muted)' }}>{q.region}</td>
@@ -247,7 +247,7 @@ function QueueTable({ rows }) {
                 <span className={`badge ${q.status === 'Active' ? 'badge-good' : 'badge-bad'}`}>{q.status}</span>
               </td>
               <td className="num" style={{ padding: '5px 0', textAlign: 'right', fontWeight: 600,
-                color: q.accuracy == null ? 'var(--text-muted)' : q.accuracy >= 90 ? '#34d399' : q.accuracy >= 80 ? '#fbbf24' : '#f87171' }}>
+                color: q.accuracy == null ? 'var(--text-muted)' : q.accuracy >= 90 ? '#10b981' : q.accuracy >= 80 ? '#f59e0b' : '#ef4444' }}>
                 {q.accuracy == null ? '—' : `${q.accuracy}%`}
               </td>
             </tr>
@@ -318,14 +318,14 @@ function BusinessPartnerTable({ filters }) {
           <tbody>
             {rows.map((bp, i) => (
               <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.05)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <td style={{ padding: '5px 12px 5px 0', color: 'var(--text-secondary)' }}>{bp.businessPartner}</td>
                 <td className="num" style={{ padding: '5px 10px', textAlign: 'right' }}>
-                  <HoverCount value={bp.active} names={bp.activeNames} color="#34d399" />
+                  <HoverCount value={bp.active} names={bp.activeNames} color="#10b981" />
                 </td>
                 <td className="num" style={{ padding: '5px 10px', textAlign: 'right' }}>
-                  <HoverCount value={bp.inactive} names={bp.inactiveNames} color="#f87171" />
+                  <HoverCount value={bp.inactive} names={bp.inactiveNames} color="#ef4444" />
                 </td>
                 <td className="num" style={{ padding: '5px 0', textAlign: 'right', fontWeight: 700, color: 'var(--text-primary)' }}>{bp.total}</td>
               </tr>
@@ -353,7 +353,7 @@ function VolumeByFYChart({ filters, granularity }) {
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
           <YAxis yAxisId="r" orientation="right" domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: C.pct, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="offered" name="Offered" fill={C.offered} opacity={0.85} radius={[3,3,0,0]} maxBarSize={54} />
           <Bar yAxisId="l" dataKey="handled" name="Handled" fill={C.handled} opacity={0.85} radius={[3,3,0,0]} maxBarSize={54} />
@@ -400,7 +400,7 @@ function HolidayCalendar() {
         <tbody>
           {HOLIDAY_CALENDAR.map((h, i) => (
             <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(56,189,248,0.05)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.05)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               <td style={{ padding: '5px 12px 5px 0', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{h.date}</td>
               <td style={{ padding: '5px 12px 5px 0', color: 'var(--text-secondary)' }}>{h.holiday}</td>
@@ -425,7 +425,7 @@ function DbOspByFYChart({ filters, granularity }) {
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Line type="monotone" dataKey="db"  name="DB Offered"  stroke={C.db}  strokeWidth={2.5} dot={{ r: 3, fill: C.db, strokeWidth: 0 }} activeDot={{ r: 5 }} />
           <Line type="monotone" dataKey="osp" name="OSP Offered" stroke={C.osp} strokeWidth={2.5} dot={{ r: 3, fill: C.osp, strokeWidth: 0 }} activeDot={{ r: 5 }} />
@@ -451,7 +451,7 @@ function ForecastByRegionChart({ filters, fy }) {
             tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
           <YAxis yAxisId="r" orientation="right" domain={[0,100]} tick={{ fill: C.line, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="actual"   name="Actual"   fill={C.actual}   opacity={0.85} radius={[3,3,0,0]} maxBarSize={30} />
           <Bar yAxisId="l" dataKey="forecast" name="Forecast" fill={C.forecast} opacity={0.85} radius={[3,3,0,0]} maxBarSize={30} />
@@ -480,7 +480,7 @@ function ForecastByFYChart({ filters, onSelectYear }) {
             tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
           <YAxis yAxisId="r" orientation="right" domain={[0,100]} tick={{ fill: C.line, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="actual" name="Actual" fill={C.actual} opacity={0.85} radius={[3,3,0,0]} maxBarSize={54}
             onClick={d => onSelectYear(d.period)} style={{ cursor: 'pointer' }} />
@@ -510,8 +510,8 @@ function ForecastYearRegionModal({ fy, filters, onClose }) {
         onClick={e => e.stopPropagation()}
         className="animate-fade-in"
         style={{
-          background: 'var(--bg-panel)', border: '1px solid rgba(56,189,248,0.3)', borderRadius: 10,
-          padding: '16px 18px', width: 460, boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(56,189,248,0.08)',
+          background: 'var(--bg-panel)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 10,
+          padding: '16px 18px', width: 460, boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(59,130,246,0.08)',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -535,7 +535,7 @@ function VarianceByFYChart({ filters, onSelectYear }) {
           <XAxis dataKey="fy" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} domain={[0, 60]} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.06)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.06)' }} />
           <Bar dataKey="pct" name="Within ±10%" radius={[4,4,0,0]} maxBarSize={90}
             onClick={d => onSelectYear(d.fy)} style={{ cursor: 'pointer' }}>
             {CQN_VARIANCE_BY_FY.map((d, i) => <Cell key={i} fill="var(--accent)" opacity={0.85} />)}
@@ -560,8 +560,8 @@ function YearQueueModal({ fy, filters, onClose }) {
         onClick={e => e.stopPropagation()}
         className="animate-fade-in"
         style={{
-          background: 'var(--bg-panel)', border: '1px solid rgba(56,189,248,0.3)', borderRadius: 10,
-          padding: '16px 18px', width: 380, boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(56,189,248,0.08)',
+          background: 'var(--bg-panel)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 10,
+          padding: '16px 18px', width: 380, boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(59,130,246,0.08)',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -583,7 +583,7 @@ function YearQueueModal({ fy, filters, onClose }) {
               {queues.map((q, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                   <td style={{ padding: '6px 12px 6px 0', fontFamily: 'monospace', fontSize: 10, color: 'var(--text-secondary)' }}>{q.name}</td>
-                  <td className="num" style={{ padding: '6px 0', textAlign: 'right', fontWeight: 600, color: '#34d399' }}>
+                  <td className="num" style={{ padding: '6px 0', textAlign: 'right', fontWeight: 600, color: '#10b981' }}>
                     {q.variance > 0 ? '+' : ''}{q.variance}%
                   </td>
                 </tr>

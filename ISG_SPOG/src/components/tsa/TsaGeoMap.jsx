@@ -7,20 +7,20 @@ import { BinaryToggle, GraphInsightButton, InfoButton, PlanSelect } from '../Cha
 const PLANS = PLAN_NAMES.filter(p => p !== 'Actual')
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
-const DEFAULT_FILL = '#0e1f35'
+const DEFAULT_FILL = '#1e2235'
 
 function acColor(v) {
-  if (v >= 90) return '#059669'
-  if (v >= 80) return '#2563eb'
-  if (v >= 70) return '#d97706'
-  return '#dc2626'
+  if (v >= 90) return '#10b981'
+  if (v >= 80) return '#3b82f6'
+  if (v >= 70) return '#f59e0b'
+  return '#ef4444'
 }
 
 const LEGEND = [
-  { label: '≥ 90% Excellent', color: '#059669' },
-  { label: '80–90% Good',     color: '#2563eb' },
-  { label: '70–80% Fair',     color: '#d97706' },
-  { label: '< 70% Critical',  color: '#dc2626' },
+  { label: '≥ 90% Excellent', color: '#10b981' },
+  { label: '80–90% Good',     color: '#3b82f6' },
+  { label: '70–80% Fair',     color: '#f59e0b' },
+  { label: '< 70% Critical',  color: '#ef4444' },
 ]
 
 // LOB adherence across regions — same choropleth mechanism as the Forecasting page's
@@ -53,11 +53,11 @@ export default function TsaGeoMap({ filters }) {
     <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border-subtle)', borderRadius: 10, overflow: 'hidden' }}>
       <div className="layer-header" onClick={() => setOpen(o => !o)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#070f1a', background: '#a78bfa', borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em' }}>04</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#0f1117', background: '#8b5cf6', borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em' }}>04</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Geo Map</span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>— LOB adherence by region</span>
         </div>
-        <span style={{ fontSize: 11, color: '#a78bfa', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
+        <span style={{ fontSize: 11, color: '#8b5cf6', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
       </div>
 
       {open && (
@@ -93,7 +93,7 @@ export default function TsaGeoMap({ filters }) {
             ))}
           </div>
 
-          <div style={{ position: 'relative', background: '#070f1a', borderRadius: 8, overflow: 'hidden',
+          <div style={{ position: 'relative', background: '#0f1117', borderRadius: 8, overflow: 'hidden',
             height: 380, border: '1px solid rgba(255,255,255,0.06)', boxShadow: 'inset 0 0 40px rgba(0,0,0,0.4)' }}>
 
             {hovered && (
@@ -116,7 +116,7 @@ export default function TsaGeoMap({ filters }) {
                       <span style={{ flexShrink: 0 }}>
                         <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{l.actual.toLocaleString()}</span>
                         <span style={{ color: 'var(--text-faint)' }}> / {l.plan.toLocaleString()}</span>
-                        <span style={{ fontWeight: 700, color: l.adherence >= 100 ? '#34d399' : l.adherence >= 90 ? 'var(--text-secondary)' : '#f87171', marginLeft: 5 }}>{l.adherence}%</span>
+                        <span style={{ fontWeight: 700, color: l.adherence >= 100 ? '#10b981' : l.adherence >= 90 ? 'var(--text-secondary)' : '#ef4444', marginLeft: 5 }}>{l.adherence}%</span>
                       </span>
                     </div>
                   ))}
@@ -140,8 +140,8 @@ export default function TsaGeoMap({ filters }) {
                         onMouseLeave={() => setHovered(null)}
                         onClick={() => accuracy != null && setSelectedKey(prev => prev === region ? null : region)}
                         style={{
-                          default: { fill, fillOpacity: isDimmed ? 0.1 : 1, stroke: isSelected ? 'var(--accent)' : '#070f1a', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none', transition: 'fill-opacity 0.2s, stroke 0.2s', cursor: accuracy != null ? 'pointer' : 'default' },
-                          hover:   { fill, fillOpacity: isDimmed ? 0.25 : 0.8, stroke: isSelected ? 'var(--accent)' : '#070f1a', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none' },
+                          default: { fill, fillOpacity: isDimmed ? 0.1 : 1, stroke: isSelected ? 'var(--accent)' : '#0f1117', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none', transition: 'fill-opacity 0.2s, stroke 0.2s', cursor: accuracy != null ? 'pointer' : 'default' },
+                          hover:   { fill, fillOpacity: isDimmed ? 0.25 : 0.8, stroke: isSelected ? 'var(--accent)' : '#0f1117', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none' },
                           pressed: { fill, outline: 'none' },
                         }}
                       />
@@ -151,9 +151,9 @@ export default function TsaGeoMap({ filters }) {
               </Geographies>
             </ComposableMap>
 
-            <div style={{ position: 'absolute', bottom: 8, left: 10, display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#3d607a' }}>
+            <div style={{ position: 'absolute', bottom: 8, left: 10, display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#6b7280' }}>
               <span>100%</span>
-              <div style={{ width: 72, height: 5, borderRadius: 3, background: 'linear-gradient(to left, #dc2626, #d97706, #2563eb, #059669)' }} />
+              <div style={{ width: 72, height: 5, borderRadius: 3, background: 'linear-gradient(to left, #ef4444, #f59e0b, #3b82f6, #10b981)' }} />
               <span>0%</span>
             </div>
           </div>

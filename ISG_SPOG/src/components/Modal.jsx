@@ -18,9 +18,9 @@ export function Modal({ title, onClose, children, width = 640 }) {
         className="animate-fade-in"
         onClick={e => e.stopPropagation()}
         style={{
-          background: 'var(--bg-panel)', border: '1px solid rgba(56,189,248,0.25)', borderRadius: 12,
+          background: 'var(--bg-panel)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 12,
           padding: '16px 18px 14px', width: '100%', maxWidth: width, maxHeight: '85vh', overflowY: 'auto',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 30px rgba(56,189,248,0.08)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 30px rgba(59,130,246,0.08)',
         }}
       >
         <div style={{ position: 'relative', marginBottom: 12 }}>

@@ -4,7 +4,7 @@ import { queueHeadcountPerformance } from '../../data/msgCapacityData'
 import { contributingFactors, FACTOR_TABLE_COLUMNS, varianceTier, varianceReason } from '../../data/insightFactors'
 import { InfoButton, PlanSelect, PopupTable } from '../ChartKit'
 
-const TIER_COLOR = { High: '#f87171', Moderate: '#fbbf24', Low: '#34d399' }
+const TIER_COLOR = { High: '#ef4444', Moderate: '#f59e0b', Low: '#10b981' }
 
 function TierDot({ tier }) {
   const color = TIER_COLOR[tier] ?? 'var(--text-muted)'
@@ -42,7 +42,7 @@ function RcaClcaPill({ row }) {
         onClick={() => setOpen(o => !o)}
         style={{
           fontSize: 9.5, fontWeight: 700, letterSpacing: '0.02em', color: '#f5f3ff',
-          background: open ? '#6d28d9' : '#7c3aed', border: 'none', borderRadius: 5,
+          background: open ? '#8b5cf6' : '#8b5cf6', border: 'none', borderRadius: 5,
           padding: '4px 10px', cursor: 'pointer', whiteSpace: 'nowrap',
         }}
       >

@@ -12,10 +12,10 @@ import { GraphInsightButton, InfoButton, PopupTable, PlanSelect, ComingSoonOverl
 import { Modal } from './Modal'
 
 const PLANS = PLAN_NAMES.filter(p => p !== 'Actual')
-const C = { actual: '#38bdf8', plan: '#fb923c', line: '#34d399', ahead: '#34d399', behind: '#f87171', grid: 'var(--chart-grid)', tick: '#4a6a85' }
+const C = { actual: '#3b82f6', plan: '#f59e0b', line: '#10b981', ahead: '#10b981', behind: '#ef4444', grid: 'var(--chart-grid)', tick: '#6b7280' }
 // Graduated severity scale — green (tight to plan) through red (way off), matching the
 // new "how far off plan" bucketing instead of the old absolute accuracy tiers.
-const STACK = { under10: '#34d399', between10and20: '#38bdf8', between20and30: '#fbbf24', above30: '#f87171' }
+const STACK = { under10: '#10b981', between10and20: '#3b82f6', between20and30: '#f59e0b', above30: '#ef4444' }
 const STACK_LABEL_COLOR = { under10: '#052e1f', between10and20: '#04202f', between20and30: '#3d2c02', above30: '#fef2f2' }
 const STACK_META = [
   { key: 'under10', label: '< 10%' },
@@ -104,7 +104,7 @@ function Visual1({ filters, granularity, selectedPlans, onPlansChange }) {
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
           <YAxis yAxisId="r" orientation="right" domain={[60,110]} tick={{ fill: C.line, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <ReferenceLine yAxisId="r" y={100} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 3" />
           <Bar yAxisId="l" dataKey="actual" name="Actuals" fill={C.actual} opacity={0.8} radius={[3,3,0,0]} maxBarSize={40} />
@@ -171,7 +171,7 @@ function Visual2({ filters, granularity, selectedPlans, onPlansChange }) {
           <XAxis dataKey="fy" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} domain={[0,100]} />
-          <Tooltip content={<StackedTip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<StackedTip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           {STACK_META.map(({ key, label }, i) => (
             <Bar key={key} dataKey={key} name={label} stackId="a" fill={STACK[key]}
               radius={i === STACK_META.length - 1 ? [3,3,0,0] : undefined}>
@@ -225,7 +225,7 @@ function Visual3({ filters, selectedPlans, onPlansChange }) {
           <XAxis type="number" domain={[-domainMax, domainMax]} ticks={ticks} tick={{ fill: C.tick, fontSize: 9 }} axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`} />
           <YAxis type="category" dataKey="cqn" tick={<QueueTick />} width={148} axisLine={false} tickLine={false} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <ReferenceLine x={0} stroke="rgba(255,255,255,0.15)" />
           <Bar dataKey="variance" name="Variance %" radius={[3,3,3,3]} maxBarSize={20}>
             {sorted.map((d, i) => <Cell key={i} fill={d.variance >= 0 ? C.ahead : C.behind} opacity={0.9} />)}
@@ -258,7 +258,7 @@ export default function Layer2ActualVsPlan({ filters, granularity }) {
       <div className="layer-header" onClick={() => setOpen(o => !o)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{
-            fontSize: 9, fontWeight: 700, color: '#070f1a', background: '#34d399',
+            fontSize: 9, fontWeight: 700, color: '#0f1117', background: '#10b981',
             borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em',
           }}>02</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -266,7 +266,7 @@ export default function Layer2ActualVsPlan({ filters, granularity }) {
           </span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>— adherence tracking</span>
         </div>
-        <span style={{ fontSize: 11, color: '#34d399', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
+        <span style={{ fontSize: 11, color: '#10b981', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
       </div>
       {open && (
         <div style={{ padding: 12, display: 'flex', gap: 10 }}>

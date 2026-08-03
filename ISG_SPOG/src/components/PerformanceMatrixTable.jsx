@@ -47,7 +47,7 @@ function RcaClcaPill({ row }) {
         onClick={() => setOpen(o => !o)}
         style={{
           fontSize: 9.5, fontWeight: 700, letterSpacing: '0.02em', color: '#f5f3ff',
-          background: open ? '#6d28d9' : '#7c3aed', border: 'none', borderRadius: 5,
+          background: open ? '#8b5cf6' : '#8b5cf6', border: 'none', borderRadius: 5,
           padding: '4px 10px', cursor: 'pointer', whiteSpace: 'nowrap',
         }}
       >
@@ -144,7 +144,7 @@ export default function PerformanceMatrixTable({
                     {r.quarters.flatMap(q => ([
                       <td key={`${q.period}-a`} className="num" style={DATA_CELL}>{q.actual.toLocaleString()}</td>,
                       <td key={`${q.period}-p`} className="num" style={DATA_CELL}>{q.plan.toLocaleString()}</td>,
-                      <td key={`${q.period}-adh`} className="num" style={{ ...DATA_CELL, fontWeight: 600, color: q.adherence >= 100 ? '#34d399' : q.adherence >= 90 ? 'var(--text-secondary)' : '#f87171' }}>{q.adherence}%</td>,
+                      <td key={`${q.period}-adh`} className="num" style={{ ...DATA_CELL, fontWeight: 600, color: q.adherence >= 100 ? '#10b981' : q.adherence >= 90 ? 'var(--text-secondary)' : '#ef4444' }}>{q.adherence}%</td>,
                     ]))}
                     <td style={{ padding: '6px 8px', textAlign: 'center', borderBottom: '1px solid var(--border-subtle)', borderLeft: '1px solid var(--border-subtle)' }}>
                       <RcaClcaPill row={r} />

@@ -15,8 +15,8 @@ function StatusPip({ ok }) {
   return (
     <span style={{
       display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
-      background: ok ? '#34d399' : '#f87171',
-      boxShadow: ok ? '0 0 6px rgba(52,211,153,0.7)' : '0 0 6px rgba(248,113,113,0.7)',
+      background: ok ? '#10b981' : '#ef4444',
+      boxShadow: ok ? '0 0 6px rgba(16,185,129,0.7)' : '0 0 6px rgba(239,68,68,0.7)',
       flexShrink: 0,
     }} />
   )
@@ -67,7 +67,7 @@ function FteTrendChart({ filters, granularity }) {
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="l" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.trend, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="actual" name="Actual FTE" fill={C.metric1} opacity={0.85} radius={[3,3,0,0]} maxBarSize={44} />
           <Bar yAxisId="l" dataKey="plan" name="Plan FTE" fill={C.metric2} opacity={0.85} radius={[3,3,0,0]} maxBarSize={44} />
@@ -88,7 +88,7 @@ function AttritionTrendChart({ filters, granularity }) {
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis yAxisId="l" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(1)}K` : v} />
           <YAxis yAxisId="r" orientation="right" tick={{ fill: C.behind, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Bar yAxisId="l" dataKey="headcount" name="Headcount" fill={C.metric1} opacity={0.85} radius={[3,3,0,0]} maxBarSize={44} />
           <Line yAxisId="r" type="monotone" dataKey="attrition" name="Attrition %" stroke={C.behind} strokeWidth={2} dot={{ r: 3, fill: C.behind, strokeWidth: 0 }} activeDot={{ r: 5 }} />
@@ -107,7 +107,7 @@ function CasesPerFteTrendChart({ filters, granularity }) {
           <CartesianGrid strokeDasharray="2 4" stroke={C.grid} />
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Line type="monotone" dataKey="actual" name="Cases/FTE" stroke={C.behind} strokeWidth={2.5} dot={{ r: 3, fill: C.behind, strokeWidth: 0 }} activeDot={{ r: 5 }} />
           <Line type="monotone" dataKey="plan" name="Plan" stroke={C.metric2} strokeWidth={2} strokeDasharray="4 3" dot={{ r: 3, fill: C.metric2, strokeWidth: 0 }} activeDot={{ r: 5 }} />
@@ -126,7 +126,7 @@ function AvgCaseTimeTrendChart({ filters, granularity }) {
           <CartesianGrid strokeDasharray="2 4" stroke={C.grid} />
           <XAxis dataKey="period" tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: C.tick, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}h`} />
-          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(56,189,248,0.04)' }} />
+          <Tooltip content={<Tip />} cursor={{ fill: 'rgba(59,130,246,0.04)' }} />
           <Legend wrapperStyle={{ fontSize: 10, color: C.tick, paddingTop: 4 }} />
           <Line type="monotone" dataKey="actual" name="Avg Case Time (hrs)" stroke={C.behind} strokeWidth={2.5} dot={{ r: 3, fill: C.behind, strokeWidth: 0 }} activeDot={{ r: 5 }} />
           <Line type="monotone" dataKey="plan" name="Plan (hrs)" stroke={C.metric2} strokeWidth={2} strokeDasharray="4 3" dot={{ r: 3, fill: C.metric2, strokeWidth: 0 }} activeDot={{ r: 5 }} />

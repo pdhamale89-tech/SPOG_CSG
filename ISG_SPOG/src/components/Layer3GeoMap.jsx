@@ -4,25 +4,25 @@ import { geoRegionData, geoSubRegionRows, regionForCountry, subRegionForCountry,
 import { GraphInsightButton, InfoButton } from './ChartKit'
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
-const DEFAULT_FILL = '#0e1f35'
+const DEFAULT_FILL = '#1e2235'
 
 function acColor(v) {
-  if (v >= 90) return '#059669'
-  if (v >= 80) return '#2563eb'
-  if (v >= 70) return '#d97706'
-  return '#dc2626'
+  if (v >= 90) return '#10b981'
+  if (v >= 80) return '#3b82f6'
+  if (v >= 70) return '#f59e0b'
+  return '#ef4444'
 }
 
 const LEGEND = [
-  { label: '≥ 90% Excellent', color: '#059669' },
-  { label: '80–90% Good',     color: '#2563eb' },
-  { label: '70–80% Fair',     color: '#d97706' },
-  { label: '< 70% Critical',  color: '#dc2626' },
+  { label: '≥ 90% Excellent', color: '#10b981' },
+  { label: '80–90% Good',     color: '#3b82f6' },
+  { label: '70–80% Fair',     color: '#f59e0b' },
+  { label: '< 70% Critical',  color: '#ef4444' },
 ]
 
 // Same 3-tier status used by the Queue Performance table above this layer, reused
 // here so a queue's status reads the same way in both places.
-const STATUS_COLOR = { Good: '#34d399', Fair: '#fbbf24', Poor: '#f87171' }
+const STATUS_COLOR = { Good: '#10b981', Fair: '#f59e0b', Poor: '#ef4444' }
 
 export default function Layer3GeoMap({ filters, granularity }) {
   const [open, setOpen]         = useState(true)
@@ -61,7 +61,7 @@ export default function Layer3GeoMap({ filters, granularity }) {
       <div className="layer-header" onClick={() => setOpen(o => !o)}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{
-            fontSize: 9, fontWeight: 700, color: '#070f1a', background: '#fb923c',
+            fontSize: 9, fontWeight: 700, color: '#0f1117', background: '#f59e0b',
             borderRadius: 4, padding: '2px 7px', letterSpacing: '0.04em',
           }}>03</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -69,7 +69,7 @@ export default function Layer3GeoMap({ filters, granularity }) {
           </span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>— global forecast adherence</span>
         </div>
-        <span style={{ fontSize: 11, color: '#fb923c', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
+        <span style={{ fontSize: 11, color: '#f59e0b', transform: open ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▲</span>
       </div>
 
       {open && (
@@ -119,14 +119,14 @@ export default function Layer3GeoMap({ filters, granularity }) {
           </div>
 
           {/* Map container */}
-          <div style={{ position: 'relative', background: '#070f1a', borderRadius: 8, overflow: 'hidden',
+          <div style={{ position: 'relative', background: '#0f1117', borderRadius: 8, overflow: 'hidden',
             height: 380, border: '1px solid rgba(255,255,255,0.06)',
             boxShadow: 'inset 0 0 40px rgba(0,0,0,0.4)' }}>
 
             {/* Empty state: selected region/sub-region has no matching rows (e.g. "Global") */}
             {rows.length === 0 && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
-                <p style={{ fontSize: 11, color: '#3d607a', textAlign: 'center', maxWidth: 220 }}>
+                <p style={{ fontSize: 11, color: '#6b7280', textAlign: 'center', maxWidth: 220 }}>
                   No {viewMode.toLowerCase()} data for the current filter scope — try clearing Region/Sub-region or picking a specific one.
                 </p>
               </div>
@@ -191,7 +191,7 @@ export default function Layer3GeoMap({ filters, granularity }) {
                     }
 
                     const fill = accuracy != null ? acColor(accuracy) : DEFAULT_FILL
-                    const hoverFill = accuracy != null ? acColor(accuracy) : '#1a3050'
+                    const hoverFill = accuracy != null ? acColor(accuracy) : '#2d3148'
                     const isSelected = selectedKey != null && displayName === selectedKey
                     const isDimmed = selectedKey != null && !isSelected
                     const baseOpacity = isFallback ? 0.35 : 1
@@ -201,8 +201,8 @@ export default function Layer3GeoMap({ filters, granularity }) {
                         onMouseLeave={() => setHovered(null)}
                         onClick={() => accuracy != null && setSelectedKey(prev => prev === displayName ? null : displayName)}
                         style={{
-                          default: { fill, fillOpacity: isDimmed ? 0.1 : baseOpacity, stroke: isSelected ? 'var(--accent)' : '#070f1a', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none', transition: 'fill-opacity 0.2s, stroke 0.2s', cursor: accuracy != null ? 'pointer' : 'default' },
-                          hover:   { fill: hoverFill, fillOpacity: isDimmed ? 0.25 : (isFallback ? 0.55 : 0.8), stroke: isSelected ? 'var(--accent)' : '#070f1a', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none' },
+                          default: { fill, fillOpacity: isDimmed ? 0.1 : baseOpacity, stroke: isSelected ? 'var(--accent)' : '#0f1117', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none', transition: 'fill-opacity 0.2s, stroke 0.2s', cursor: accuracy != null ? 'pointer' : 'default' },
+                          hover:   { fill: hoverFill, fillOpacity: isDimmed ? 0.25 : (isFallback ? 0.55 : 0.8), stroke: isSelected ? 'var(--accent)' : '#0f1117', strokeWidth: isSelected ? 1.5 : 0.4, outline: 'none' },
                           pressed: { fill: hoverFill, outline: 'none' },
                         }}
                       />
@@ -213,10 +213,10 @@ export default function Layer3GeoMap({ filters, granularity }) {
             </ComposableMap>
 
             {/* Scale */}
-            <div style={{ position: 'absolute', bottom: 8, left: 10, display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#3d607a' }}>
+            <div style={{ position: 'absolute', bottom: 8, left: 10, display: 'flex', alignItems: 'center', gap: 5, fontSize: 9, color: '#6b7280' }}>
               <span>100%</span>
               <div style={{ width: 72, height: 5, borderRadius: 3,
-                background: 'linear-gradient(to left, #dc2626, #d97706, #2563eb, #059669)' }} />
+                background: 'linear-gradient(to left, #ef4444, #f59e0b, #3b82f6, #10b981)' }} />
               <span>0%</span>
             </div>
           </div>

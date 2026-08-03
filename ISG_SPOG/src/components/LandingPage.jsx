@@ -7,13 +7,13 @@ const TILES = [
     key: 'msg',
     label: 'ESG',
     desc: 'Forecasting and Capacity Plan for ESG queues, staffing and utilization.',
-    accent: '#38bdf8',
+    accent: '#3b82f6',
   },
   {
     key: 'tsa',
     label: 'HES',
     desc: 'Forecasting and Capacity Plan for HES lines of business and workload.',
-    accent: '#a78bfa',
+    accent: '#8b5cf6',
   },
 ]
 

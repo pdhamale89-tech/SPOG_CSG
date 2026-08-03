@@ -3,7 +3,7 @@ import { queuePerformance } from '../data/mockData'
 import { contributingFactors, FACTOR_TABLE_COLUMNS } from '../data/insightFactors'
 import { InfoButton, PopupTable } from './ChartKit'
 
-const STATUS_COLOR = { Good: '#34d399', Fair: '#fbbf24', Poor: '#f87171' }
+const STATUS_COLOR = { Good: '#10b981', Fair: '#f59e0b', Poor: '#ef4444' }
 
 function StatusDot({ status }) {
   const color = STATUS_COLOR[status] ?? 'var(--text-muted)'
@@ -41,7 +41,7 @@ function RcaClcaPill({ row }) {
         onClick={() => setOpen(o => !o)}
         style={{
           fontSize: 9.5, fontWeight: 700, letterSpacing: '0.02em', color: '#f5f3ff',
-          background: open ? '#6d28d9' : '#7c3aed', border: 'none', borderRadius: 5,
+          background: open ? '#8b5cf6' : '#8b5cf6', border: 'none', borderRadius: 5,
           padding: '4px 10px', cursor: 'pointer', whiteSpace: 'nowrap',
         }}
       >
