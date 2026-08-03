@@ -886,12 +886,12 @@ export function buildCapOspMixConfig(d, theme) {
   const LP = legendPos(theme);
   const pctDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
   return {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'OSP% Old', data: d.ospPctOld, borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5 },
-        { label: 'OSP% New', data: d.ospPctNew, borderColor: '#10b981', pointRadius: 4, tension: 0.3, borderWidth: 2.5 },
+        { label: 'OSP% Old', data: d.ospPctOld, backgroundColor: 'rgba(245,158,11,.5)', borderRadius: 3 },
+        { label: 'OSP% New', data: d.ospPctNew, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3 },
       ],
     },
     options: {
