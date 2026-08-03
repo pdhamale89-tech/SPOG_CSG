@@ -20,7 +20,7 @@ export default function PlanningSidebar() {
   return (
     <div style={{ display: 'flex', flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
       <div style={{
-        width: 46, flexShrink: 0, background: 'var(--bg-panel)', borderRight: '1px solid var(--border-subtle)',
+        width: 46, flexShrink: 0, background: 'var(--bg-sidebar)', borderRight: '1px solid var(--border-strong)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 0',
         maxHeight: '100vh', overflowY: 'auto',
       }}>
@@ -32,9 +32,9 @@ export default function PlanningSidebar() {
             aria-label={s.label}
             aria-pressed={active === s.key}
             style={{
-              width: 32, height: 32, borderRadius: 8, border: '1px solid var(--border-default)',
-              background: active === s.key ? 'var(--accent)' : 'var(--bg-inset)',
-              color: active === s.key ? 'var(--accent-contrast)' : 'var(--text-dim)',
+              width: 32, height: 32, borderRadius: 8, border: '1px solid transparent',
+              background: active === s.key ? 'var(--accent)' : 'var(--bg-sidebar-hover)',
+              color: active === s.key ? 'var(--accent-contrast)' : 'var(--text-sidebar)',
               fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'background-color 0.15s ease, color 0.15s ease', padding: 0,
             }}

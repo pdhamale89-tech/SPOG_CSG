@@ -36,6 +36,9 @@
   --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(96,165,250,0.18);
   --shadow-card-active: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.4), 0 0 24px rgba(96,165,250,0.1);
   --accent-contrast: #0f1117;
+  --bg-sidebar: #111528;
+  --bg-sidebar-hover: #1e2340;
+  --text-sidebar: #c7cad9;
   color-scheme: dark;
 }
 
@@ -66,6 +69,9 @@
   --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.12), 0 0 0 1px rgba(59,130,246,0.18);
   --shadow-card-active: 0 10px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(59,130,246,0.4), 0 0 24px rgba(59,130,246,0.08);
   --accent-contrast: #ffffff;
+  --bg-sidebar: #111528;
+  --bg-sidebar-hover: #1e2340;
+  --text-sidebar: #c7cad9;
   color-scheme: light;
 }
 
@@ -97,53 +103,37 @@
 
 @layer components {
 
-  /* ── Signature: luminous top-edge card glow ─────────────────────── */
+  /* ── Card (flat CSG pattern: bordered panel, shadow lift on hover — no
+     glow signature) ─────────────────────────────────────────────────── */
   .card-panel {
     position: relative;
     background: var(--bg-raised);
     border: 1px solid var(--border-default);
-    border-radius: 8px;
-    /* No overflow: hidden here (2026-07-20) — it was clipping the card's insight
-       popup, which needs to render outside the card's own bounds. Not load-bearing
-       for anything else: the ::before/active glow bars are already inset within the
-       card's width and don't need corner clipping. */
+    border-radius: 10px;
+    padding: 12px;
     transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
     box-shadow: var(--shadow-card);
   }
-  .card-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 20%; right: 20%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0.45;
-    transition: left 0.25s ease, right 0.25s ease, opacity 0.25s ease;
-  }
   .card-panel:hover {
-    border-color: rgba(59,130,246,0.3);
     box-shadow: var(--shadow-card-hover);
   }
-  .card-panel:hover::before {
-    left: 5%; right: 5%;
-    opacity: 0.85;
-  }
   .card-panel.active {
-    border-color: rgba(59,130,246,0.5);
+    border-color: var(--accent);
     box-shadow: var(--shadow-card-active);
   }
-  .card-panel.active::before {
-    left: 0; right: 0;
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(59,130,246,0.6);
-  }
 
-  /* ── Chart/visual panel ─────────────────────────────────────────── */
+  /* ── Chart/visual panel (same flat CSG card look as .card-panel: a
+     raised card with a border and a shadow that lifts on hover) ────── */
   .chart-panel {
-    background: var(--bg-inset);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
     padding: 12px;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: var(--shadow-card);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .chart-panel:hover {
+    box-shadow: var(--shadow-card-hover);
   }
 
   /* ── Layer section header ────────────────────────────────────────── */
@@ -163,31 +153,30 @@
   }
 
   /* ── Field select ───────────────────────────────────────────────── */
-  /* Deliberately not a boxed slicer: a soft-topped tab with an accent
-     underline that only lights up on hover/focus, so a quiet filter bar
-     doesn't read as a wall of identical dropdown boxes. The chevron is a
-     baked-in data-URI SVG, so its stroke color can't follow the theme —
-     '#5a8bb0' is a neutral slate that reads fine on both backgrounds. */
+  /* Boxed dropdown (border all sides), matching the CSG dashboard's
+     filter-group select pattern instead of the underline-tab look this
+     used to have. The chevron is a baked-in data-URI SVG, so its stroke
+     color can't follow the theme — '#5a8bb0' is a neutral slate that
+     reads fine on both backgrounds. */
   .select-dark {
     appearance: none;
-    background-color: var(--select-bg);
+    background-color: var(--bg-raised);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%235a8bb0' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 7px center;
-    border: none;
-    border-bottom: 1.5px solid var(--border-default);
-    border-radius: 4px 4px 0 0;
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
     color: var(--text-primary);
     font-family: inherit;
     font-size: 11px;
     font-weight: 500;
     padding: 5px 22px 5px 8px;
     cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     outline: none;
   }
-  .select-dark:hover  { border-bottom-color: rgba(59,130,246,0.5); background-color: var(--select-bg-hover); }
-  .select-dark:focus  { border-bottom-color: var(--accent); background-color: var(--select-bg-hover); box-shadow: 0 1px 0 0 var(--accent); }
+  .select-dark:hover  { border-color: var(--accent); }
+  .select-dark:focus  { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
   .select-dark option { background: var(--bg-panel); color: var(--text-primary); }
 
   /* ── Multi-select field (searchable, checkbox list) ────────────────── */
@@ -197,22 +186,21 @@
     justify-content: space-between;
     gap: 6px;
     width: 100%;
-    background-color: var(--select-bg);
-    border: none;
-    border-bottom: 1.5px solid var(--border-default);
-    border-radius: 4px 4px 0 0;
+    background-color: var(--bg-raised);
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
     color: var(--text-primary);
     font-family: inherit;
     font-size: 11px;
     font-weight: 500;
     padding: 5px 8px;
     cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     outline: none;
     text-align: left;
   }
-  .ms-field:hover  { border-bottom-color: rgba(59,130,246,0.5); background-color: var(--select-bg-hover); }
-  .ms-field:focus  { border-bottom-color: var(--accent); background-color: var(--select-bg-hover); box-shadow: 0 1px 0 0 var(--accent); }
+  .ms-field:hover  { border-color: var(--accent); }
+  .ms-field:focus  { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
   .ms-field-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .ms-panel {

@@ -73,7 +73,8 @@ export default function MsgCapacityFilterPanel({ filters, onChange, granularity,
   return (
     <div style={{
       background: 'linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-inset) 100%)',
-      borderBottom: '1px solid var(--border-subtle)',
+      borderBottom: '1px solid var(--border-default)',
+      boxShadow: 'var(--shadow-card)',
       padding: '11px 18px 12px',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 10 }}>
