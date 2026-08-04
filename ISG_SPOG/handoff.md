@@ -1,5 +1,11 @@
 # Project Handoff — TSG SPoG MSG Forecasting Dashboard
 
+## Header "Live · FY27" Badge Removed (2026-08-04)
+
+- The green pulsing-dot "Live · FY27" indicator in the shared header (`App.jsx`, rendered once above every page — landing + all 4 business pages) has been removed entirely, along with its wrapping `<div>` and the `<span>` pulse-dot.
+- Per direct request with a screenshot of the badge. No other header element (theme toggle, page/sub-page badge) was touched.
+- **Verified**: grepped for any other "Live · FYxx" occurrence (none — confirms this was the only instance, matching the note from the 2026-07-06 FY26→FY27 update).
+
 ## "Coming Soon" Overlay on ESG/HES Forecasting Graph Pop-Ups (2026-07-31)
 
 - Every graph's existing click-title-for-details pop-up on ESG Forecasting (`Layer1PlanOverPlan.jsx`, `Layer2ActualVsPlan.jsx`) and HES Forecasting (`AsuLayer.jsx`, `SrLayer.jsx`, `AsuSrTrendLayer.jsx` — including its separate bar-click "Top 5 Non-Adherent LOBs" modal) now shows a professional dark+blur overlay layered on top of the real content, with a large "COMING SOON" pill centered at the top. The real table/data underneath is NOT hidden — it stays fully rendered, just darkened and blurred through the overlay.

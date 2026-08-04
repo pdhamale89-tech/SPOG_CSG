@@ -155,13 +155,6 @@ export default function App() {
         <div className="flex items-center gap-4">
           {isBusiness && <PageToggle options={SUB_PAGES[view]} page={subPage} setPage={setSubPage} />}
           <ThemeToggle theme={theme} onToggle={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
-          <div style={{ fontSize: 10, color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#10b981',
-              display: 'inline-block', boxShadow: '0 0 6px #10b981',
-            }} className="animate-pulse-soft" />
-            Live · FY27
-          </div>
           {isBusiness && (
             <div style={{
               fontSize: 10, fontWeight: 600, color: 'var(--accent)',

@@ -4,6 +4,12 @@ A record of every significant design decision made, with the reasoning behind it
 
 ---
 
+## Header "Live · FY27" Badge Removed Rather Than Just Hidden (2026-08-04)
+
+**Decision:** Deleted the shared header's green pulsing-dot "Live · FY27" indicator (`App.jsx`) — the `<span>` dot and its wrapping `<div>` — instead of hiding it via CSS or a feature flag.
+
+**Why:** The badge was a static, hardcoded string (not driven by any real "live" data status), so there was no future toggle to preserve — a clean removal avoids leaving dead markup or an unused style behind. Direct request with a screenshot.
+
 ## Graph Pop-Ups Get a "Coming Soon" Overlay That Obscures, Not Removes, the Real Content (2026-07-31)
 
 **Decision:** Every ESG/HES Forecasting graph's existing click-title pop-up (and `AsuSrTrendLayer`'s separate bar-click "Top 5 Non-Adherent LOBs" modal) now renders its real content exactly as before, then layers a dark (`rgba(4,10,18,0.62)`) + blurred (`backdrop-filter: blur(5px)`) overlay on top with a large "Coming Soon" pill centered at the top. New shared `ComingSoonOverlay` in `ChartKit.jsx` wraps `children` rather than replacing them.

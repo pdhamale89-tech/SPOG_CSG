@@ -882,3 +882,13 @@ Chronological log of every user prompt and the corresponding actions taken.
 - Deliberately left the per-row "RCA/CLCA" pill popups (`PerformanceMatrixTable.jsx`, both `QueuePerformanceTable.jsx` files) alone — a different, pre-existing interaction shared with Capacity pages, not "click the graph's title."
 - Verified with `npm run build` (clean, 1186 modules) and a grep sweep of every `PopupTable`/`Modal` usage across both Forecasting pages to confirm complete, correctly-scoped coverage; no browser-automation tool was available this session to click through it visually (same known gap noted elsewhere in this project).
 - Updated `handoff.md`, `tech_spec.md`, `design_choice.md`; committed and pushed to `main`.
+
+---
+
+## Prompt 68 — 2026-08-04
+**Input:** Can you remove the [Image #1] from all the pages *(screenshot of the green-dot "Live · FY27" badge)*
+
+**Action:**
+- Grepped for "Live" across the repo and found a single occurrence: the shared header block in `App.jsx` (rendered once above every page — landing + all 4 business pages), matching the same pattern noted in the 2026-07-06 FY26→FY27 handoff entry.
+- Removed the pulsing-dot `<span>` and its wrapping `<div>` entirely.
+- Updated `handoff.md`, `design_choice.md` (no `tech_spec.md` change — the badge was never documented there); committed and pushed to `ISG_SPOG`.
