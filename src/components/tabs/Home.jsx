@@ -2,32 +2,59 @@ import { useApp } from '../../context/AppContext';
 
 const ISG_URL = `${import.meta.env.BASE_URL}isg/`;
 
+const BUSINESSES = [
+  {
+    key: 'csg',
+    code: 'CSG',
+    name: 'Customer Support Group',
+    icon: '🏢',
+    desc: 'Forecast, shipment, ASU and capacity planning in one pane.',
+    chips: ['Forecast', 'Shipment', 'ASU', 'Capacity', 'Reports'],
+  },
+  {
+    key: 'isg',
+    code: 'ISG',
+    name: 'Infrastructure Solutions Group',
+    icon: '🏭',
+    desc: 'ESG and HES forecasting, capacity planning and shared calendar tools.',
+    chips: ['ESG', 'HES', 'Calendar'],
+  },
+];
+
 export default function Home() {
   const { goSub } = useApp();
 
+  function openBusiness(key) {
+    if (key === 'csg') goSub('forecast-overview');
+    else window.location.href = ISG_URL;
+  }
+
   return (
     <div className="tab-panel active">
-      <div className="ai-story">
-        <div className="ai-icon-box">🏠</div>
-        <div>
-          <div className="ai-story-title">Welcome</div>
-          <div className="ai-story-text"><strong>SPOG</strong> consolidates Forecast, Shipment, ASU, and Capacity dashboards.</div>
-        </div>
+      <div className="home-hero-header">
+        <div className="home-hero-eyebrow">SPOG · Single Pane of Glass</div>
+        <h1 className="home-hero-h1">Choose a business to open its dashboard</h1>
+        <p className="home-hero-sub">One workspace, two businesses — CSG and ISG each have their own forecast, capacity and reporting views.</p>
       </div>
 
       <div className="home-hero-grid">
-        <button type="button" className="home-hero-card csg" onClick={() => goSub('forecast-overview')}>
-          <span className="home-hero-ic">🏢</span>
-          <span className="home-hero-title">CSG</span>
-          <span className="home-hero-tag">Customer Support Group — open this dashboard</span>
-          <span className="home-hero-cta">Open dashboard →</span>
-        </button>
-        <button type="button" className="home-hero-card isg" onClick={() => { window.location.href = ISG_URL; }}>
-          <span className="home-hero-ic">🏭</span>
-          <span className="home-hero-title">ISG</span>
-          <span className="home-hero-tag">Infrastructure Solutions Group dashboard</span>
-          <span className="home-hero-cta">Open dashboard →</span>
-        </button>
+        {BUSINESSES.map((b) => (
+          <button key={b.key} type="button" className={`home-hero-card ${b.key}`} onClick={() => openBusiness(b.key)}>
+            <div className="home-hero-top">
+              <span className="home-hero-ic">{b.icon}</span>
+              <span className="home-hero-badge">{b.chips.length} modules</span>
+            </div>
+            <div>
+              <span className="home-hero-title">{b.code}</span>
+              <span className="home-hero-full">{b.name}</span>
+            </div>
+            <span className="home-hero-tag">{b.desc}</span>
+            <div className="home-hero-chips">
+              {b.chips.map((c) => <span key={c} className="home-hero-chip">{c}</span>)}
+            </div>
+            <span className="home-hero-cta">Open {b.code} dashboard →</span>
+          </button>
+        ))}
       </div>
     </div>
   );
