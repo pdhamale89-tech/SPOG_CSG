@@ -118,6 +118,15 @@ export default function App() {
   const meta = isBusiness ? BUSINESS_META[view] : null
   const subPageLabel = isBusiness ? SUB_PAGES[view].find(p => p.key === subPage)?.label : null
 
+  // Single entry point for both the sidebar's top-level business rows (switch
+  // business, keep its last-viewed sub-page) and its Forecasting/Capacity Plan
+  // sub-rows (switch business AND set the specific sub-page in one click).
+  function handleSidebarNavigate(businessKey, subPageKey) {
+    setView(businessKey)
+    if (businessKey === 'msg') setMsgSubPage(subPageKey)
+    else setTsaSubPage(subPageKey)
+  }
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-page)', color: 'var(--text-primary)', transition: 'background-color 0.2s ease, color 0.2s ease' }}>
 
@@ -177,7 +186,13 @@ export default function App() {
           Hidden on the landing page itself (2026-07-29, per direct request) — it
           only makes sense once a business's Forecasting/Capacity Plan view is open. */}
       <div style={{ display: 'flex' }}>
-        {view !== 'landing' && <PlanningSidebar view={view} onSelectBusiness={setView} />}
+        {view !== 'landing' && (
+          <PlanningSidebar
+            view={view}
+            subPages={{ msg: msgSubPage, tsa: tsaSubPage }}
+            onNavigate={handleSidebarNavigate}
+          />
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {view === 'landing' && <LandingPage onSelect={setView} />}
           {view === 'msg' && (msgSubPage === 'forecasting' ? <ForecastingPage /> : <MsgCapacityPage />)}

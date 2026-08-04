@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import FiscalCalendarView from './FiscalCalendarView'
 import PlanningCycleView from './PlanningCycleView'
 import HolidayCalendarView from './HolidayCalendarView'
@@ -18,18 +18,36 @@ const SECTIONS = [
 // button + landing tiles. Same key/label convention as App.jsx's
 // BUSINESS_META ('msg'=ESG, 'tsa'=HES); kept local rather than importing
 // BUSINESS_META since that also carries the header badge text this doesn't need.
+// Each business's Forecasting/Capacity Plan sub-pages are listed underneath,
+// same as CSG Sidebar's always-expanded sub-items (e.g. Forecast Overview/
+// Shipment Overview/ASU Overview under Forecast) — both businesses' sub-lists
+// stay visible regardless of which one is currently active.
 const BUSINESSES = [
-  { key: 'msg', label: 'ESG', icon: '🏢' },
-  { key: 'tsa', label: 'HES', icon: '🏭' },
+  {
+    key: 'msg', label: 'ESG', icon: '🏢',
+    subs: [
+      { key: 'forecasting', label: 'ESG Forecasting' },
+      { key: 'capacity', label: 'ESG Capacity Plan' },
+    ],
+  },
+  {
+    key: 'tsa', label: 'HES', icon: '🏭',
+    subs: [
+      { key: 'forecasting', label: 'HES Forecasting' },
+      { key: 'capacity', label: 'HES Capacity Plan' },
+    ],
+  },
 ]
 
 // Rail converted (2026-08-04) from a narrow icon-only strip to the same
 // labeled-nav-list format as the CSG dashboard's left Sidebar: a brand row on
 // top, section labels, then full-width icon+text rows with the same
 // hover/active treatment. Clicking a Planning Tools row still opens the same
-// content drawer to the right; clicking a business row switches App.jsx's
-// top-level view via onSelectBusiness.
-export default function PlanningSidebar({ view, onSelectBusiness }) {
+// content drawer to the right; clicking a business row or one of its
+// Forecasting/Capacity Plan sub-rows navigates via onNavigate(businessKey,
+// subPageKey) — App.jsx switches the top-level view and that business's
+// remembered sub-page in one call.
+export default function PlanningSidebar({ view, subPages, onNavigate }) {
   const [active, setActive] = useState(null)
   const activeSection = SECTIONS.find(s => s.key === active)
 
@@ -46,15 +64,28 @@ export default function PlanningSidebar({ view, onSelectBusiness }) {
         <div className="isg-sidebar-nav">
           <div className="isg-sidebar-label">Business</div>
           {BUSINESSES.map(b => (
-            <button
-              key={b.key}
-              onClick={() => onSelectBusiness?.(b.key)}
-              aria-label={b.label}
-              aria-pressed={view === b.key}
-              className={`isg-sb-i${view === b.key ? ' active' : ''}`}
-            >
-              <span className="ic">{b.icon}</span>{b.label}
-            </button>
+            <Fragment key={b.key}>
+              <button
+                onClick={() => onNavigate?.(b.key, subPages?.[b.key])}
+                aria-label={b.label}
+                aria-pressed={view === b.key}
+                className={`isg-sb-i${view === b.key ? ' active' : ''}`}
+              >
+                <span className="ic">{b.icon}</span>{b.label}
+              </button>
+              <div className="isg-sb-sub">
+                {b.subs.map(sp => (
+                  <button
+                    key={sp.key}
+                    onClick={() => onNavigate?.(b.key, sp.key)}
+                    aria-pressed={view === b.key && subPages?.[b.key] === sp.key}
+                    className={`isg-sb-i${view === b.key && subPages?.[b.key] === sp.key ? ' active' : ''}`}
+                  >
+                    {sp.label}
+                  </button>
+                ))}
+              </div>
+            </Fragment>
           ))}
 
           <div className="isg-sidebar-label">Planning Tools</div>

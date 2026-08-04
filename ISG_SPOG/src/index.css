@@ -415,6 +415,8 @@
   .isg-sb-i:hover { background: var(--bg-sidebar-hover); color: #e5e7eb; }
   .isg-sb-i.active { background: var(--accent-dim); color: var(--accent); }
   .isg-sb-i .ic { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+  .isg-sb-sub { display: flex; flex-direction: column; gap: 0; width: 100%; padding: 0 8px 0 18px; }
+  .isg-sb-sub .isg-sb-i { padding: 7px 10px 7px 22px; font-size: 11px; font-weight: 500; }
 
   /* ── Status badge ─────────────────────────────────────────────────── */
   .badge { padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
