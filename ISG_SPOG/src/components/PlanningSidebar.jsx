@@ -13,35 +13,39 @@ const SECTIONS = [
   { key: 'holidays', label: 'Holiday Calendar', icon: '🌍' },
 ]
 
+// Rail converted (2026-08-04) from a narrow icon-only strip to the same
+// labeled-nav-list format as the CSG dashboard's left Sidebar: a brand row on
+// top, a section label, then full-width icon+text rows with the same
+// hover/active treatment. Clicking a row still opens the same content drawer
+// to the right — only the rail's own look changed, not the interaction.
 export default function PlanningSidebar() {
   const [active, setActive] = useState(null)
   const activeSection = SECTIONS.find(s => s.key === active)
 
   return (
     <div style={{ display: 'flex', flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
-      <div style={{
-        width: 46, flexShrink: 0, background: 'var(--bg-sidebar)', borderRight: '1px solid var(--border-strong)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 0',
-        maxHeight: '100vh', overflowY: 'auto',
-      }}>
-        {SECTIONS.map(s => (
-          <button
-            key={s.key}
-            onClick={() => setActive(a => (a === s.key ? null : s.key))}
-            title={s.label}
-            aria-label={s.label}
-            aria-pressed={active === s.key}
-            style={{
-              width: 32, height: 32, borderRadius: 8, border: '1px solid transparent',
-              background: active === s.key ? 'var(--accent)' : 'var(--bg-sidebar-hover)',
-              color: active === s.key ? 'var(--accent-contrast)' : 'var(--text-sidebar)',
-              fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background-color 0.15s ease, color 0.15s ease', padding: 0,
-            }}
-          >
-            {s.icon}
-          </button>
-        ))}
+      <div className="isg-sidebar">
+        <div className="isg-sidebar-brand">
+          <div className="isg-sidebar-logo">📊</div>
+          <div>
+            ISG SPoG
+            <small>Planning Tools</small>
+          </div>
+        </div>
+        <div className="isg-sidebar-nav">
+          <div className="isg-sidebar-label">Planning Tools</div>
+          {SECTIONS.map(s => (
+            <button
+              key={s.key}
+              onClick={() => setActive(a => (a === s.key ? null : s.key))}
+              aria-label={s.label}
+              aria-pressed={active === s.key}
+              className={`isg-sb-i${active === s.key ? ' active' : ''}`}
+            >
+              <span className="ic">{s.icon}</span>{s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {activeSection && (

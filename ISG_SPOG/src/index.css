@@ -364,6 +364,58 @@
     display: flex; align-items: center; gap: 4px; position: relative; z-index: 1;
   }
 
+  /* ── Left panel (Planning Tools rail): same labeled-nav-list format as
+     the CSG dashboard's left Sidebar — brand row, section label, full-
+     width icon+text rows with the same hover/active treatment — instead
+     of a narrow icon-only strip. ───────────────────────────────────── */
+  .isg-sidebar {
+    width: 190px;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .isg-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .isg-sidebar-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px;
+  }
+  .isg-sidebar-brand small {
+    display: block; font-size: 9px; font-weight: 500; color: var(--text-sidebar);
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .isg-sidebar-nav { display: flex; flex-direction: column; gap: 1px; width: 100%; padding: 0 8px; }
+  .isg-sidebar-label {
+    font-size: 8px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 10px 6px; opacity: 0.6;
+  }
+  .isg-sb-i {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 7px; border: none; background: none;
+    width: 100%; text-align: left; cursor: pointer; transition: all 0.15s ease;
+    white-space: nowrap; color: var(--text-sidebar); font-size: 12px; font-weight: 600;
+    font-family: inherit;
+  }
+  .isg-sb-i:hover { background: var(--bg-sidebar-hover); color: #e5e7eb; }
+  .isg-sb-i.active { background: var(--accent-dim); color: var(--accent); }
+  .isg-sb-i .ic { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+
   /* ── Status badge ─────────────────────────────────────────────────── */
   .badge { padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
   .badge-good { background: rgba(16,185,129,0.15); color: #10b981; }
