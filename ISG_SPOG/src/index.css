@@ -325,6 +325,45 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   }
 
+  /* ── KPI tile (Key Metrics row): same colorful gradient-tile format as
+     the CSG dashboard's KPI cards — a different gradient per position,
+     big bold white value, rather than a neutral bordered card. Still a
+     real drill-down trigger (role="button"), just restyled. ────────── */
+  .kpi-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    padding: 14px;
+    color: #fff;
+    box-shadow: var(--shadow-card);
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    transition: box-shadow 0.2s ease;
+  }
+  .kpi-tile::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .kpi-tile:nth-child(2) { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+  .kpi-tile:nth-child(3) { background: linear-gradient(135deg, #10b981, #059669); }
+  .kpi-tile:nth-child(4) { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .kpi-tile:hover { box-shadow: var(--shadow-card-hover); }
+  .kpi-tile.active { box-shadow: 0 0 0 2px rgba(255,255,255,0.7), var(--shadow-card-hover); }
+  .kpi-tile-label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 700; opacity: 0.9;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin-bottom: 4px; position: relative; z-index: 1;
+  }
+  .kpi-tile-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; position: relative; z-index: 1; }
+  .kpi-tile-sub {
+    font-size: 10.5px; opacity: 0.9; margin-top: 6px;
+    display: flex; align-items: center; gap: 4px; position: relative; z-index: 1;
+  }
+
   /* ── Status badge ─────────────────────────────────────────────────── */
   .badge { padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
   .badge-good { background: rgba(16,185,129,0.15); color: #10b981; }

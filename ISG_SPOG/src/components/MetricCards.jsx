@@ -42,6 +42,10 @@ function StatusPip({ ok }) {
 // per-card InfoButton — a real nested <button> — doesn't sit inside another <button>
 // element; the info button's wrapper stops click propagation so tapping it doesn't
 // also toggle the card's own drill-down open/closed.
+// KPI tile: same gradient-tile format as the CSG dashboard's Key Metrics row
+// (colorful gradient per position, big bold value, white text) instead of the
+// neutral bordered card this used to be. Still a real drill-down trigger
+// (role="button", active state), just restyled.
 function Card({ id, icon, label, sublabel, value, sub, trend, onClick, active, info }) {
   return (
     <div
@@ -49,43 +53,24 @@ function Card({ id, icon, label, sublabel, value, sub, trend, onClick, active, i
       tabIndex={0}
       onClick={onClick}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }}
-      className={`card-panel flex-1 min-w-0 text-left flex flex-col${active ? ' active' : ''}`}
-      style={{ cursor: 'pointer', padding: 0, minHeight: 84, position: 'relative' }}
+      className={`kpi-tile flex-1 min-w-0 text-left${active ? ' active' : ''}`}
+      style={{ cursor: 'pointer' }}
     >
       {info && (
-        <div style={{ position: 'absolute', top: 6, right: 8, zIndex: 2 }} onClick={e => e.stopPropagation()}>
+        <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={e => e.stopPropagation()}>
           <InfoButton info={info} align="right" />
         </div>
       )}
-      <div style={{
-        padding: '8px 12px 6px',
-        borderBottom: '1px solid var(--border-subtle)',
-        display: 'flex', alignItems: 'center', gap: 6,
-      }}>
-        <span style={{ fontSize: 14, lineHeight: 1 }}>{icon}</span>
-        <div>
-          <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>{label}</p>
-          {sublabel && <p style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 1 }}>{sublabel}</p>}
-        </div>
+      <div className="kpi-tile-label">
+        <span style={{ fontSize: 13, lineHeight: 1 }}>{icon}</span>
+        {label}{sublabel && ` · ${sublabel}`}
       </div>
-
-      <div style={{ padding: '8px 12px 10px', flex: 1 }}>
-        <p className="num" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1, letterSpacing: '-0.02em' }}>
-          {value}
+      <p className="num kpi-tile-value">{value}</p>
+      {sub && (
+        <p className="kpi-tile-sub">
+          {trend !== undefined && <StatusPip ok={trend} />}
+          {sub}
         </p>
-        {sub && (
-          <p style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
-            {trend !== undefined && <StatusPip ok={trend} />}
-            {sub}
-          </p>
-        )}
-      </div>
-
-      {active && (
-        <div style={{
-          height: 2, background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
-          marginTop: 'auto',
-        }} />
       )}
     </div>
   )
