@@ -41,14 +41,18 @@ const BUSINESSES = [
 // Rail converted (2026-08-04) from a narrow icon-only strip to the same
 // labeled-nav-list format as the CSG dashboard's left Sidebar: a brand row on
 // top, section labels, then full-width icon+text rows with the same
-// hover/active treatment. Clicking a Planning Tools row still opens the same
-// content drawer to the right; clicking a business row or one of its
-// Forecasting/Capacity Plan sub-rows navigates via onNavigate(businessKey,
-// subPageKey) — App.jsx switches the top-level view and that business's
-// remembered sub-page in one call.
+// hover/active treatment. Clicking a business row or one of its Forecasting/
+// Capacity Plan sub-rows navigates via onNavigate(businessKey, subPageKey) —
+// App.jsx switches the top-level view and that business's remembered
+// sub-page in one call. Fiscal Calendar/Planning Cycle/Holiday Calendar (the
+// former standalone "Planning Tools" rows) are now grouped under a single
+// "Calendar" tab, same as ESG/HES's Forecasting/Capacity Plan sub-rows — each
+// still just opens the same content drawer to the right; nothing about that
+// mechanic changed.
 export default function PlanningSidebar({ view, subPages, onNavigate }) {
   const [active, setActive] = useState(null)
   const activeSection = SECTIONS.find(s => s.key === active)
+  const isCalendarOpen = SECTIONS.some(s => s.key === active)
 
   return (
     <div style={{ display: 'flex', flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
@@ -88,17 +92,26 @@ export default function PlanningSidebar({ view, subPages, onNavigate }) {
           ))}
 
           <div className="isg-sidebar-label">Planning Tools</div>
-          {SECTIONS.map(s => (
-            <button
-              key={s.key}
-              onClick={() => setActive(a => (a === s.key ? null : s.key))}
-              aria-label={s.label}
-              aria-pressed={active === s.key}
-              className={`isg-sb-i${active === s.key ? ' active' : ''}`}
-            >
-              <span className="ic">{s.icon}</span>{s.label}
-            </button>
-          ))}
+          <button
+            onClick={() => setActive(a => (SECTIONS.some(s => s.key === a) ? null : SECTIONS[0].key))}
+            aria-label="Calendar"
+            aria-pressed={isCalendarOpen}
+            className={`isg-sb-i${isCalendarOpen ? ' active' : ''}`}
+          >
+            <span className="ic">📅</span>Calendar
+          </button>
+          <div className="isg-sb-sub">
+            {SECTIONS.map(s => (
+              <button
+                key={s.key}
+                onClick={() => setActive(a => (a === s.key ? null : s.key))}
+                aria-pressed={active === s.key}
+                className={`isg-sb-i${active === s.key ? ' active' : ''}`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
