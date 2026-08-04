@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import LandingPage from './components/LandingPage'
 import ForecastingPage from './components/ForecastingPage'
 import MsgCapacityPage from './components/msgCapacity/MsgCapacityPage'
 import TsaForecastingPage from './components/tsa/TsaForecastingPage'
@@ -32,24 +31,6 @@ function PageToggle({ options, page, setPage }) {
         </button>
       ))}
     </div>
-  )
-}
-
-// Home button placed next to the header logo, next to a business section, to get
-// back to the ISG SPoG landing tiles — the only way back up once a business is
-// selected, since the header no longer carries a top-level page toggle.
-function HomeButton({ onClick }) {
-  return (
-    <button onClick={onClick} aria-label="Back to ISG SPoG home" title="Back to ISG SPoG home" style={{
-      width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border-default)',
-      background: 'var(--bg-inset)', color: 'var(--text-dim)', display: 'flex',
-      alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0,
-    }}>
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <path d="M2 7.5 8 2l6 5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M3.5 6.5V13a1 1 0 0 0 1 1H6.5v-3.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V14h2a1 1 0 0 0 1-1V6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </button>
   )
 }
 
@@ -92,10 +73,11 @@ const BUSINESS_META = {
 }
 
 export default function App() {
-  // Top-level: 'landing' or a business key ('msg'/'tsa'). Each business remembers
-  // its own last-viewed sub-page (Forecasting/Capacity Plan) independently, so
-  // hopping back to the landing tiles and returning doesn't reset it.
-  const [view, setView] = useState('landing')
+  // Landing tile page removed (2026-08-04) — the CSG dashboard's ISG button now
+  // navigates straight in here, so `view` is just a business key ('msg'/'tsa'),
+  // defaulting to ESG. Each business remembers its own last-viewed sub-page
+  // (Forecasting/Capacity Plan) independently.
+  const [view, setView] = useState('msg')
   const [msgSubPage, setMsgSubPage] = useState('forecasting')
   const [tsaSubPage, setTsaSubPage] = useState('forecasting')
 
@@ -112,11 +94,10 @@ export default function App() {
     localStorage.setItem(THEME_KEY, theme)
   }, [theme])
 
-  const isBusiness = view === 'msg' || view === 'tsa'
   const subPage = view === 'msg' ? msgSubPage : tsaSubPage
   const setSubPage = view === 'msg' ? setMsgSubPage : setTsaSubPage
-  const meta = isBusiness ? BUSINESS_META[view] : null
-  const subPageLabel = isBusiness ? SUB_PAGES[view].find(p => p.key === subPage)?.label : null
+  const meta = BUSINESS_META[view]
+  const subPageLabel = SUB_PAGES[view].find(p => p.key === subPage)?.label
 
   // Single entry point for both the sidebar's top-level business rows (switch
   // business, keep its last-viewed sub-page) and its Forecasting/Capacity Plan
@@ -136,7 +117,6 @@ export default function App() {
         borderBottom: '1px solid var(--border-default)',
       }} className="px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {isBusiness && <HomeButton onClick={() => setView('landing')} />}
           {/* Logo mark */}
           <div style={{
             width: 32, height: 32, borderRadius: 7,
@@ -156,23 +136,21 @@ export default function App() {
               ISG SPoG
             </h1>
             <p style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 1 }}>
-              {isBusiness ? `${meta.label} · ${subPageLabel}` : 'ESG · HES'}
+              {meta.label} · {subPageLabel}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          {isBusiness && <PageToggle options={SUB_PAGES[view]} page={subPage} setPage={setSubPage} />}
+          <PageToggle options={SUB_PAGES[view]} page={subPage} setPage={setSubPage} />
           <ThemeToggle theme={theme} onToggle={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
-          {isBusiness && (
-            <div style={{
-              fontSize: 10, fontWeight: 600, color: 'var(--accent)',
-              background: 'var(--accent-dim)', border: '1px solid rgba(59,130,246,0.2)',
-              borderRadius: 5, padding: '3px 9px',
-            }}>
-              {meta.badge}
-            </div>
-          )}
+          <div style={{
+            fontSize: 10, fontWeight: 600, color: 'var(--accent)',
+            background: 'var(--accent-dim)', border: '1px solid rgba(59,130,246,0.2)',
+            borderRadius: 5, padding: '3px 9px',
+          }}>
+            {meta.badge}
+          </div>
         </div>
       </header>
 
@@ -182,19 +160,14 @@ export default function App() {
       {/* PlanningSidebar is mounted once here, outside the page conditionals below,
           so its expand/collapse state persists across every page/tab switch —
           this is what makes the Fiscal Calendar + Planning Cycle available on
-          every business page via one shared instance instead of a copy per page.
-          Hidden on the landing page itself (2026-07-29, per direct request) — it
-          only makes sense once a business's Forecasting/Capacity Plan view is open. */}
+          every business page via one shared instance instead of a copy per page. */}
       <div style={{ display: 'flex' }}>
-        {view !== 'landing' && (
-          <PlanningSidebar
-            view={view}
-            subPages={{ msg: msgSubPage, tsa: tsaSubPage }}
-            onNavigate={handleSidebarNavigate}
-          />
-        )}
+        <PlanningSidebar
+          view={view}
+          subPages={{ msg: msgSubPage, tsa: tsaSubPage }}
+          onNavigate={handleSidebarNavigate}
+        />
         <div style={{ flex: 1, minWidth: 0 }}>
-          {view === 'landing' && <LandingPage onSelect={setView} />}
           {view === 'msg' && (msgSubPage === 'forecasting' ? <ForecastingPage /> : <MsgCapacityPage />)}
           {view === 'tsa' && (tsaSubPage === 'forecasting' ? <TsaForecastingPage /> : <TsaCapacityPage />)}
 

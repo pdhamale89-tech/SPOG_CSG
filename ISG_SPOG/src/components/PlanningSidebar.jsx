@@ -14,8 +14,7 @@ const SECTIONS = [
 ]
 
 // Business switch tabs (2026-08-04) — added to the top of the rail so you can
-// jump straight from ESG to HES (or back) without going through the Home
-// button + landing tiles. Same key/label convention as App.jsx's
+// jump straight from ESG to HES (or back). Same key/label convention as App.jsx's
 // BUSINESS_META ('msg'=ESG, 'tsa'=HES); kept local rather than importing
 // BUSINESS_META since that also carries the header badge text this doesn't need.
 // Each business's Forecasting/Capacity Plan sub-pages are listed underneath,
