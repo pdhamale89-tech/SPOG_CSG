@@ -177,7 +177,7 @@ export default function App() {
           Hidden on the landing page itself (2026-07-29, per direct request) — it
           only makes sense once a business's Forecasting/Capacity Plan view is open. */}
       <div style={{ display: 'flex' }}>
-        {view !== 'landing' && <PlanningSidebar />}
+        {view !== 'landing' && <PlanningSidebar view={view} onSelectBusiness={setView} />}
         <div style={{ flex: 1, minWidth: 0 }}>
           {view === 'landing' && <LandingPage onSelect={setView} />}
           {view === 'msg' && (msgSubPage === 'forecasting' ? <ForecastingPage /> : <MsgCapacityPage />)}

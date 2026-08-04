@@ -13,12 +13,23 @@ const SECTIONS = [
   { key: 'holidays', label: 'Holiday Calendar', icon: '🌍' },
 ]
 
+// Business switch tabs (2026-08-04) — added to the top of the rail so you can
+// jump straight from ESG to HES (or back) without going through the Home
+// button + landing tiles. Same key/label convention as App.jsx's
+// BUSINESS_META ('msg'=ESG, 'tsa'=HES); kept local rather than importing
+// BUSINESS_META since that also carries the header badge text this doesn't need.
+const BUSINESSES = [
+  { key: 'msg', label: 'ESG', icon: '🏢' },
+  { key: 'tsa', label: 'HES', icon: '🏭' },
+]
+
 // Rail converted (2026-08-04) from a narrow icon-only strip to the same
 // labeled-nav-list format as the CSG dashboard's left Sidebar: a brand row on
-// top, a section label, then full-width icon+text rows with the same
-// hover/active treatment. Clicking a row still opens the same content drawer
-// to the right — only the rail's own look changed, not the interaction.
-export default function PlanningSidebar() {
+// top, section labels, then full-width icon+text rows with the same
+// hover/active treatment. Clicking a Planning Tools row still opens the same
+// content drawer to the right; clicking a business row switches App.jsx's
+// top-level view via onSelectBusiness.
+export default function PlanningSidebar({ view, onSelectBusiness }) {
   const [active, setActive] = useState(null)
   const activeSection = SECTIONS.find(s => s.key === active)
 
@@ -33,6 +44,19 @@ export default function PlanningSidebar() {
           </div>
         </div>
         <div className="isg-sidebar-nav">
+          <div className="isg-sidebar-label">Business</div>
+          {BUSINESSES.map(b => (
+            <button
+              key={b.key}
+              onClick={() => onSelectBusiness?.(b.key)}
+              aria-label={b.label}
+              aria-pressed={view === b.key}
+              className={`isg-sb-i${view === b.key ? ' active' : ''}`}
+            >
+              <span className="ic">{b.icon}</span>{b.label}
+            </button>
+          ))}
+
           <div className="isg-sidebar-label">Planning Tools</div>
           {SECTIONS.map(s => (
             <button
