@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { M8 } from '../../data/forecastData';
 
@@ -59,6 +59,18 @@ export default function FilterBar() {
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
+  // Yearly only has real data on Capacity Overview (see capacityData.js) --
+  // every other tab indexes its own period-keyed dataset (forecastData.js's
+  // D, etc.) with no 'yearly' entry and would throw. So the button only
+  // shows up while that tab is active, and if the user switches away from
+  // Capacity Overview while Yearly is selected, fall back to Monthly rather
+  // than carry an unsupported period into a tab that can't render it.
+  useEffect(() => {
+    if (currentTab !== 'capacity-overview' && curPeriod === 'yearly') {
+      setCurPeriod('monthly');
+    }
+  }, [currentTab, curPeriod, setCurPeriod]);
+
   function handleClear() {
     setDecor(DEFAULTS);
     setFiscalYear('FY26');
@@ -87,6 +99,9 @@ export default function FilterBar() {
           <button className={'p-btn' + (curPeriod === 'weekly' ? ' active' : '')} onClick={() => setCurPeriod('weekly')}>Weekly</button>
           <button className={'p-btn' + (curPeriod === 'monthly' ? ' active' : '')} onClick={() => setCurPeriod('monthly')}>Monthly</button>
           <button className={'p-btn' + (curPeriod === 'qtr' ? ' active' : '')} onClick={() => setCurPeriod('qtr')}>QTR</button>
+          {currentTab === 'capacity-overview' && (
+            <button className={'p-btn' + (curPeriod === 'yearly' ? ' active' : '')} onClick={() => setCurPeriod('yearly')}>Yearly</button>
+          )}
         </div>
         <span className="f-clear" onClick={handleClear}>✕ Clear All</span>
       </div>
