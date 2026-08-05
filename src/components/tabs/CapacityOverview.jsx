@@ -14,7 +14,7 @@ import {
 import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
   capA1, capWeeklyTable,
-  capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_VOL_PERIODS, CAP_VOL_KEYS,
+  capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
   CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS, CAP_L1_EXIT_KEYS,
 } from '../../data/capacityData';
 import {
@@ -23,26 +23,40 @@ import {
 } from '../../utils/insights';
 
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
-const NO_COMPARISON = 'None';
 
-// Both Plan Name 1 and Plan Name 2 can be set to None now. Whichever one is
-// actually set becomes the primary plan (periodA); if only Plan Name 2 has a
-// value, it's promoted into the primary slot rather than left stranded. If
-// both are None, periodA/periodB are both null and every chart below falls
-// back to its plain, plan-less series -- legend labels with no data plotted.
-function resolvePlans(planName1, planName2) {
-  const p1 = planName1 !== NO_COMPARISON ? planName1 : null;
-  const p2 = planName2 !== NO_COMPARISON ? planName2 : null;
-  if (p1) return { periodA: p1, periodB: p2 };
-  if (p2) return { periodA: p2, periodB: null };
-  return { periodA: null, periodB: null };
+// Overall isn't "no plan selected" -- Jul and Aug are two alternate plan
+// vintages forecasting the same periods, not additive sub-totals, so
+// Overall is their average (a blended baseline), not a sum and not a blank
+// state. Every metric below is that same kind of "two forecasts of one
+// number" relationship, so average is the correct blend in all of them.
+function overallSeries(julArr, augArr) {
+  return julArr.map((v, i) => Math.round((v + augArr[i]) / 2));
+}
+
+// Looks up a single metric's array for a given plan slot (Jul/Aug/Overall)
+// given the {Jul: 'fieldName', Aug: 'fieldName'} key map for that metric.
+function seriesFor(keyMap, dataObj, plan) {
+  if (plan === CAP_OVERALL) return overallSeries(dataObj[keyMap.Jul], dataObj[keyMap.Aug]);
+  return dataObj[keyMap[plan]];
+}
+
+function volumeSeriesFor(plan) {
+  if (plan === CAP_OVERALL) {
+    return {
+      db: overallSeries(capC1[CAP_VOL_KEYS.Jul.db], capC1[CAP_VOL_KEYS.Aug.db]),
+      osp: overallSeries(capC1[CAP_VOL_KEYS.Jul.osp], capC1[CAP_VOL_KEYS.Aug.osp]),
+      total: overallSeries(capC2[CAP_VOL_KEYS.Jul.total], capC2[CAP_VOL_KEYS.Aug.total]),
+    };
+  }
+  const k = CAP_VOL_KEYS[plan];
+  return { db: capC1[k.db], osp: capC1[k.osp], total: capC2[k.total] };
 }
 
 export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear } = useApp();
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
-  const [planName2, setPlanName2] = useState(NO_COMPARISON);
+  const [planName2, setPlanName2] = useState(CAP_OVERALL);
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -52,56 +66,41 @@ export default function CapacityOverview() {
   const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
 
   const dC1 = useMemo(() => {
-    const { periodA, periodB } = resolvePlans(planName1, planName2);
-    const a = periodA ? CAP_VOL_KEYS[periodA] : null;
-    const b = periodB ? CAP_VOL_KEYS[periodB] : null;
+    const a = volumeSeriesFor(planName1);
+    const b = volumeSeriesFor(planName2);
     return {
-      labels: L6, periodA, periodB,
-      aDb: a ? capC1[a.db] : [], aOsp: a ? capC1[a.osp] : [],
-      bDb: b ? capC1[b.db] : [], bOsp: b ? capC1[b.osp] : [],
-      aTotal: a ? capC2[a.total] : [], bTotal: b ? capC2[b.total] : [],
+      labels: L6, periodA: planName1, periodB: planName2,
+      aDb: a.db, aOsp: a.osp, bDb: b.db, bOsp: b.osp,
+      aTotal: a.total, bTotal: b.total,
     };
   }, [L6, planName1, planName2]);
   // The 4 charts below don't have their own Compare Plans selector -- they
   // read the same Plan Name 1/Plan Name 2 chosen above the Volume Comparison
-  // chart, so their legends (and which series even render) stay in sync with
-  // that one control, including the both-None case (legends only, no data).
-  const dC3 = useMemo(() => {
-    const { periodA, periodB } = resolvePlans(planName1, planName2);
-    return {
-      ...capC3, labels: L8, periodA, periodB,
-      aTotalHc: periodA ? capC3[CAP_HC_TOTAL_KEYS[periodA]] : [],
-      bTotalHc: periodB ? capC3[CAP_HC_TOTAL_KEYS[periodB]] : [],
-    };
-  }, [L8, planName1, planName2]);
-  const dC4 = useMemo(() => {
-    const { periodA, periodB } = resolvePlans(planName1, planName2);
-    return {
-      ...capC4, labels: L8, periodA, periodB,
-      aExcessHc: periodA ? capC4[CAP_EXCESS_HC_KEYS[periodA]] : [],
-      bExcessHc: periodB ? capC4[CAP_EXCESS_HC_KEYS[periodB]] : [],
-      aLoaExit: periodA ? capC4[CAP_LOA_EXIT_KEYS[periodA]] : [],
-      bLoaExit: periodB ? capC4[CAP_LOA_EXIT_KEYS[periodB]] : [],
-    };
-  }, [L8, planName1, planName2]);
-  const dC5 = useMemo(() => {
-    const { periodA, periodB } = resolvePlans(planName1, planName2);
-    return {
-      ...capC5, labels: L8, periodA, periodB,
-      aHiring: periodA ? capC5[CAP_HIRING_KEYS[periodA]] : [],
-      bHiring: periodB ? capC5[CAP_HIRING_KEYS[periodB]] : [],
-    };
-  }, [L8, planName1, planName2]);
+  // chart, so their legends and values stay in sync with that one control.
+  const dC3 = useMemo(() => ({
+    ...capC3, labels: L8, periodA: planName1, periodB: planName2,
+    aTotalHc: seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1),
+    bTotalHc: seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2),
+  }), [L8, planName1, planName2]);
+  const dC4 = useMemo(() => ({
+    ...capC4, labels: L8, periodA: planName1, periodB: planName2,
+    aExcessHc: seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1),
+    bExcessHc: seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2),
+    aLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1),
+    bLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2),
+  }), [L8, planName1, planName2]);
+  const dC5 = useMemo(() => ({
+    ...capC5, labels: L8, periodA: planName1, periodB: planName2,
+    aHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName1),
+    bHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName2),
+  }), [L8, planName1, planName2]);
   const dC6 = useMemo(() => ({ ...capC6, labels: L8 }), [L8]);
   const dC7 = useMemo(() => ({ ...capC7, labels: L8 }), [L8]);
-  const dC8 = useMemo(() => {
-    const { periodA, periodB } = resolvePlans(planName1, planName2);
-    return {
-      ...capC8, labels: L8, periodA, periodB,
-      aL1Exit: periodA ? capC8[CAP_L1_EXIT_KEYS[periodA]] : [],
-      bL1Exit: periodB ? capC8[CAP_L1_EXIT_KEYS[periodB]] : [],
-    };
-  }, [L8, planName1, planName2]);
+  const dC8 = useMemo(() => ({
+    ...capC8, labels: L8, periodA: planName1, periodB: planName2,
+    aL1Exit: seriesFor(CAP_L1_EXIT_KEYS, capC8, planName1),
+    bL1Exit: seriesFor(CAP_L1_EXIT_KEYS, capC8, planName2),
+  }), [L8, planName1, planName2]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
@@ -179,14 +178,14 @@ export default function CapacityOverview() {
         <div className="filter-group">
           <label>Plan Name 1</label>
           <select value={planName1} onChange={(e) => setPlanName1(e.target.value)}>
-            <option value={NO_COMPARISON}>None</option>
+            <option value={CAP_OVERALL}>Overall</option>
             {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
         <div className="filter-group">
           <label>Plan Name 2</label>
           <select value={planName2} onChange={(e) => setPlanName2(e.target.value)}>
-            <option value={NO_COMPARISON}>None</option>
+            <option value={CAP_OVERALL}>Overall</option>
             {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
@@ -202,9 +201,9 @@ export default function CapacityOverview() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              {dC1.periodA && !dC1.periodB ? `Volume — ${dC1.periodA}` : 'Volume Comparison'}
+              Volume Comparison
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1/Plan Name 2 selection above." />
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1/Plan Name 2 selection above; Overall is the average of Jul and Aug." />
             </div>
           </div>
           <ChartCanvas config={c1Config} height="300px" />

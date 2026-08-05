@@ -107,6 +107,10 @@ export const capC2 = {
 // Volume Comparison lets the user pick which two projection vintages to
 // compare (was hardcoded Jul vs Aug); this maps a vintage name to its
 // field names in capC1 (DB/OSP bars) and capC2 (Total Volume trend line).
+// Overall is a third selectable option, not a "none" -- it's the average of
+// Jul and Aug (see CapacityOverview's overallSeries), since the two are
+// alternate plan vintages forecasting the same periods, not sub-totals.
+export const CAP_OVERALL = 'Overall';
 export const CAP_VOL_PERIODS = ['Jul', 'Aug'];
 export const CAP_VOL_KEYS = {
   Jul: { db: 'julDb', osp: 'julOsp', total: 'julTotal' },

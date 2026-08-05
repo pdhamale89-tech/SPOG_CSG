@@ -1,6 +1,14 @@
 import { uppData } from '../../data/forecastData';
+import { CAP_OVERALL } from '../../data/capacityData';
 import { getColors } from '../../theme/colors';
 import { buildPeriodLabels } from '../../utils/periodLabels';
+
+// Overall's series is an average, not a specific plan's actual data -- tag
+// its legend labels with (Avg) so it doesn't read as if Jul or Aug measured
+// that number directly.
+function planLabel(plan) {
+  return plan === CAP_OVERALL ? `${plan} (Avg)` : plan;
+}
 
 function fK(v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'K' : v; }
 
@@ -757,32 +765,20 @@ export function buildCapVolumeConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  // Plan Name 1 and/or Plan Name 2 can be set to None (see CapacityOverview).
-  // With only one set, periodA is whichever one is picked -- comparison-plan
-  // datasets are simply omitted when periodB is null. With both None, periodA
-  // is null too: the legend still shows plain DB/OSP/Total Volume entries,
-  // just with no data plotted (aDb/aOsp/aTotal are [] in that case).
-  const aLabel = d.periodA ? `${d.periodA} ` : '';
   const datasets = [
-    { label: `${aLabel}DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
-    { label: `${aLabel}OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
-  ];
-  if (d.periodB) {
-    datasets.push(
-      { label: `${d.periodB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
-      { label: `${d.periodB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
-    );
-  }
-  datasets.push({
-    label: `${aLabel}Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
-    borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
-  });
-  if (d.periodB) {
-    datasets.push({
-      label: `${d.periodB} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
+    { label: `${planLabel(d.periodA)} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
+    { label: `${planLabel(d.periodA)} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
+    { label: `${planLabel(d.periodB)} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
+    { label: `${planLabel(d.periodB)} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+    {
+      label: `${planLabel(d.periodA)} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
+      borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
+    },
+    {
+      label: `${planLabel(d.periodB)} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
       borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
-    });
-  }
+    },
+  ];
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },
@@ -800,15 +796,12 @@ export function buildCapHcConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  const aLabel = d.periodA ? `${d.periodA} ` : '';
   const datasets = [
     { label: 'Avg HC', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
     { label: 'Exit HC', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
-    { label: `${aLabel}Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: `${planLabel(d.periodA)} Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: `${planLabel(d.periodB)} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
   ];
-  if (d.periodB) {
-    datasets.push({ label: `${d.periodB} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
-  }
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },
@@ -820,14 +813,13 @@ export function buildCapExcessConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  const aLabel = d.periodA ? `${d.periodA} ` : '';
   const datasets = [
-    { label: `${aLabel}Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
+    { label: `${planLabel(d.periodA)} Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
+    { label: `${planLabel(d.periodB)} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
+    { label: `${planLabel(d.periodA)} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: `${planLabel(d.periodB)} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: 'Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
   ];
-  if (d.periodB) datasets.push({ label: `${d.periodB} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 });
-  datasets.push({ label: `${aLabel}LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
-  if (d.periodB) datasets.push({ label: `${d.periodB} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
-  datasets.push({ label: 'Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } });
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },
@@ -839,14 +831,12 @@ export function buildCapHiringConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  const aBarLabel = d.periodA ? `${d.periodA} (Old)` : 'Hiring';
-  const aLineLabel = d.periodA ? `${d.periodA} Total` : 'Total';
   const datasets = [
-    { label: aBarLabel, data: d.aHiring, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
+    { label: `${planLabel(d.periodA)} (Old)`, data: d.aHiring, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
+    { label: `${planLabel(d.periodB)} (New)`, data: d.bHiring, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
+    { label: `${planLabel(d.periodA)} Total`, data: d.aHiring, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+    { label: `${planLabel(d.periodB)} Total`, data: d.bHiring, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
   ];
-  if (d.periodB) datasets.push({ label: `${d.periodB} (New)`, data: d.bHiring, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 });
-  datasets.push({ label: aLineLabel, data: d.aHiring, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } });
-  if (d.periodB) datasets.push({ label: `${d.periodB} Total`, data: d.bHiring, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } });
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },
@@ -931,12 +921,11 @@ export function buildCapExitConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  const aLabel = d.periodA ? `${d.periodA} ` : '';
   const datasets = [
-    { label: `${aLabel}L1 Exit`, data: d.aL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
+    { label: `${planLabel(d.periodA)} L1 Exit`, data: d.aL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
+    { label: `${planLabel(d.periodB)} L1 Exit`, data: d.bL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' },
+    { label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
   ];
-  if (d.periodB) datasets.push({ label: `${d.periodB} L1 Exit`, data: d.bL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' });
-  datasets.push({ label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } });
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },

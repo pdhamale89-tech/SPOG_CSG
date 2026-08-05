@@ -62,37 +62,20 @@ export function histTrendInsight(d, curHistPlan) {
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {
-  if (!d.periodA) return 'Select Plan Name 1 (or Plan Name 2) above to see volume details.';
-  if (!d.periodB) {
-    return `${d.periodA} plan volume totals ${fK(sum(d.aTotal))} across ${d.labels.length} periods, with OSP carrying the majority of the DB/OSP split; total volume moved from ${fK(first(d.aTotal))} to ${fK(last(d.aTotal))}.`;
-  }
   const pctDiff = round((1 - sum(d.bTotal) / sum(d.aTotal)) * 100);
   const dir = pctDiff >= 0 ? 'below' : 'above';
   return `${d.periodB} projection volume runs ${Math.abs(pctDiff)}% ${dir} the ${d.periodA} plan across ${d.labels.length} periods, with OSP carrying the majority of both DB/OSP splits; total volume moved from ${fK(first(d.aTotal))} (${d.periodA}) to ${fK(last(d.bTotal))} (${d.periodB}).`;
 }
 
 export function capHcInsight(d) {
-  if (!d.periodA) return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}. Select a plan above to see the Total HC comparison.`;
-  if (!d.periodB) {
-    return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while the ${d.periodA} Total HC line dropped from ${first(d.aTotalHc)} to ${last(d.aTotalHc)}.`;
-  }
   return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.aTotalHc)} (${d.periodA}) to ${last(d.bTotalHc)} (${d.periodB}) over the same span.`;
 }
 
 export function capExcessInsight(d) {
-  if (!d.periodA) return 'Select a plan above to see Excess HC and LOA Exit details.';
-  if (!d.periodB) {
-    return `${d.periodA} excess headcount eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)}, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.aLoaExit)}.`;
-  }
   return `Excess headcount eased from ${first(d.aExcessHc)} (${d.periodA}) to ${last(d.bExcessHc)} (${d.periodB}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)}.`;
 }
 
 export function capHiringInsight(d) {
-  if (!d.periodA) return 'Select a plan above to see hiring details.';
-  if (!d.periodB) {
-    const zeroQtrs = d.aHiring.filter((v) => v === 0).length;
-    return `${d.periodA} hiring dropped to zero in ${zeroQtrs} of ${d.aHiring.length} quarters, never exceeding ${Math.max(...d.aHiring)} approved hires.`;
-  }
   const zeroQtrs = d.bHiring.filter((v) => v === 0).length;
   return `${d.periodB} hiring dropped to zero in ${zeroQtrs} of ${d.bHiring.length} quarters versus the ${d.periodA} plan, which never fell below ${Math.min(...d.aHiring)} approved hires.`;
 }
@@ -114,10 +97,6 @@ export function capOspMixInsight(d) {
 }
 
 export function capExitInsight(d) {
-  if (!d.periodA) return `Select a plan above to see L1 Exit details. Exit PoP% last measured ${last(d.exitPopPct)}%.`;
-  if (!d.periodB) {
-    return `${d.periodA} L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} to ${last(d.aL1Exit)}, a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
-  }
   return `L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} (${d.periodA}) to ${last(d.bL1Exit)} (${d.periodB}), a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
 }
 
