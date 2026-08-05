@@ -290,7 +290,7 @@ export function buildPartnerLockConfig(data, theme, isPartnerView, targetPct) {
               ];
               if (d.queues) lines.push(`Queues: ${d.queues}`);
               if (d.regions) lines.push(`Region(s): ${d.regions}`);
-              if (isPartnerView) lines.push('Click to drill down');
+              if (isPartnerView) lines.push('Click for more information');
               return lines;
             },
           },

@@ -29,7 +29,7 @@ export default function ChartCanvas({ config, height, onClick }) {
           config: configRef.current, curPeriod: curPeriodRef.current, fiscalYear: fiscalYearRef.current,
         });
         if (!panels.length) return;
-        openDrillDown('Trend Drill-Down', 'Select a view', panels, tableRows);
+        openDrillDown('More Information', 'Select a view', panels, tableRows);
       };
     const handleHover = config.options?.onHover || ((evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; });
     const finalConfig = { ...config, options: { ...config.options, onClick: handleClick, onHover: handleHover } };

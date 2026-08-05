@@ -3,7 +3,7 @@ export default function KpiCard({ label, value, delta, sub, onClick }) {
     <div
       className={'kpi-card' + (onClick ? ' kpi-card-clickable' : '')}
       onClick={onClick}
-      title={onClick ? 'Click for details' : undefined}
+      title={onClick ? 'Click for more information' : undefined}
     >
       <div className="kpi-label">{label}</div>
       <div className="kpi-value">{value}</div>

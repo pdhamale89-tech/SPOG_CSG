@@ -80,8 +80,8 @@ export default function PartnerMinimum() {
     setSelPartner(null);
   }
 
-  const tip = '<strong>Purpose</strong>Lock% by partner, drill into queues, compare periods against an 80% target.'
-    + (isPartnerView ? '<strong>Tip</strong>💡 Click a partner bar to drill down' : '');
+  const tip = '<strong>Purpose</strong>Lock% by partner, compare periods against an 80% target.'
+    + (isPartnerView ? '<strong>Tip</strong>💡 Click a partner bar for more information' : '');
 
   return (
     <div>

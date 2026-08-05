@@ -145,7 +145,7 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📊 Historical Volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period with drill-down." /></div>
+          <div className="card-title">📊 Historical Volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period.<strong>Tip</strong>💡 Click for more information." /></div>
           <div className="card-dd">
             <select className="hv-queue-sel" defaultValue="all">
               <option value="all">All Queues</option>
@@ -224,7 +224,7 @@ export default function ForecastOverview() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories. Drill into a country or offering." /></div>
+            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories.<strong>Tip</strong>💡 Click for more information on a country or offering." /></div>
             <div className="card-dd">
               <RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} />
               <select

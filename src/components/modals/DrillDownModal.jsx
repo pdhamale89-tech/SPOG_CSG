@@ -20,7 +20,7 @@ export default function DrillDownModal() {
     <div className={'modal-overlay' + (open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeDrillDown(); }}>
       <div className="modal drilldown-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{title || 'Drill-Down'}</h2>
+          <h2>{title || 'More Information'}</h2>
           <button className="modal-close" onClick={closeDrillDown}>&times;</button>
         </div>
         <div className="modal-body">
