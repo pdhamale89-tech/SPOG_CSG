@@ -12,7 +12,9 @@
 .period-bar{display:flex;gap:2px;margin-left:auto;}
 .p-btn{padding:3px 10px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;}
 .p-btn.active{background:var(--accent-blue);color:#fff;border-color:var(--accent-blue);}
-.f-clear{font-size:9px;color:var(--accent-red);cursor:pointer;font-weight:700;white-space:nowrap;}
+.filter-clear-row{display:flex;justify-content:flex-end;margin-top:8px;}
+.clear-all-btn{font-size:10px;font-weight:700;color:var(--accent-red);background:transparent;border:1px solid var(--accent-red);border-radius:6px;padding:4px 10px;cursor:pointer;white-space:nowrap;}
+.clear-all-btn:hover{background:rgba(239,68,68,.1);}
 .filter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px 10px;}
 .filter-group{display:flex;flex-direction:column;gap:3px;}
 .filter-group label{font-size:8px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;}

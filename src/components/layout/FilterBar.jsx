@@ -103,32 +103,36 @@ export default function FilterBar() {
             <button className={'p-btn' + (curPeriod === 'yearly' ? ' active' : '')} onClick={() => setCurPeriod('yearly')}>Yearly</button>
           )}
         </div>
-        <span className="f-clear" onClick={handleClear}>✕ Clear All</span>
       </div>
       {expanded && (
-        <div className="filter-grid">
-          <div className="filter-group">
-            <label>Fiscal Year</label>
-            <select value={fiscalYear} onChange={(e) => setFiscalYear(e.target.value)}>
-              {FISCAL_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-            </select>
+        <>
+          <div className="filter-grid">
+            <div className="filter-group">
+              <label>Fiscal Year</label>
+              <select value={fiscalYear} onChange={(e) => setFiscalYear(e.target.value)}>
+                {FISCAL_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            {FIELDS_BEFORE_REGION.map(renderField)}
+            <div className="filter-group">
+              <label>Region</label>
+              <select value={curRegion} onChange={(e) => applyFilters(e.target.value)}>
+                <option value="Global">Global</option>
+                <option value="AMER">AMER</option>
+                <option value="EMEA">EMEA</option>
+                <option value="APJ">APJ</option>
+              </select>
+            </div>
+            {FIELDS_AFTER_REGION.filter((f) => !(f.key === 'offering' && currentTab === 'asu-overview')).map((f) => renderField(
+              f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
+            ))}
+            {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
+            {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
           </div>
-          {FIELDS_BEFORE_REGION.map(renderField)}
-          <div className="filter-group">
-            <label>Region</label>
-            <select value={curRegion} onChange={(e) => applyFilters(e.target.value)}>
-              <option value="Global">Global</option>
-              <option value="AMER">AMER</option>
-              <option value="EMEA">EMEA</option>
-              <option value="APJ">APJ</option>
-            </select>
+          <div className="filter-clear-row">
+            <button type="button" className="clear-all-btn" onClick={handleClear}>✕ Clear All</button>
           </div>
-          {FIELDS_AFTER_REGION.filter((f) => !(f.key === 'offering' && currentTab === 'asu-overview')).map((f) => renderField(
-            f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
-          ))}
-          {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
-          {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
-        </div>
+        </>
       )}
     </div>
   );
