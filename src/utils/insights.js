@@ -62,6 +62,9 @@ export function histTrendInsight(d, curHistPlan) {
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {
+  if (!d.periodB) {
+    return `${d.periodA} plan volume totals ${fK(sum(d.aTotal))} across ${d.labels.length} periods, with OSP carrying the majority of the DB/OSP split; total volume moved from ${fK(first(d.aTotal))} to ${fK(last(d.aTotal))}.`;
+  }
   const pctDiff = round((1 - sum(d.bTotal) / sum(d.aTotal)) * 100);
   const dir = pctDiff >= 0 ? 'below' : 'above';
   return `${d.periodB} projection volume runs ${Math.abs(pctDiff)}% ${dir} the ${d.periodA} plan across ${d.labels.length} periods, with OSP carrying the majority of both DB/OSP splits; total volume moved from ${fK(first(d.aTotal))} (${d.periodA}) to ${fK(last(d.bTotal))} (${d.periodB}).`;

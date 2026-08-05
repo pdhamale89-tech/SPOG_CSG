@@ -22,12 +22,13 @@ import {
 } from '../../utils/insights';
 
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
+const NO_COMPARISON = 'None';
 
 export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear } = useApp();
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
-  const [planName2, setPlanName2] = useState(CAP_VOL_PERIODS[1]);
+  const [planName2, setPlanName2] = useState(NO_COMPARISON);
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -38,13 +39,15 @@ export default function CapacityOverview() {
 
   const dC1 = useMemo(() => {
     const a = CAP_VOL_KEYS[planName1];
-    const b = CAP_VOL_KEYS[planName2];
+    const hasComparison = planName2 !== NO_COMPARISON;
+    const b = hasComparison ? CAP_VOL_KEYS[planName2] : null;
     return {
       labels: L6,
       periodA: planName1,
-      periodB: planName2,
-      aDb: capC1[a.db], aOsp: capC1[a.osp], bDb: capC1[b.db], bOsp: capC1[b.osp],
-      aTotal: capC2[a.total], bTotal: capC2[b.total],
+      periodB: hasComparison ? planName2 : null,
+      aDb: capC1[a.db], aOsp: capC1[a.osp],
+      bDb: b ? capC1[b.db] : null, bOsp: b ? capC1[b.osp] : null,
+      aTotal: capC2[a.total], bTotal: b ? capC2[b.total] : null,
     };
   }, [L6, planName1, planName2]);
   const dC3 = useMemo(() => ({ ...capC3, labels: L8 }), [L8]);
@@ -136,6 +139,7 @@ export default function CapacityOverview() {
         <div className="filter-group">
           <label>Plan Name 2</label>
           <select value={planName2} onChange={(e) => setPlanName2(e.target.value)}>
+            <option value={NO_COMPARISON}>None</option>
             {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
@@ -150,7 +154,11 @@ export default function CapacityOverview() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">Volume Comparison <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend, comparing the Plan Name 1/Plan Name 2 selection above." /></div>
+            <div className="card-title">
+              {dC1.periodB ? 'Volume Comparison' : `Volume — ${planName1}`}
+              {' '}
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1 selection above; set Plan Name 2 to compare it against a second plan." />
+            </div>
           </div>
           <ChartCanvas config={c1Config} height="300px" />
           <InsightBox text={capVolumeInsight(dC1)} />

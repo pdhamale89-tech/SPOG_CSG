@@ -757,25 +757,32 @@ export function buildCapVolumeConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  // Plan Name 2 can be set to None (see CapacityOverview) to show only the
+  // primary plan -- periodB/bDb/bOsp/bTotal are null in that case, so the
+  // comparison-plan datasets are simply omitted rather than charted as empty.
+  const datasets = [
+    { label: `${d.periodA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
+    { label: `${d.periodA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
+  ];
+  if (d.periodB) {
+    datasets.push(
+      { label: `${d.periodB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
+      { label: `${d.periodB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+    );
+  }
+  datasets.push({
+    label: `${d.periodA} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
+    borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
+  });
+  if (d.periodB) {
+    datasets.push({
+      label: `${d.periodB} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
+      borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
+    });
+  }
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: `${d.periodA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
-        { label: `${d.periodA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
-        { label: `${d.periodB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
-        { label: `${d.periodB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
-        {
-          label: `${d.periodA} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
-          borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
-        },
-        {
-          label: `${d.periodB} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
-          borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
-        },
-      ],
-    },
+    data: { labels: d.labels, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
