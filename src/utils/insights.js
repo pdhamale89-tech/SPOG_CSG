@@ -62,6 +62,7 @@ export function histTrendInsight(d, curHistPlan) {
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {
+  if (!d.periodA) return 'Select Plan Name 1 (or Plan Name 2) above to see volume details.';
   if (!d.periodB) {
     return `${d.periodA} plan volume totals ${fK(sum(d.aTotal))} across ${d.labels.length} periods, with OSP carrying the majority of the DB/OSP split; total volume moved from ${fK(first(d.aTotal))} to ${fK(last(d.aTotal))}.`;
   }
@@ -71,6 +72,7 @@ export function capVolumeInsight(d) {
 }
 
 export function capHcInsight(d) {
+  if (!d.periodA) return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}. Select a plan above to see the Total HC comparison.`;
   if (!d.periodB) {
     return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while the ${d.periodA} Total HC line dropped from ${first(d.aTotalHc)} to ${last(d.aTotalHc)}.`;
   }
@@ -78,6 +80,7 @@ export function capHcInsight(d) {
 }
 
 export function capExcessInsight(d) {
+  if (!d.periodA) return 'Select a plan above to see Excess HC and LOA Exit details.';
   if (!d.periodB) {
     return `${d.periodA} excess headcount eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)}, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.aLoaExit)}.`;
   }
@@ -85,6 +88,7 @@ export function capExcessInsight(d) {
 }
 
 export function capHiringInsight(d) {
+  if (!d.periodA) return 'Select a plan above to see hiring details.';
   if (!d.periodB) {
     const zeroQtrs = d.aHiring.filter((v) => v === 0).length;
     return `${d.periodA} hiring dropped to zero in ${zeroQtrs} of ${d.aHiring.length} quarters, never exceeding ${Math.max(...d.aHiring)} approved hires.`;
@@ -110,6 +114,7 @@ export function capOspMixInsight(d) {
 }
 
 export function capExitInsight(d) {
+  if (!d.periodA) return `Select a plan above to see L1 Exit details. Exit PoP% last measured ${last(d.exitPopPct)}%.`;
   if (!d.periodB) {
     return `${d.periodA} L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} to ${last(d.aL1Exit)}, a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
   }
