@@ -802,8 +802,8 @@ export function buildCapHcConfig(d, theme) {
   const DL = dataLabelsDefault(theme);
   const aLabel = d.periodA ? `${d.periodA} ` : '';
   const datasets = [
-    { label: 'Aug HC Avg', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
-    { label: 'Aug HC Exit', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
+    { label: 'Avg HC', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
+    { label: 'Exit HC', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
     { label: `${aLabel}Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
   ];
   if (d.periodB) {
@@ -827,7 +827,7 @@ export function buildCapExcessConfig(d, theme) {
   if (d.periodB) datasets.push({ label: `${d.periodB} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 });
   datasets.push({ label: `${aLabel}LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
   if (d.periodB) datasets.push({ label: `${d.periodB} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
-  datasets.push({ label: 'Jul Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } });
+  datasets.push({ label: 'Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } });
   return {
     type: 'bar',
     data: { labels: d.labels, datasets },
