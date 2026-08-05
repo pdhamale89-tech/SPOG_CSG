@@ -88,12 +88,15 @@ export function capHiringBreakdownInsight(d) {
 }
 
 export function capCapacityInsight(d) {
-  return `Capacity% rose from ${first(d.capPctOld)}% to a peak of ${Math.max(...d.capPctNew)}% under the new plan.`;
+  const lastVariance = Math.round(last(d.bCapPct) - last(d.aCapPct));
+  const dir = lastVariance >= 0 ? `${lastVariance}pp above` : `${Math.abs(lastVariance)}pp below`;
+  return `${d.periodB} Capacity% runs ${dir} ${d.periodA}, peaking at ${Math.max(...d.bCapPct)}% (${d.periodB}) versus ${Math.max(...d.aCapPct)}% (${d.periodA}).`;
 }
 
 export function capOspMixInsight(d) {
-  const validOsp = d.ospPctNew.filter((v) => v != null);
-  return `OSP mix climbed to a peak of ${Math.max(...validOsp)}% under the new plan, versus ${Math.max(...d.ospPctOld.filter((v) => v != null))}% under the old plan.`;
+  const validA = d.aOspPct.filter((v) => v != null);
+  const validB = d.bOspPct.filter((v) => v != null);
+  return `OSP mix climbed to a peak of ${Math.max(...validB)}% under ${d.periodB}, versus ${Math.max(...validA)}% under ${d.periodA}.`;
 }
 
 export function capExitInsight(d) {

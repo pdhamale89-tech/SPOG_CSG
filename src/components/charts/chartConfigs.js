@@ -869,13 +869,18 @@ export function buildCapCapacityConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const pctDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
+  const variance = d.aCapPct.map((v, i) => (v == null || d.bCapPct[i] == null ? null : Math.round(d.bCapPct[i] - v)));
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Cap% Old', data: d.capPctOld, backgroundColor: 'rgba(59,130,246,.3)', borderRadius: 3 },
-        { label: 'Cap% New', data: d.capPctNew, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3 },
+        { label: `${planLabel(d.periodA)} Cap%`, data: d.aCapPct, backgroundColor: 'rgba(59,130,246,.3)', borderRadius: 3 },
+        { label: `${planLabel(d.periodB)} Cap%`, data: d.bCapPct, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3 },
+        {
+          label: `Variance (${planLabel(d.periodB)} − ${planLabel(d.periodA)})`, data: variance, type: 'line', yAxisID: 'y1',
+          borderColor: '#f59e0b', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false },
+        },
       ],
     },
     options: {
@@ -884,6 +889,7 @@ export function buildCapCapacityConfig(d, theme) {
       layout: TOP_LABEL_LAYOUT,
       scales: {
         y: { beginAtZero: true, max: 200, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, title: { display: true, text: 'Capacity %', color: tc, font: { size: 9 } } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + 'pp' }, grid: { display: false }, title: { display: true, text: 'Variance', color: tc, font: { size: 9 } } },
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
       },
       plugins: { legend: LP, datalabels: pctDL },
@@ -900,8 +906,8 @@ export function buildCapOspMixConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'OSP% Old', data: d.ospPctOld, backgroundColor: 'rgba(245,158,11,.5)', borderRadius: 3 },
-        { label: 'OSP% New', data: d.ospPctNew, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3 },
+        { label: `${planLabel(d.periodA)} OSP%`, data: d.aOspPct, backgroundColor: 'rgba(245,158,11,.5)', borderRadius: 3 },
+        { label: `${planLabel(d.periodB)} OSP%`, data: d.bOspPct, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3 },
       ],
     },
     options: {

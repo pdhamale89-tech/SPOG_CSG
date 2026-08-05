@@ -16,6 +16,7 @@ import {
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
   CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS, CAP_L1_EXIT_KEYS,
+  CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
@@ -30,7 +31,10 @@ const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
 // state. Every metric below is that same kind of "two forecasts of one
 // number" relationship, so average is the correct blend in all of them.
 function overallSeries(julArr, augArr) {
-  return julArr.map((v, i) => Math.round((v + augArr[i]) / 2));
+  return julArr.map((v, i) => {
+    const b = augArr[i];
+    return v == null || b == null ? null : Math.round((v + b) / 2);
+  });
 }
 
 // Looks up a single metric's array for a given plan slot (Jul/Aug/Overall)
@@ -95,7 +99,13 @@ export default function CapacityOverview() {
     bHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName2),
   }), [L8, planName1, planName2]);
   const dC6 = useMemo(() => ({ ...capC6, labels: L8 }), [L8]);
-  const dC7 = useMemo(() => ({ ...capC7, labels: L8 }), [L8]);
+  const dC7 = useMemo(() => ({
+    ...capC7, labels: L8, periodA: planName1, periodB: planName2,
+    aCapPct: seriesFor(CAP_CAPACITY_KEYS, capC7, planName1),
+    bCapPct: seriesFor(CAP_CAPACITY_KEYS, capC7, planName2),
+    aOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1),
+    bOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2),
+  }), [L8, planName1, planName2]);
   const dC8 = useMemo(() => ({
     ...capC8, labels: L8, periodA: planName1, periodB: planName2,
     aL1Exit: seriesFor(CAP_L1_EXIT_KEYS, capC8, planName1),
@@ -244,12 +254,12 @@ export default function CapacityOverview() {
 
       <div className="s-grid">
         <div className="card">
-          <div className="card-header"><div className="card-title">Capacity % — Old vs New <InfoBtn tip="<strong>Purpose</strong>Capacity % under the old vs new plan." /></div></div>
+          <div className="card-header"><div className="card-title">Capacity Comparison <InfoBtn tip="<strong>Purpose</strong>Capacity % for the Plan Name 1/Plan Name 2 selection above, plus the variance between them." /></div></div>
           <ChartCanvas config={c7Config} height="300px" />
           <InsightBox text={capCapacityInsight(dC7)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">OSP Mix % — Old vs New <InfoBtn tip="<strong>Purpose</strong>OSP mix % under the old vs new plan." /></div></div>
+          <div className="card-header"><div className="card-title">OSP Mix Comparison <InfoBtn tip="<strong>Purpose</strong>OSP mix % for the Plan Name 1/Plan Name 2 selection above." /></div></div>
           <ChartCanvas config={c7bConfig} height="300px" />
           <InsightBox text={capOspMixInsight(dC7)} />
         </div>
@@ -257,7 +267,7 @@ export default function CapacityOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">L1 Exit HC + DB/OSP Split <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
+          <div className="card-header"><div className="card-title">Headcount Bifurcation <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
           <ChartCanvas config={c8Config} height="300px" />
           <InsightBox text={capExitInsight(dC8)} />
         </div>

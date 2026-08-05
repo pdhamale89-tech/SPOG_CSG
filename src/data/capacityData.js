@@ -125,6 +125,8 @@ export const CAP_EXCESS_HC_KEYS = { Jul: 'julExcessHc', Aug: 'augExcessHc' };
 export const CAP_LOA_EXIT_KEYS = { Jul: 'julLoaExit', Aug: 'augLoaExit' };
 export const CAP_HIRING_KEYS = { Jul: 'julOld', Aug: 'augNew' };
 export const CAP_L1_EXIT_KEYS = { Jul: 'julL1Exit', Aug: 'augL1Exit' };
+export const CAP_CAPACITY_KEYS = { Jul: 'capPctOld', Aug: 'capPctNew' };
+export const CAP_OSP_PCT_KEYS = { Jul: 'ospPctOld', Aug: 'ospPctNew' };
 
 export const capC3 = {
   labels: CAP_Q8,
