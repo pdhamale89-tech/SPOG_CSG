@@ -923,28 +923,52 @@ export function buildCapOspMixConfig(d, theme) {
   };
 }
 
-export function buildCapExitConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+// Total HC (bar) + L1 HC Avg/L1 HC Exit (lines, left axis) + Excess HC
+// (dashed line, right axis, red per-point labels) -- a standalone trend,
+// not a Jul-vs-Aug comparison, so no planLabel() involved here. Clicking a
+// bar/point is wired up by the caller (CapacityOverview's ChartCanvas
+// onClick) to open the per-period detail modal.
+export function buildCapHeadcountBifurcationConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
-  const datasets = [
-    { label: `${planLabel(d.periodA)} L1 Exit`, data: d.aL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
-    { label: `${planLabel(d.periodB)} L1 Exit`, data: d.bL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' },
-    { label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
-  ];
+  const totalHcDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() };
+  const excessDL = { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, formatter: (v) => v.toLocaleString() };
   return {
     type: 'bar',
-    data: { labels: d.labels, datasets },
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Total HC', data: d.totalHc, backgroundColor: 'rgba(59,130,246,.25)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL },
+        {
+          label: 'L1 HC Avg', data: d.l1HcAvg, type: 'line', yAxisID: 'y',
+          borderColor: '#2563eb', backgroundColor: '#2563eb', pointRadius: 3, pointStyle: 'circle', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
+        },
+        {
+          label: 'L1 HC Exit', data: d.l1HcExit, type: 'line', yAxisID: 'y',
+          borderColor: '#16a34a', backgroundColor: '#16a34a', borderDash: [6, 3], pointRadius: 3, pointStyle: 'rect', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
+        },
+        {
+          label: 'Excess HC', data: d.excessHc, type: 'line', yAxisID: 'y1',
+          borderColor: '#ef4444', backgroundColor: '#ef4444', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL,
+        },
+      ],
+    },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
       scales: {
-        y: { beginAtZero: true, ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } },
-        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
+        y: {
+          beginAtZero: true, ticks: { color: tc, font: { size: 9 }, callback: (v) => v.toLocaleString() }, grid: { color: gc },
+          title: { display: true, text: 'Headcount (Total / L1 Avg / L1 Exit)', color: tc, font: { size: 9 } },
+        },
+        y1: {
+          position: 'right', beginAtZero: true, ticks: { color: tc, font: { size: 9 } }, grid: { display: false },
+          title: { display: true, text: 'Excess HC Scale', color: tc, font: { size: 9 } },
+        },
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
       },
-      plugins: { legend: LP, datalabels: DL },
+      plugins: { legend: LP },
     },
   };
 }

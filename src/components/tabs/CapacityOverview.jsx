@@ -8,19 +8,19 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import {
   buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
-  buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig, buildCapExitConfig,
-  buildCapPopConfig,
+  buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig,
+  buildCapHeadcountBifurcationConfig, buildCapPopConfig,
 } from '../charts/chartConfigs';
 import {
-  CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
+  CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
-  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS, CAP_L1_EXIT_KEYS,
+  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS,
   CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
-  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capExitInsight, capPopInsight,
+  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capHeadcountBifurcationInsight, capPopInsight,
 } from '../../utils/insights';
 
 const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
@@ -57,7 +57,7 @@ function volumeSeriesFor(plan) {
 }
 
 export default function CapacityOverview() {
-  const { theme, curPeriod, fiscalYear } = useApp();
+  const { theme, curPeriod, fiscalYear, openHeadcountDetail } = useApp();
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
   const [planName2, setPlanName2] = useState(CAP_OVERALL);
@@ -68,6 +68,10 @@ export default function CapacityOverview() {
   const capMiniStats = CAP_MINI_STATS[curPeriod];
   const L6 = useMemo(() => capLabelsFor(curPeriod, 6, fiscalYear), [curPeriod, fiscalYear]);
   const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
+  // Headcount Bifurcation is its own standalone trend (not a Jul/Aug plan
+  // comparison), with one more period than the other charts on this page,
+  // so it gets its own period-label array sized to match.
+  const L9 = useMemo(() => capLabelsFor(curPeriod, 9, fiscalYear), [curPeriod, fiscalYear]);
 
   const dC1 = useMemo(() => {
     const a = volumeSeriesFor(planName1);
@@ -106,11 +110,7 @@ export default function CapacityOverview() {
     aOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1),
     bOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2),
   }), [L8, planName1, planName2]);
-  const dC8 = useMemo(() => ({
-    ...capC8, labels: L8, periodA: planName1, periodB: planName2,
-    aL1Exit: seriesFor(CAP_L1_EXIT_KEYS, capC8, planName1),
-    bL1Exit: seriesFor(CAP_L1_EXIT_KEYS, capC8, planName2),
-  }), [L8, planName1, planName2]);
+  const dHc = useMemo(() => ({ ...capHcBifurcation, labels: L9 }), [L9]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
@@ -121,8 +121,17 @@ export default function CapacityOverview() {
   const c6Config = useMemo(() => buildCapHiringBreakdownConfig(dC6, theme), [dC6, theme]);
   const c7Config = useMemo(() => buildCapCapacityConfig(dC7, theme), [dC7, theme]);
   const c7bConfig = useMemo(() => buildCapOspMixConfig(dC7, theme), [dC7, theme]);
-  const c8Config = useMemo(() => buildCapExitConfig(dC8, theme), [dC8, theme]);
+  const c8Config = useMemo(() => buildCapHeadcountBifurcationConfig(dHc, theme), [dHc, theme]);
   const a1Config = useMemo(() => buildCapPopConfig(dA1, theme), [dA1, theme]);
+
+  function handleHcClick(evt, els) {
+    if (!els.length) return;
+    const idx = els[0].index;
+    openHeadcountDetail({
+      label: dHc.labels[idx], avg: dHc.l1HcAvg[idx], exit: dHc.l1HcExit[idx],
+      excess: dHc.excessHc[idx], total: dHc.totalHc[idx],
+    });
+  }
 
   function toggleSort(col) {
     setSort((s) => ({ col, dir: s.col === col && s.dir === 'asc' ? 'desc' : 'asc' }));
@@ -267,9 +276,15 @@ export default function CapacityOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">Headcount Bifurcation <InfoBtn tip="<strong>Purpose</strong>L1 exit headcount with exit PoP% overlay." /></div></div>
-          <ChartCanvas config={c8Config} height="300px" />
-          <InsightBox text={capExitInsight(dC8)} />
+          <div className="card-header">
+            <div className="card-title">
+              Headcount Bifurcation{' '}
+              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC.<strong>Tip</strong>💡 Click a bar or point for that period's L1 HC Avg, L1 HC Exit and Excess HC details." />
+            </div>
+            <div className="hc-total-badge">Total HC: <strong>{dHc.totalHc[dHc.totalHc.length - 1].toLocaleString()}</strong></div>
+          </div>
+          <ChartCanvas config={c8Config} height="300px" onClick={handleHcClick} />
+          <InsightBox text={capHeadcountBifurcationInsight(dHc)} />
         </div>
       </div>
 

@@ -124,7 +124,6 @@ export const CAP_HC_TOTAL_KEYS = { Jul: 'julTotalHc', Aug: 'augTotalHc' };
 export const CAP_EXCESS_HC_KEYS = { Jul: 'julExcessHc', Aug: 'augExcessHc' };
 export const CAP_LOA_EXIT_KEYS = { Jul: 'julLoaExit', Aug: 'augLoaExit' };
 export const CAP_HIRING_KEYS = { Jul: 'julOld', Aug: 'augNew' };
-export const CAP_L1_EXIT_KEYS = { Jul: 'julL1Exit', Aug: 'augL1Exit' };
 export const CAP_CAPACITY_KEYS = { Jul: 'capPctOld', Aug: 'capPctNew' };
 export const CAP_OSP_PCT_KEYS = { Jul: 'ospPctOld', Aug: 'ospPctNew' };
 
@@ -169,11 +168,15 @@ export const capC7 = {
   ospPctNew: [null, null, 87, 87, 86, 85, 85, 88],
 };
 
-export const capC8 = {
-  labels: CAP_Q8,
-  julL1Exit: [1797, 1687, 1660, 1582, 1524, 1488, 1459, 1381],
-  augL1Exit: [235, 256, 239, 223, 210, 211, 196, 184],
-  exitPopPct: [-86.9, -84.8, -85.6, -85.9, -86.2, -85.8, -86.5, -86.7],
+// Headcount Bifurcation is a standalone trend (Total HC / L1 HC Avg / L1 HC
+// Exit / Excess HC over time) -- it does not compare Jul vs Aug like the
+// other charts on this page, so it has its own 9-period series rather than
+// keying off CAP_VOL_PERIODS/Compare Plans.
+export const capHcBifurcation = {
+  l1HcAvg: [2679, 2579, 2339, 1986, 1780, 1745, 1680, 1590, 1550],
+  l1HcExit: [2624, 2515, 2166, 1936, 1750, 1715, 1650, 1560, 1520],
+  excessHc: [355, 438, 438, 374, 246, 279, 244, 280, 159],
+  totalHc: [2689, 2629, 2239, 1986, 1848, 1813, 1748, 1656, 1617],
 };
 
 // ===== Analytics charts =====

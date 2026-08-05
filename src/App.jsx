@@ -11,6 +11,7 @@ import ForwardModal from './components/modals/ForwardModal';
 import DrillDownModal from './components/modals/DrillDownModal';
 import AdherenceModal from './components/modals/AdherenceModal';
 import SegmentGrowthModal from './components/modals/SegmentGrowthModal';
+import HeadcountDetailModal from './components/modals/HeadcountDetailModal';
 
 import Home from './components/tabs/Home';
 import ForecastOverview from './components/tabs/ForecastOverview';
@@ -65,6 +66,7 @@ function DashboardShell() {
       <DrillDownModal />
       <AdherenceModal />
       <SegmentGrowthModal />
+      <HeadcountDetailModal />
       <Toast />
     </div>
   );

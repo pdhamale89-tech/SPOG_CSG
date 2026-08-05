@@ -43,6 +43,7 @@ export function AppProvider({ children }) {
   const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [], tableRows: [] });
   const [adherenceModal, setAdherenceModal] = useState({ open: false });
   const [segmentGrowthModal, setSegmentGrowthModal] = useState({ open: false });
+  const [headcountDetailModal, setHeadcountDetailModal] = useState({ open: false, label: '', avg: 0, exit: 0, excess: 0, total: 0 });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
   // so this is what lets the UI show "Actioned" after a submit instead of the toast being the
@@ -152,6 +153,9 @@ export function AppProvider({ children }) {
   const openSegmentGrowth = useCallback(() => setSegmentGrowthModal({ open: true }), []);
   const closeSegmentGrowth = useCallback(() => setSegmentGrowthModal((m) => ({ ...m, open: false })), []);
 
+  const openHeadcountDetail = useCallback((payload) => setHeadcountDetailModal({ open: true, ...payload }), []);
+  const closeHeadcountDetail = useCallback(() => setHeadcountDetailModal((m) => ({ ...m, open: false })), []);
+
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
@@ -160,6 +164,7 @@ export function AppProvider({ children }) {
         setDetailModal((m) => ({ ...m, open: false }));
         setAdherenceModal((m) => ({ ...m, open: false }));
         setSegmentGrowthModal((m) => ({ ...m, open: false }));
+        setHeadcountDetailModal((m) => ({ ...m, open: false }));
         setDrillDownModal((m) => ({ ...m, open: false }));
       }
     }
@@ -181,6 +186,7 @@ export function AppProvider({ children }) {
     detailModal, openDetail, closeDetail,
     adherenceModal, openAdherence, closeAdherence,
     segmentGrowthModal, openSegmentGrowth, closeSegmentGrowth,
+    headcountDetailModal, openHeadcountDetail, closeHeadcountDetail,
     approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval,
     forwardModal, openForward, closeForward, submitForward,
@@ -193,6 +199,7 @@ export function AppProvider({ children }) {
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, adherenceModal, openAdherence, closeAdherence,
     segmentGrowthModal, openSegmentGrowth, closeSegmentGrowth,
+    headcountDetailModal, openHeadcountDetail, closeHeadcountDetail,
     approvalModal, openApproval, closeApproval, handleApproval,
     handleRCAApproval, forwardModal, openForward, closeForward, submitForward,
     drillDownModal, openDrillDown, closeDrillDown, actionLog, logAction]);

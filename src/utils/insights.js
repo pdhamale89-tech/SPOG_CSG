@@ -99,8 +99,8 @@ export function capOspMixInsight(d) {
   return `OSP mix climbed to a peak of ${Math.max(...validB)}% under ${d.periodB}, versus ${Math.max(...validA)}% under ${d.periodA}.`;
 }
 
-export function capExitInsight(d) {
-  return `L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} (${d.periodA}) to ${last(d.bL1Exit)} (${d.periodB}), a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
+export function capHeadcountBifurcationInsight(d) {
+  return `Total HC fell from ${first(d.totalHc).toLocaleString()} to ${last(d.totalHc).toLocaleString()} across ${d.labels.length} periods, with L1 HC Avg/Exit tracking closely alongside it; Excess HC eased from ${first(d.excessHc)} to ${last(d.excessHc)} over the same span. Click a bar or point for that period's full breakdown.`;
 }
 
 export function capPopInsight(d) {
