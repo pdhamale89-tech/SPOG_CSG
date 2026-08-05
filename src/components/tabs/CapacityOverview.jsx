@@ -202,7 +202,7 @@ export default function CapacityOverview() {
 
       <div className="mini-row">
         {capMiniStats.map((m) => (
-          <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} />
+          <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} tip={m.tip} />
         ))}
       </div>
       <div className="s-grid">

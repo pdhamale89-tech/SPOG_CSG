@@ -53,22 +53,22 @@ export const CAP_KPIS = {
 
 export const CAP_MINI_STATS = {
   weekly: [
-    { label: 'L1 HC Avg', value: '244', tone: 'b' },
-    { label: 'L1 HC Exit', value: '210', tone: 'r' },
-    { label: 'HC Next Wk', value: '221', tone: 'b' },
-    { label: 'LOA Exit', value: '3', tone: 'y' },
+    { label: 'L1 HC Avg', value: '244', tone: 'b', tip: 'Average Level 1 headcount for the current week.' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r', tip: 'Level 1 headcount that exited during the current week.' },
+    { label: 'HC Next Wk', value: '221', tone: 'b', tip: 'Projected total headcount for next week.' },
+    { label: 'LOA Exit', value: '3', tone: 'y', tip: 'Headcount that exited on Leave of Absence (LOA) during the current week.' },
   ],
   monthly: [
-    { label: 'L1 HC Avg', value: '244', tone: 'b' },
-    { label: 'L1 HC Exit', value: '210', tone: 'r' },
-    { label: 'HC Next Mo', value: '209', tone: 'b' },
-    { label: 'LOA Exit', value: '10', tone: 'y' },
+    { label: 'L1 HC Avg', value: '244', tone: 'b', tip: 'Average Level 1 headcount for the current month.' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r', tip: 'Level 1 headcount that exited during the current month.' },
+    { label: 'HC Next Mo', value: '209', tone: 'b', tip: 'Projected total headcount for next month.' },
+    { label: 'LOA Exit', value: '10', tone: 'y', tip: 'Headcount that exited on Leave of Absence (LOA) during the current month.' },
   ],
   qtr: [
-    { label: 'L1 HC Avg', value: '244', tone: 'b' },
-    { label: 'L1 HC Exit', value: '210', tone: 'r' },
-    { label: 'HC FY28Q4', value: '197', tone: 'b' },
-    { label: 'LOA Exit', value: '13', tone: 'y' },
+    { label: 'L1 HC Avg', value: '244', tone: 'b', tip: 'Average Level 1 headcount for the current quarter.' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r', tip: 'Level 1 headcount that exited during the current quarter.' },
+    { label: 'HC FY28Q4', value: '197', tone: 'b', tip: 'Projected total headcount for FY28 Q4.' },
+    { label: 'LOA Exit', value: '13', tone: 'y', tip: 'Headcount that exited on Leave of Absence (LOA) during the current quarter.' },
   ],
 };
 
