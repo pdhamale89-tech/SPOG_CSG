@@ -97,6 +97,15 @@ export const CAP_VOL_KEYS = {
   Aug: { db: 'augDb', osp: 'augOsp', total: 'augTotal' },
 };
 
+// Same Plan Name 1/Plan Name 2 selection above also drives which field each of
+// these charts reads for its comparison series, so their legends say the plan
+// that's actually selected instead of a hardcoded Jul/Aug.
+export const CAP_HC_TOTAL_KEYS = { Jul: 'julTotalHc', Aug: 'augTotalHc' };
+export const CAP_EXCESS_HC_KEYS = { Jul: 'julExcessHc', Aug: 'augExcessHc' };
+export const CAP_LOA_EXIT_KEYS = { Jul: 'julLoaExit', Aug: 'augLoaExit' };
+export const CAP_HIRING_KEYS = { Jul: 'julOld', Aug: 'augNew' };
+export const CAP_L1_EXIT_KEYS = { Jul: 'julL1Exit', Aug: 'augL1Exit' };
+
 export const capC3 = {
   labels: CAP_Q8,
   augHcAvg: [247, 251, 247, 231, 217, 210, 205, 190],

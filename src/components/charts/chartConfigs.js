@@ -797,17 +797,17 @@ export function buildCapHcConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const datasets = [
+    { label: 'Aug HC Avg', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
+    { label: 'Aug HC Exit', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
+    { label: `${d.periodA} Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+  ];
+  if (d.periodB) {
+    datasets.push({ label: `${d.periodB} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
+  }
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Aug HC Avg', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
-        { label: 'Aug HC Exit', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
-        { label: 'Jul Total HC', data: d.julTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-        { label: 'Aug Total HC', data: d.augTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-      ],
-    },
+    data: { labels: d.labels, datasets },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
@@ -816,18 +816,16 @@ export function buildCapExcessConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const datasets = [
+    { label: `${d.periodA} Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
+  ];
+  if (d.periodB) datasets.push({ label: `${d.periodB} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 });
+  datasets.push({ label: `${d.periodA} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
+  if (d.periodB) datasets.push({ label: `${d.periodB} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false });
+  datasets.push({ label: 'Jul Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } });
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Jul Excess HC', data: d.julExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
-        { label: 'Aug Excess HC', data: d.augExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
-        { label: 'Jul LOA Exit', data: d.julLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-        { label: 'Aug LOA Exit', data: d.augLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-        { label: 'Jul Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
-      ],
-    },
+    data: { labels: d.labels, datasets },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
@@ -836,17 +834,15 @@ export function buildCapHiringConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const datasets = [
+    { label: `${d.periodA} (Old)`, data: d.aHiring, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
+  ];
+  if (d.periodB) datasets.push({ label: `${d.periodB} (New)`, data: d.bHiring, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 });
+  datasets.push({ label: `${d.periodA} Total`, data: d.aHiring, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } });
+  if (d.periodB) datasets.push({ label: `${d.periodB} Total`, data: d.bHiring, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } });
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Jul (Old)', data: d.julOld, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
-        { label: 'Aug (New)', data: d.augNew, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
-        { label: 'Jul Total', data: d.julOld, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
-        { label: 'Aug Total', data: d.augNew, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
-      ],
-    },
+    data: { labels: d.labels, datasets },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
   };
 }
@@ -928,16 +924,14 @@ export function buildCapExitConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const datasets = [
+    { label: `${d.periodA} L1 Exit`, data: d.aL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
+  ];
+  if (d.periodB) datasets.push({ label: `${d.periodB} L1 Exit`, data: d.bL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' });
+  datasets.push({ label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } });
   return {
     type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Jul L1 Exit', data: d.julL1Exit, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 3, yAxisID: 'y' },
-        { label: 'Aug L1 Exit', data: d.augL1Exit, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, yAxisID: 'y' },
-        { label: 'Exit PoP%', data: d.exitPopPct, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
-      ],
-    },
+    data: { labels: d.labels, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,

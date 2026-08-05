@@ -15,6 +15,7 @@ import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capC8,
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_VOL_PERIODS, CAP_VOL_KEYS,
+  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS, CAP_L1_EXIT_KEYS,
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
@@ -50,12 +51,46 @@ export default function CapacityOverview() {
       aTotal: capC2[a.total], bTotal: b ? capC2[b.total] : null,
     };
   }, [L6, planName1, planName2]);
-  const dC3 = useMemo(() => ({ ...capC3, labels: L8 }), [L8]);
-  const dC4 = useMemo(() => ({ ...capC4, labels: L8 }), [L8]);
-  const dC5 = useMemo(() => ({ ...capC5, labels: L8 }), [L8]);
+  // The 4 charts below don't have their own Compare Plans selector -- they
+  // read the same Plan Name 1/Plan Name 2 chosen above the Volume Comparison
+  // chart, so their legends (and, when Plan Name 2 is None, which series even
+  // render) stay in sync with that one control.
+  const dC3 = useMemo(() => {
+    const hasComparison = planName2 !== NO_COMPARISON;
+    return {
+      ...capC3, labels: L8, periodA: planName1, periodB: hasComparison ? planName2 : null,
+      aTotalHc: capC3[CAP_HC_TOTAL_KEYS[planName1]],
+      bTotalHc: hasComparison ? capC3[CAP_HC_TOTAL_KEYS[planName2]] : null,
+    };
+  }, [L8, planName1, planName2]);
+  const dC4 = useMemo(() => {
+    const hasComparison = planName2 !== NO_COMPARISON;
+    return {
+      ...capC4, labels: L8, periodA: planName1, periodB: hasComparison ? planName2 : null,
+      aExcessHc: capC4[CAP_EXCESS_HC_KEYS[planName1]],
+      bExcessHc: hasComparison ? capC4[CAP_EXCESS_HC_KEYS[planName2]] : null,
+      aLoaExit: capC4[CAP_LOA_EXIT_KEYS[planName1]],
+      bLoaExit: hasComparison ? capC4[CAP_LOA_EXIT_KEYS[planName2]] : null,
+    };
+  }, [L8, planName1, planName2]);
+  const dC5 = useMemo(() => {
+    const hasComparison = planName2 !== NO_COMPARISON;
+    return {
+      ...capC5, labels: L8, periodA: planName1, periodB: hasComparison ? planName2 : null,
+      aHiring: capC5[CAP_HIRING_KEYS[planName1]],
+      bHiring: hasComparison ? capC5[CAP_HIRING_KEYS[planName2]] : null,
+    };
+  }, [L8, planName1, planName2]);
   const dC6 = useMemo(() => ({ ...capC6, labels: L8 }), [L8]);
   const dC7 = useMemo(() => ({ ...capC7, labels: L8 }), [L8]);
-  const dC8 = useMemo(() => ({ ...capC8, labels: L8 }), [L8]);
+  const dC8 = useMemo(() => {
+    const hasComparison = planName2 !== NO_COMPARISON;
+    return {
+      ...capC8, labels: L8, periodA: planName1, periodB: hasComparison ? planName2 : null,
+      aL1Exit: capC8[CAP_L1_EXIT_KEYS[planName1]],
+      bL1Exit: hasComparison ? capC8[CAP_L1_EXIT_KEYS[planName2]] : null,
+    };
+  }, [L8, planName1, planName2]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 

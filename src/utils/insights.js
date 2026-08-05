@@ -71,16 +71,26 @@ export function capVolumeInsight(d) {
 }
 
 export function capHcInsight(d) {
-  return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.julTotalHc)} (Jul) to ${last(d.augTotalHc)} (Aug) over the same span.`;
+  if (!d.periodB) {
+    return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while the ${d.periodA} Total HC line dropped from ${first(d.aTotalHc)} to ${last(d.aTotalHc)}.`;
+  }
+  return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.aTotalHc)} (${d.periodA}) to ${last(d.bTotalHc)} (${d.periodB}) over the same span.`;
 }
 
 export function capExcessInsight(d) {
-  return `Excess headcount eased from ${first(d.julExcessHc)} to ${last(d.augExcessHc)} across plans, with LOA exits narrowing from ${first(d.julLoaExit)} to ${last(d.augLoaExit)}.`;
+  if (!d.periodB) {
+    return `${d.periodA} excess headcount eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)}, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.aLoaExit)}.`;
+  }
+  return `Excess headcount eased from ${first(d.aExcessHc)} (${d.periodA}) to ${last(d.bExcessHc)} (${d.periodB}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)}.`;
 }
 
 export function capHiringInsight(d) {
-  const zeroQtrs = d.augNew.filter((v) => v === 0).length;
-  return `Aug hiring dropped to zero in ${zeroQtrs} of ${d.augNew.length} quarters versus the Jul plan, which never fell below ${Math.min(...d.julOld)} approved hires.`;
+  if (!d.periodB) {
+    const zeroQtrs = d.aHiring.filter((v) => v === 0).length;
+    return `${d.periodA} hiring dropped to zero in ${zeroQtrs} of ${d.aHiring.length} quarters, never exceeding ${Math.max(...d.aHiring)} approved hires.`;
+  }
+  const zeroQtrs = d.bHiring.filter((v) => v === 0).length;
+  return `${d.periodB} hiring dropped to zero in ${zeroQtrs} of ${d.bHiring.length} quarters versus the ${d.periodA} plan, which never fell below ${Math.min(...d.aHiring)} approved hires.`;
 }
 
 export function capHiringBreakdownInsight(d) {
@@ -100,7 +110,10 @@ export function capOspMixInsight(d) {
 }
 
 export function capExitInsight(d) {
-  return `L1 exit headcount fell from ${d.julL1Exit[0].toLocaleString()} (Jul) to ${last(d.augL1Exit)} (Aug), a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
+  if (!d.periodB) {
+    return `${d.periodA} L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} to ${last(d.aL1Exit)}, a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
+  }
+  return `L1 exit headcount fell from ${d.aL1Exit[0].toLocaleString()} (${d.periodA}) to ${last(d.bL1Exit)} (${d.periodB}), a swing of roughly ${last(d.exitPopPct)}% period-over-period.`;
 }
 
 export function capPopInsight(d) {
