@@ -11,12 +11,12 @@ export const CAP_WK6 = ['Wk27', 'Wk28', 'Wk29', 'Wk30', 'Wk31', 'Wk32'];
 export function capLabelsFor(period, length, fiscalYear) {
   return buildPeriodLabels(fiscalYear, period, length);
 }
-export const CAP_PERIOD_LABEL = { weekly: 'Week-on-Week', monthly: 'Month-on-Month', qtr: 'Quarter-on-Quarter' };
-export const CAP_PERIOD_WORD = { weekly: 'Weekly', monthly: 'Monthly', qtr: 'Quarterly' };
+export const CAP_PERIOD_LABEL = { weekly: 'Week-on-Week', monthly: 'Month-on-Month', qtr: 'Quarter-on-Quarter', yearly: 'Year-on-Year' };
+export const CAP_PERIOD_WORD = { weekly: 'Weekly', monthly: 'Monthly', qtr: 'Quarterly', yearly: 'Yearly' };
 
 // KPI values genuinely differ by period: volume/hiring/gap/CQN are flow metrics that
-// scale with period length (weekly < monthly < quarterly), while headcount and the
-// percentage metrics are point-in-time state and stay put (with a slightly different
+// scale with period length (weekly < monthly < quarterly < yearly), while headcount and
+// the percentage metrics are point-in-time state and stay put (with a slightly different
 // "from" comparison value so they don't look like an untouched copy-paste).
 export const CAP_KPIS = {
   weekly: [
@@ -49,6 +49,16 @@ export const CAP_KPIS = {
     { label: 'Vol Next Qtr', value: '4.34M', dir: 'dn', delta: '61.1%', sub: 'DB: 603K · OSP: 3.73M' },
     { label: 'Quarterly CQN', value: '-1.90M', dir: 'dn', delta: 'Worsening', sub: '~-1.95M trend' },
   ],
+  yearly: [
+    { label: 'Volume', value: '9.32M', dir: 'dn', delta: '60.9% PoP', sub: 'DB: 1.18M · OSP: 8.14M' },
+    { label: 'HC', value: '223', dir: 'dn', delta: 'From 245', sub: 'Avg: 217 · Exit: 210' },
+    { label: 'Excess Capacity', value: '154%', dir: 'dn', delta: 'From 168%', sub: 'Excess HC: 76' },
+    { label: 'Hiring', value: '104', dir: 'flat', delta: 'UR: 104', sub: 'Next Yr: 76' },
+    { label: 'Gap', value: '-14.56M', dir: 'dn', delta: 'Under-cap', sub: 'Next Yr: -7.00M' },
+    { label: 'OSP Mix', value: '88%', dir: 'up', delta: 'From 62%', sub: 'DB: 12%' },
+    { label: 'Vol Next Year', value: '17.36M', dir: 'dn', delta: '61.1%', sub: 'DB: 2.41M · OSP: 14.95M' },
+    { label: 'Yearly CQN', value: '-7.60M', dir: 'dn', delta: 'Worsening', sub: '~-7.80M trend' },
+  ],
 };
 
 export const CAP_MINI_STATS = {
@@ -69,6 +79,12 @@ export const CAP_MINI_STATS = {
     { label: 'L1 HC Exit', value: '210', tone: 'r', tip: 'Level 1 headcount that exited during the current quarter.' },
     { label: 'HC FY28Q4', value: '197', tone: 'b', tip: 'Projected total headcount for FY28 Q4.' },
     { label: 'LOA Exit', value: '13', tone: 'y', tip: 'Headcount that exited on Leave of Absence (LOA) during the current quarter.' },
+  ],
+  yearly: [
+    { label: 'L1 HC Avg', value: '244', tone: 'b', tip: 'Average Level 1 headcount for the current year.' },
+    { label: 'L1 HC Exit', value: '210', tone: 'r', tip: 'Level 1 headcount that exited during the current year.' },
+    { label: 'HC FY29', value: '185', tone: 'b', tip: 'Projected total headcount for FY29.' },
+    { label: 'LOA Exit', value: '45', tone: 'y', tip: 'Headcount that exited on Leave of Absence (LOA) during the current year.' },
   ],
 };
 

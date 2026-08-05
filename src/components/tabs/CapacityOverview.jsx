@@ -38,18 +38,29 @@ function resolvePlans(planName1, planName2) {
   return { periodA: null, periodB: null };
 }
 
+// Capacity Overview gets its own Weekly/Monthly/QTR/Yearly toggle, separate
+// from the global filter bar's 3-way period switch (Forecast/Shipment/ASU
+// don't have yearly data), so Yearly only ever shows up here.
+const CAP_PERIODS = [
+  { key: 'weekly', label: 'Weekly' },
+  { key: 'monthly', label: 'Monthly' },
+  { key: 'qtr', label: 'QTR' },
+  { key: 'yearly', label: 'Yearly' },
+];
+
 export default function CapacityOverview() {
-  const { theme, curPeriod, fiscalYear } = useApp();
+  const { theme, fiscalYear } = useApp();
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
+  const [capPeriod, setCapPeriod] = useState('monthly');
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
   const [planName2, setPlanName2] = useState(NO_COMPARISON);
 
-  const periodLabel = CAP_PERIOD_LABEL[curPeriod];
-  const periodWord = CAP_PERIOD_WORD[curPeriod];
-  const capKpis = CAP_KPIS[curPeriod];
-  const capMiniStats = CAP_MINI_STATS[curPeriod];
-  const L6 = useMemo(() => capLabelsFor(curPeriod, 6, fiscalYear), [curPeriod, fiscalYear]);
-  const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
+  const periodLabel = CAP_PERIOD_LABEL[capPeriod];
+  const periodWord = CAP_PERIOD_WORD[capPeriod];
+  const capKpis = CAP_KPIS[capPeriod];
+  const capMiniStats = CAP_MINI_STATS[capPeriod];
+  const L6 = useMemo(() => capLabelsFor(capPeriod, 6, fiscalYear), [capPeriod, fiscalYear]);
+  const L8 = useMemo(() => capLabelsFor(capPeriod, 8, fiscalYear), [capPeriod, fiscalYear]);
 
   const dC1 = useMemo(() => {
     const { periodA, periodB } = resolvePlans(planName1, planName2);
@@ -174,6 +185,15 @@ export default function CapacityOverview() {
 
   return (
     <div className="tab-panel active">
+      <div className="cap-plan-filters">
+        <span className="cap-plan-filters-title">🗓 Period</span>
+        <div className="period-bar">
+          {CAP_PERIODS.map((p) => (
+            <button key={p.key} className={'p-btn' + (capPeriod === p.key ? ' active' : '')} onClick={() => setCapPeriod(p.key)}>{p.label}</button>
+          ))}
+        </div>
+      </div>
+
       <div className="cap-plan-filters">
         <span className="cap-plan-filters-title">🆚 Compare Plans</span>
         <div className="filter-group">

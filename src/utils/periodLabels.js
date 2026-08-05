@@ -26,6 +26,9 @@ export function buildPeriodLabels(fiscalYear, curPeriod, n) {
       return `FY${fy}Q${q}`;
     });
   }
+  if (curPeriod === 'yearly') {
+    return Array.from({ length: n }, (_, i) => `FY${startFy + i}`);
+  }
   return Array.from({ length: n }, (_, i) => {
     const fy = startFy + Math.floor(i / 12);
     const m = (i % 12) + 1;
