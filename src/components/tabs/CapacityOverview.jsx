@@ -9,7 +9,7 @@ import InsightBox from '../common/InsightBox';
 import {
   buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
   buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig,
-  buildCapHeadcountBifurcationConfig, buildCapPopConfig, planLabel,
+  buildCapHeadcountBifurcationConfig, buildCapPopConfig,
 } from '../charts/chartConfigs';
 import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
@@ -258,7 +258,7 @@ export default function CapacityOverview() {
       </div>
       <div className="s-grid">
         <div className="card">
-          <div className="card-header"><div className="card-title">HC Avg, Exit &amp; Total — Jul vs Aug <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend with total headcount overlay." /></div></div>
+          <div className="card-header"><div className="card-title">HC Avg, Exit &amp; Total <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend with total headcount overlay." /></div></div>
           <ChartCanvas config={c3Config} height="300px" />
           <InsightBox text={capHcInsight(dC3)} />
         </div>
@@ -302,10 +302,6 @@ export default function CapacityOverview() {
               Headcount Bifurcation{' '}
               <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC for the Plan Name 1/Plan Name 2 selection above.<strong>Tip</strong>💡 Click a bar or point for that period's full breakdown." />
             </div>
-            <div className="hc-total-badge">
-              Total HC — {planLabel(dHc.periodA)}: <strong>{dHc.aTotalHc[dHc.aTotalHc.length - 1].toLocaleString()}</strong>
-              {' · '}{planLabel(dHc.periodB)}: <strong>{dHc.bTotalHc[dHc.bTotalHc.length - 1].toLocaleString()}</strong>
-            </div>
           </div>
           <ChartCanvas config={c8Config} height="300px" onClick={handleHcClick} />
           <InsightBox text={capHeadcountBifurcationInsight(dHc)} />
@@ -314,7 +310,7 @@ export default function CapacityOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined <InfoBtn tip="<strong>Purpose</strong>HC Avg/Exit PoP% as bars on the left axis; DB/OSP/Total Volume PoP% as lines on the right axis." /></div></div>
+          <div className="card-header"><div className="card-title">Volume PoP% and HC PoP% <InfoBtn tip="<strong>Purpose</strong>HC Avg/Exit PoP% as bars on the left axis; DB/OSP/Total Volume PoP% as lines on the right axis." /></div></div>
           <ChartCanvas config={a1Config} height="300px" />
           <InsightBox text={capPopInsight(dA1)} />
         </div>

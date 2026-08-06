@@ -999,16 +999,22 @@ export function buildCapHeadcountBifurcationConfig(d, theme) {
 // PoP% stay lines but move to a right-side axis, so the two families of
 // %s (headcount vs volume) aren't fighting for the same scale.
 export function buildCapPopConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const PDL = dataLabelsPercent(theme);
+  // PDL's align:'top' is an absolute screen direction, which works for line
+  // points but pins a negative bar's label to the 0-line (its base) instead
+  // of near its tip, crowding every bar's label into one row and clipping
+  // them. align:'end' is bar-direction-aware -- it follows the bar outward
+  // from its tip whichever way that is, so these two don't collide.
+  const negBarDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'end', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'HC Avg PoP%', data: d.hcAvgPop, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, yAxisID: 'y', datalabels: PDL },
-        { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', datalabels: PDL },
+        { label: 'HC Avg PoP%', data: d.hcAvgPop, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, yAxisID: 'y', datalabels: negBarDL },
+        { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', datalabels: negBarDL },
         {
           label: 'DB Vol PoP%', data: d.dbVolPop, type: 'line', yAxisID: 'y1',
           borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
@@ -1026,7 +1032,7 @@ export function buildCapPopConfig(d, theme) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: TOP_LABEL_LAYOUT,
+      layout: { padding: { top: 16, bottom: 16 } },
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
         y: {
