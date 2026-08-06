@@ -100,7 +100,7 @@ export function capOspMixInsight(d) {
 }
 
 export function capHeadcountBifurcationInsight(d) {
-  return `Total HC fell from ${first(d.totalHc).toLocaleString()} to ${last(d.totalHc).toLocaleString()} across ${d.labels.length} periods, with L1 HC Avg/Exit tracking closely alongside it; Excess HC eased from ${first(d.excessHc)} to ${last(d.excessHc)} over the same span. Click a bar or point for that period's full breakdown.`;
+  return `${d.periodA} Total HC fell from ${first(d.aTotalHc).toLocaleString()} to ${last(d.aTotalHc).toLocaleString()} across ${d.labels.length} periods, versus ${d.periodB} at ${first(d.bTotalHc).toLocaleString()} to ${last(d.bTotalHc).toLocaleString()}; Excess HC eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)} (${d.periodA}) and ${first(d.bExcessHc)} to ${last(d.bExcessHc)} (${d.periodB}). Click a bar or point for that period's full breakdown.`;
 }
 
 export function capPopInsight(d) {

@@ -9,7 +9,7 @@ import InsightBox from '../common/InsightBox';
 import {
   buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
   buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig,
-  buildCapHeadcountBifurcationConfig, buildCapPopConfig,
+  buildCapHeadcountBifurcationConfig, buildCapPopConfig, planLabel,
 } from '../charts/chartConfigs';
 import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
@@ -17,6 +17,7 @@ import {
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
   CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_TRAINING_KEYS, CAP_HIRING_KEYS,
   CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
+  CAP_HC_BIF_TOTAL_KEYS, CAP_HC_BIF_AVG_KEYS, CAP_HC_BIF_EXIT_KEYS, CAP_HC_BIF_EXCESS_KEYS,
 } from '../../data/capacityData';
 import {
   capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
@@ -112,7 +113,17 @@ export default function CapacityOverview() {
     aOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1),
     bOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2),
   }), [L8, planName1, planName2]);
-  const dHc = useMemo(() => ({ ...capHcBifurcation, labels: L9 }), [L9]);
+  const dHc = useMemo(() => ({
+    labels: L9, periodA: planName1, periodB: planName2,
+    aTotalHc: seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1),
+    bTotalHc: seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2),
+    aL1HcAvg: seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1),
+    bL1HcAvg: seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2),
+    aL1HcExit: seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1),
+    bL1HcExit: seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2),
+    aExcessHc: seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1),
+    bExcessHc: seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2),
+  }), [L9, planName1, planName2]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
@@ -130,8 +141,9 @@ export default function CapacityOverview() {
     if (!els.length) return;
     const idx = els[0].index;
     openHeadcountDetail({
-      label: dHc.labels[idx], avg: dHc.l1HcAvg[idx], exit: dHc.l1HcExit[idx],
-      excess: dHc.excessHc[idx], total: dHc.totalHc[idx],
+      label: dHc.labels[idx], periodA: dHc.periodA, periodB: dHc.periodB,
+      aAvg: dHc.aL1HcAvg[idx], aExit: dHc.aL1HcExit[idx], aExcess: dHc.aExcessHc[idx], aTotal: dHc.aTotalHc[idx],
+      bAvg: dHc.bL1HcAvg[idx], bExit: dHc.bL1HcExit[idx], bExcess: dHc.bExcessHc[idx], bTotal: dHc.bTotalHc[idx],
     });
   }
 
@@ -281,9 +293,12 @@ export default function CapacityOverview() {
           <div className="card-header">
             <div className="card-title">
               Headcount Bifurcation{' '}
-              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC.<strong>Tip</strong>💡 Click a bar or point for that period's L1 HC Avg, L1 HC Exit and Excess HC details." />
+              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC for the Plan Name 1/Plan Name 2 selection above.<strong>Tip</strong>💡 Click a bar or point for that period's full breakdown." />
             </div>
-            <div className="hc-total-badge">Total HC: <strong>{dHc.totalHc[dHc.totalHc.length - 1].toLocaleString()}</strong></div>
+            <div className="hc-total-badge">
+              Total HC — {planLabel(dHc.periodA)}: <strong>{dHc.aTotalHc[dHc.aTotalHc.length - 1].toLocaleString()}</strong>
+              {' · '}{planLabel(dHc.periodB)}: <strong>{dHc.bTotalHc[dHc.bTotalHc.length - 1].toLocaleString()}</strong>
+            </div>
           </div>
           <ChartCanvas config={c8Config} height="300px" onClick={handleHcClick} />
           <InsightBox text={capHeadcountBifurcationInsight(dHc)} />

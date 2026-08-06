@@ -6,7 +6,7 @@ import { buildPeriodLabels } from '../../utils/periodLabels';
 // Overall's series is an average, not a specific plan's actual data -- tag
 // its legend labels with (Avg) so it doesn't read as if Jul or Aug measured
 // that number directly.
-function planLabel(plan) {
+export function planLabel(plan) {
   return plan === CAP_OVERALL ? `${plan} (Avg)` : plan;
 }
 
@@ -929,28 +929,44 @@ export function buildCapOspMixConfig(d, theme) {
 // not a Jul-vs-Aug comparison, so no planLabel() involved here. Clicking a
 // bar/point is wired up by the caller (CapacityOverview's ChartCanvas
 // onClick) to open the per-period detail modal.
+// Total HC / L1 HC Avg / L1 HC Exit / Excess HC now follow Plan Name 1/Plan
+// Name 2 the same way Excess HC + LOA + Training does -- every metric shows
+// both plans (dynamically labeled via planLabel), not just one static line.
 export function buildCapHeadcountBifurcationConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const totalHcDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() };
-  const excessDL = { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, formatter: (v) => v.toLocaleString() };
+  const totalHcDL = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() });
+  const excessDL = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, formatter: (v) => v.toLocaleString() });
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Total HC', data: d.totalHc, backgroundColor: 'rgba(59,130,246,.25)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL },
+        { label: `${planLabel(d.periodA)} Total HC`, data: d.aTotalHc, backgroundColor: 'rgba(59,130,246,.25)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL(tp) },
+        { label: `${planLabel(d.periodB)} Total HC`, data: d.bTotalHc, backgroundColor: 'rgba(139,92,246,.3)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL(tp) },
         {
-          label: 'L1 HC Avg', data: d.l1HcAvg, type: 'line', yAxisID: 'y',
+          label: `${planLabel(d.periodA)} L1 HC Avg`, data: d.aL1HcAvg, type: 'line', yAxisID: 'y',
           borderColor: '#2563eb', backgroundColor: '#2563eb', pointRadius: 3, pointStyle: 'circle', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: 'L1 HC Exit', data: d.l1HcExit, type: 'line', yAxisID: 'y',
+          label: `${planLabel(d.periodB)} L1 HC Avg`, data: d.bL1HcAvg, type: 'line', yAxisID: 'y',
+          borderColor: '#7c3aed', backgroundColor: '#7c3aed', pointRadius: 3, pointStyle: 'circle', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
+        },
+        {
+          label: `${planLabel(d.periodA)} L1 HC Exit`, data: d.aL1HcExit, type: 'line', yAxisID: 'y',
           borderColor: '#16a34a', backgroundColor: '#16a34a', borderDash: [6, 3], pointRadius: 3, pointStyle: 'rect', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: 'Excess HC', data: d.excessHc, type: 'line', yAxisID: 'y1',
-          borderColor: '#ef4444', backgroundColor: '#ef4444', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL,
+          label: `${planLabel(d.periodB)} L1 HC Exit`, data: d.bL1HcExit, type: 'line', yAxisID: 'y',
+          borderColor: '#0d9488', backgroundColor: '#0d9488', borderDash: [6, 3], pointRadius: 3, pointStyle: 'rect', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
+        },
+        {
+          label: `${planLabel(d.periodA)} Excess HC`, data: d.aExcessHc, type: 'line', yAxisID: 'y1',
+          borderColor: '#ef4444', backgroundColor: '#ef4444', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL('#ef4444'),
+        },
+        {
+          label: `${planLabel(d.periodB)} Excess HC`, data: d.bExcessHc, type: 'line', yAxisID: 'y1',
+          borderColor: '#f59e0b', backgroundColor: '#f59e0b', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL('#f59e0b'),
         },
       ],
     },

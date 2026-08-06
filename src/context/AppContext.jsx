@@ -43,7 +43,7 @@ export function AppProvider({ children }) {
   const [drillDownModal, setDrillDownModal] = useState({ open: false, title: '', subtitle: '', panels: [], tableRows: [] });
   const [adherenceModal, setAdherenceModal] = useState({ open: false });
   const [segmentGrowthModal, setSegmentGrowthModal] = useState({ open: false });
-  const [headcountDetailModal, setHeadcountDetailModal] = useState({ open: false, label: '', avg: 0, exit: 0, excess: 0, total: 0 });
+  const [headcountDetailModal, setHeadcountDetailModal] = useState({ open: false });
   // Session-only record of submitted RCA/CLCA actions, keyed by whatever id triggered them
   // (queue id like 'Q-001', or a derived key for a Partner Minimum bar). No backend exists yet,
   // so this is what lets the UI show "Actioned" after a submit instead of the toast being the

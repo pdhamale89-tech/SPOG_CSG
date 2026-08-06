@@ -1,8 +1,20 @@
 import { useApp } from '../../context/AppContext';
+import { planLabel } from '../charts/chartConfigs';
 
 export default function HeadcountDetailModal() {
   const { headcountDetailModal, closeHeadcountDetail } = useApp();
-  const { open, label, avg, exit, excess, total } = headcountDetailModal;
+  const {
+    open, label, periodA, periodB,
+    aTotal, aAvg, aExit, aExcess,
+    bTotal, bAvg, bExit, bExcess,
+  } = headcountDetailModal;
+
+  const rows = [
+    { metric: 'Total HC', a: aTotal, b: bTotal, strong: true },
+    { metric: 'L1 HC Avg', a: aAvg, b: bAvg },
+    { metric: 'L1 HC Exit', a: aExit, b: bExit },
+    { metric: 'Excess HC', a: aExcess, b: bExcess },
+  ];
 
   return (
     <div className={'modal-overlay' + (open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeHeadcountDetail(); }}>
@@ -12,11 +24,21 @@ export default function HeadcountDetailModal() {
           <button className="modal-close" onClick={closeHeadcountDetail}>&times;</button>
         </div>
         <div className="modal-body">
-          <div className="approval-grid">
-            <div className="approval-field"><label>Total HC</label><span><strong>{total?.toLocaleString()}</strong></span></div>
-            <div className="approval-field"><label>L1 HC Avg</label><span>{avg?.toLocaleString()}</span></div>
-            <div className="approval-field"><label>L1 HC Exit</label><span>{exit?.toLocaleString()}</span></div>
-            <div className="approval-field"><label>Excess HC</label><span>{excess?.toLocaleString()}</span></div>
+          <div className="tw">
+            <table>
+              <thead>
+                <tr><th>Metric</th><th>{planLabel(periodA)}</th><th>{planLabel(periodB)}</th></tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.metric}>
+                    <td>{r.metric}</td>
+                    <td>{r.strong ? <strong>{r.a?.toLocaleString()}</strong> : r.a?.toLocaleString()}</td>
+                    <td>{r.strong ? <strong>{r.b?.toLocaleString()}</strong> : r.b?.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

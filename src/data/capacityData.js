@@ -170,16 +170,25 @@ export const capC7 = {
   ospPctNew: [null, null, 87, 87, 86, 85, 85, 88],
 };
 
-// Headcount Bifurcation is a standalone trend (Total HC / L1 HC Avg / L1 HC
-// Exit / Excess HC over time) -- it does not compare Jul vs Aug like the
-// other charts on this page, so it has its own 9-period series rather than
-// keying off CAP_VOL_PERIODS/Compare Plans.
+// Headcount Bifurcation (Total HC / L1 HC Avg / L1 HC Exit / Excess HC) now
+// follows Compare Plans the same way Excess HC + LOA + Training does -- each
+// metric has a Jul and an Aug vintage, and Overall averages them (see
+// seriesFor/CAP_OVERALL in CapacityOverview). It has 9 periods rather than
+// the other charts' 8, hence its own label array (L9) in CapacityOverview.
 export const capHcBifurcation = {
-  l1HcAvg: [2679, 2579, 2339, 1986, 1780, 1745, 1680, 1590, 1550],
-  l1HcExit: [2624, 2515, 2166, 1936, 1750, 1715, 1650, 1560, 1520],
-  excessHc: [355, 438, 438, 374, 246, 279, 244, 280, 159],
-  totalHc: [2689, 2629, 2239, 1986, 1848, 1813, 1748, 1656, 1617],
+  julTotalHc: [2689, 2629, 2239, 1986, 1848, 1813, 1748, 1656, 1617],
+  augTotalHc: [1076, 1052, 896, 794, 739, 725, 699, 662, 647],
+  julL1HcAvg: [2679, 2579, 2339, 1986, 1780, 1745, 1680, 1590, 1550],
+  augL1HcAvg: [1072, 1032, 936, 794, 712, 698, 672, 636, 620],
+  julL1HcExit: [2624, 2515, 2166, 1936, 1750, 1715, 1650, 1560, 1520],
+  augL1HcExit: [1050, 1006, 866, 774, 700, 686, 660, 624, 608],
+  julExcessHc: [355, 438, 438, 374, 246, 279, 244, 280, 159],
+  augExcessHc: [142, 175, 175, 150, 98, 112, 98, 112, 64],
 };
+export const CAP_HC_BIF_TOTAL_KEYS = { Jul: 'julTotalHc', Aug: 'augTotalHc' };
+export const CAP_HC_BIF_AVG_KEYS = { Jul: 'julL1HcAvg', Aug: 'augL1HcAvg' };
+export const CAP_HC_BIF_EXIT_KEYS = { Jul: 'julL1HcExit', Aug: 'augL1HcExit' };
+export const CAP_HC_BIF_EXCESS_KEYS = { Jul: 'julExcessHc', Aug: 'augExcessHc' };
 
 // ===== Analytics charts =====
 
