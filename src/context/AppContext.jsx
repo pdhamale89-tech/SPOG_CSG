@@ -10,7 +10,7 @@ const BREADCRUMBS = {
   'shipment-overview': 'Forecast › Shipment Overview',
   'asu-overview': 'Forecast › ASU Overview',
   'capacity-overview': 'Capacity › Overview',
-  'calendar-forecast': 'Calendar › Forecast',
+  'calendar-forecast': 'Calendar › Planning',
   'calendar-fiscal': 'Calendar › Fiscal',
 };
 

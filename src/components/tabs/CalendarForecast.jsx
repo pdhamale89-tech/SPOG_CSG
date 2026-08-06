@@ -56,7 +56,7 @@ function MonthBlock({ month }) {
 export default function CalendarForecast() {
   return (
     <div className="tab-panel active">
-      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>📅 Forecast Calendar — FY27</h2>
+      <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '2px' }}>📅 Planning Calendar — FY27</h2>
       <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
         Fiscal weeks and key planning deadlines across all four quarters (4-4-5 calendar).
       </p>
