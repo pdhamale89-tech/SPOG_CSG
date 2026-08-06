@@ -307,7 +307,7 @@ export default function CapacityOverview() {
 
       <div className="s-grid full">
         <div className="card">
-          <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Volume and headcount period-over-period % change." /></div></div>
+          <div className="card-header"><div className="card-title">Volume PoP% + HC PoP% Combined <InfoBtn tip="<strong>Purpose</strong>HC Avg/Exit PoP% as bars on the left axis; DB/OSP/Total Volume PoP% as lines on the right axis." /></div></div>
           <ChartCanvas config={a1Config} height="300px" />
           <InsightBox text={capPopInsight(dA1)} />
         </div>

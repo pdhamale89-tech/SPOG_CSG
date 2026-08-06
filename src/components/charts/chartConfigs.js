@@ -990,29 +990,50 @@ export function buildCapHeadcountBifurcationConfig(d, theme) {
   };
 }
 
+// HC Avg/Exit PoP% render as bars on the left axis; DB/OSP/Total Volume
+// PoP% stay lines but move to a right-side axis, so the two families of
+// %s (headcount vs volume) aren't fighting for the same scale.
 export function buildCapPopConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
   const PDL = dataLabelsPercent(theme);
   return {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'DB Vol PoP%', data: d.dbVolPop, borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL },
-        { label: 'OSP Vol PoP%', data: d.ospVolPop, borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL },
-        { label: 'Total Vol PoP%', data: d.totalVolPop, borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL },
-        { label: 'HC Avg PoP%', data: d.hcAvgPop, borderColor: '#8b5cf6', borderDash: [5, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: PDL },
-        { label: 'HC Exit PoP%', data: d.hcExitPop, borderColor: '#06b6d4', borderDash: [5, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: 'HC Avg PoP%', data: d.hcAvgPop, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, yAxisID: 'y', datalabels: PDL },
+        { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', datalabels: PDL },
+        {
+          label: 'DB Vol PoP%', data: d.dbVolPop, type: 'line', yAxisID: 'y1',
+          borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+        },
+        {
+          label: 'OSP Vol PoP%', data: d.ospVolPop, type: 'line', yAxisID: 'y1',
+          borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+        },
+        {
+          label: 'Total Vol PoP%', data: d.totalVolPop, type: 'line', yAxisID: 'y1',
+          borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+        },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
-      scales: { x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc } } },
-      plugins: { legend: LP, datalabels: DL },
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        y: {
+          ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc },
+          title: { display: true, text: 'HC PoP%', color: tc, font: { size: 9 } },
+        },
+        y1: {
+          position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false },
+          title: { display: true, text: 'Volume PoP%', color: tc, font: { size: 9 } },
+        },
+      },
+      plugins: { legend: LP },
     },
   };
 }
