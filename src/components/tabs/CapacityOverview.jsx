@@ -16,6 +16,7 @@ import {
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
   CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_TRAINING_KEYS, CAP_HIRING_KEYS,
+  CAP_APPROVED_HIRING_KEYS, CAP_NONAPPROVED_HIRING_KEYS,
   CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
   CAP_HC_BIF_TOTAL_KEYS, CAP_HC_BIF_AVG_KEYS, CAP_HC_BIF_EXIT_KEYS, CAP_HC_BIF_EXCESS_KEYS,
 } from '../../data/capacityData';
@@ -105,7 +106,13 @@ export default function CapacityOverview() {
     aHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName1),
     bHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName2),
   }), [L8, planName1, planName2]);
-  const dC6 = useMemo(() => ({ ...capC6, labels: L8 }), [L8]);
+  const dC6 = useMemo(() => ({
+    labels: L8, periodA: planName1, periodB: planName2,
+    aApproved: seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1),
+    bApproved: seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2),
+    aNonApproved: seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1),
+    bNonApproved: seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2),
+  }), [L8, planName1, planName2]);
   const dC7 = useMemo(() => ({
     ...capC7, labels: L8, periodA: planName1, periodB: planName2,
     aCapPct: seriesFor(CAP_CAPACITY_KEYS, capC7, planName1),
@@ -269,7 +276,7 @@ export default function CapacityOverview() {
           <InsightBox text={capHiringInsight(dC5)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line." /></div></div>
+          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line, for the Plan Name 1/Plan Name 2 selection above." /></div></div>
           <ChartCanvas config={c6Config} height="300px" />
           <InsightBox text={capHiringBreakdownInsight(dC6)} />
         </div>

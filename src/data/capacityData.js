@@ -152,15 +152,19 @@ export const capC5 = {
   augNew: [22, 0, 4, 0, 19, 0, 0, 0],
 };
 
+// Hiring Breakdown now follows Compare Plans the same way Excess HC + LOA +
+// Training does -- Approved/Non-Approved Hiring each have a Jul and an Aug
+// vintage (Total Hiring is computed as Approved + Non-Approved per plan,
+// not stored).
 export const capC6 = {
   labels: CAP_Q8,
-  julApproved: [3, 9, 5, 0, 0, 0, 0, 0],
-  julUrHiring: [60, 0, 32, 0, 19, 0, 0, 0],
-  julNonApproved: [0, 0, 55, 16, 48, 52, 47, 9],
-  augUrHiring: [22, 0, 4, 0, 19, 0, 0, 0],
-  julOverall: [63, 9, 92, 16, 67, 52, 47, 9],
-  augOverall: [22, 0, 4, 0, 19, 0, 0, 0],
+  julApprovedHiring: [63, 9, 37, 0, 19, 0, 0, 0],
+  augApprovedHiring: [22, 0, 4, 0, 19, 0, 0, 0],
+  julNonApprovedHiring: [0, 0, 55, 16, 48, 52, 47, 9],
+  augNonApprovedHiring: [0, 0, 20, 6, 18, 20, 18, 3],
 };
+export const CAP_APPROVED_HIRING_KEYS = { Jul: 'julApprovedHiring', Aug: 'augApprovedHiring' };
+export const CAP_NONAPPROVED_HIRING_KEYS = { Jul: 'julNonApprovedHiring', Aug: 'augNonApprovedHiring' };
 
 export const capC7 = {
   labels: CAP_Q8,

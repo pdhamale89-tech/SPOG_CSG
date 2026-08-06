@@ -845,21 +845,26 @@ export function buildCapHiringConfig(d, theme) {
   };
 }
 
+// Approved/Non-Approved/Total Hiring now follow Plan Name 1/Plan Name 2
+// the same way Excess HC + LOA + Training does, instead of a fixed single
+// breakdown.
 export function buildCapHiringBreakdownConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
-  const approved = d.labels.map((_, i) => d.julApproved[i] + d.julUrHiring[i] + d.augUrHiring[i]);
-  const nonApproved = d.julNonApproved;
-  const total = d.labels.map((_, i) => approved[i] + nonApproved[i]);
+  const aTotal = d.aApproved.map((v, i) => v + d.aNonApproved[i]);
+  const bTotal = d.bApproved.map((v, i) => v + d.bNonApproved[i]);
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Approved Hiring', data: approved, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3 },
-        { label: 'Non-Approved Hiring', data: nonApproved, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3 },
-        { label: 'Total Hiring', data: total, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: `${planLabel(d.periodA)} Approved`, data: d.aApproved, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3 },
+        { label: `${planLabel(d.periodB)} Approved`, data: d.bApproved, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
+        { label: `${planLabel(d.periodA)} Non-Approved`, data: d.aNonApproved, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3 },
+        { label: `${planLabel(d.periodB)} Non-Approved`, data: d.bNonApproved, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3 },
+        { label: `${planLabel(d.periodA)} Total`, data: aTotal, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: `${planLabel(d.periodB)} Total`, data: bTotal, type: 'line', borderColor: '#0ea5e9', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },

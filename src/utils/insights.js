@@ -81,10 +81,11 @@ export function capHiringInsight(d) {
 }
 
 export function capHiringBreakdownInsight(d) {
-  const approved = sum(d.julApproved) + sum(d.julUrHiring) + sum(d.augUrHiring);
-  const nonApproved = sum(d.julNonApproved);
-  const total = approved + nonApproved;
-  return `Approved hiring accounts for ${approved} of the ${total} total hires tracked, versus ${nonApproved} still non-approved.`;
+  const aApproved = sum(d.aApproved);
+  const aTotal = aApproved + sum(d.aNonApproved);
+  const bApproved = sum(d.bApproved);
+  const bTotal = bApproved + sum(d.bNonApproved);
+  return `${d.periodA} approved hiring accounts for ${aApproved} of ${aTotal} total hires, versus ${d.periodB} at ${bApproved} of ${bTotal}.`;
 }
 
 export function capCapacityInsight(d) {
