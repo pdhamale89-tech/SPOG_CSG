@@ -78,6 +78,15 @@ export default function CapacityOverview() {
   const [planName2, setPlanName2] = useState(CAP_OVERALL);
   const [year1, setYear1] = useState('FY26');
   const [year2, setYear2] = useState('FY26');
+  // Comparing years only makes sense once you're already looking at yearly
+  // cadence -- so the Year 1/Year 2 dropdowns (and their effect on every
+  // chart below) only kick in when the Weekly/Monthly/QTR/Yearly toggle is
+  // set to Yearly. Otherwise both effectively pin to FY26 (factor 1, no-op)
+  // regardless of what's stored, so flipping back to Yearly later doesn't
+  // resurrect a stale year pick from an unrelated session.
+  const yearFilterActive = curPeriod === 'yearly';
+  const effectiveYear1 = yearFilterActive ? year1 : 'FY26';
+  const effectiveYear2 = yearFilterActive ? year2 : 'FY26';
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -94,60 +103,60 @@ export default function CapacityOverview() {
     const a = volumeSeriesFor(planName1);
     const b = volumeSeriesFor(planName2);
     return {
-      labels: L6, periodA: planName1, periodB: planName2, year1, year2,
-      aDb: scaleForYear(a.db, year1), aOsp: scaleForYear(a.osp, year1),
-      bDb: scaleForYear(b.db, year2), bOsp: scaleForYear(b.osp, year2),
-      aTotal: scaleForYear(a.total, year1), bTotal: scaleForYear(b.total, year2),
+      labels: L6, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+      aDb: scaleForYear(a.db, effectiveYear1), aOsp: scaleForYear(a.osp, effectiveYear1),
+      bDb: scaleForYear(b.db, effectiveYear2), bOsp: scaleForYear(b.osp, effectiveYear2),
+      aTotal: scaleForYear(a.total, effectiveYear1), bTotal: scaleForYear(b.total, effectiveYear2),
     };
-  }, [L6, planName1, planName2, year1, year2]);
+  }, [L6, planName1, planName2, effectiveYear1, effectiveYear2]);
   // The charts below don't have their own Compare Plans selector -- they
   // read the same Plan Name 1/Plan Name 2/Year 1/Year 2 chosen above the
   // Volume Comparison chart, so their legends and values stay in sync with
   // that one control.
   const dC3 = useMemo(() => ({
-    ...capC3, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
-    aTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1), year1),
-    bTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2), year2),
-  }), [L8, planName1, planName2, year1, year2]);
+    ...capC3, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1), effectiveYear1),
+    bTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2), effectiveYear2),
+  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dC4 = useMemo(() => ({
-    ...capC4, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
-    aExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1), year1),
-    bExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2), year2),
-    aLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1), year1),
-    bLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2), year2),
-    aTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName1), year1),
-    bTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName2), year2),
-  }), [L8, planName1, planName2, year1, year2]);
+    ...capC4, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1), effectiveYear1),
+    bExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2), effectiveYear2),
+    aLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1), effectiveYear1),
+    bLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2), effectiveYear2),
+    aTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName1), effectiveYear1),
+    bTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName2), effectiveYear2),
+  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dC5 = useMemo(() => ({
-    ...capC5, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
-    aHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName1), year1),
-    bHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName2), year2),
-  }), [L8, planName1, planName2, year1, year2]);
+    ...capC5, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName1), effectiveYear1),
+    bHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName2), effectiveYear2),
+  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dC6 = useMemo(() => ({
-    labels: L8, periodA: planName1, periodB: planName2, year1, year2,
-    aApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1), year1),
-    bApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2), year2),
-    aNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1), year1),
-    bNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2), year2),
-  }), [L8, planName1, planName2, year1, year2]);
+    labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1), effectiveYear1),
+    bApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2), effectiveYear2),
+    aNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1), effectiveYear1),
+    bNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2), effectiveYear2),
+  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dC7 = useMemo(() => ({
-    ...capC7, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
-    aCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName1), year1),
-    bCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName2), year2),
-    aOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1), year1),
-    bOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2), year2),
-  }), [L8, planName1, planName2, year1, year2]);
+    ...capC7, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName1), effectiveYear1),
+    bCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName2), effectiveYear2),
+    aOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1), effectiveYear1),
+    bOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2), effectiveYear2),
+  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dHc = useMemo(() => ({
-    labels: L9, periodA: planName1, periodB: planName2, year1, year2,
-    aTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1), year1),
-    bTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2), year2),
-    aL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1), year1),
-    bL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2), year2),
-    aL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1), year1),
-    bL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2), year2),
-    aExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1), year1),
-    bExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2), year2),
-  }), [L9, planName1, planName2, year1, year2]);
+    labels: L9, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
+    aTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1), effectiveYear1),
+    bTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2), effectiveYear2),
+    aL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1), effectiveYear1),
+    bL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2), effectiveYear2),
+    aL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1), effectiveYear1),
+    bL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2), effectiveYear2),
+    aExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1), effectiveYear1),
+    bExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2), effectiveYear2),
+  }), [L9, planName1, planName2, effectiveYear1, effectiveYear2]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
@@ -246,18 +255,22 @@ export default function CapacityOverview() {
             {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
-        <div className="filter-group">
-          <label>Year 1</label>
-          <select value={year1} onChange={(e) => setYear1(e.target.value)}>
-            {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-          </select>
-        </div>
-        <div className="filter-group">
-          <label>Year 2</label>
-          <select value={year2} onChange={(e) => setYear2(e.target.value)}>
-            {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-          </select>
-        </div>
+        {yearFilterActive && (
+          <>
+            <div className="filter-group">
+              <label>Year 1</label>
+              <select value={year1} onChange={(e) => setYear1(e.target.value)}>
+                {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Year 2</label>
+              <select value={year2} onChange={(e) => setYear2(e.target.value)}>
+                {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="kpi-grid">
