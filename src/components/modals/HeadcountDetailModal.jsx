@@ -1,10 +1,10 @@
 import { useApp } from '../../context/AppContext';
-import { planLabel } from '../charts/chartConfigs';
+import { planYearLabel } from '../charts/chartConfigs';
 
 export default function HeadcountDetailModal() {
   const { headcountDetailModal, closeHeadcountDetail } = useApp();
   const {
-    open, label, periodA, periodB,
+    open, label, periodA, periodB, year1, year2,
     aTotal, aAvg, aExit, aExcess,
     bTotal, bAvg, bExit, bExcess,
   } = headcountDetailModal;
@@ -27,7 +27,7 @@ export default function HeadcountDetailModal() {
           <div className="tw">
             <table>
               <thead>
-                <tr><th>Metric</th><th>{planLabel(periodA)}</th><th>{planLabel(periodB)}</th></tr>
+                <tr><th>Metric</th><th>{planYearLabel(periodA, year1)}</th><th>{planYearLabel(periodB, year2)}</th></tr>
               </thead>
               <tbody>
                 {rows.map((r) => (

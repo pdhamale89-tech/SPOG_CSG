@@ -9,6 +9,11 @@ function round(v) { return Math.round(v); }
 function maxIdx(arr) { return arr.reduce((mi, v, i, a) => (v > a[mi] ? i : mi), 0); }
 function minIdx(arr) { return arr.reduce((mi, v, i, a) => (v < a[mi] ? i : mi), 0); }
 function labelAt(labels, i) { return labels?.[i] ?? `period ${i + 1}`; }
+// Compare Plans charts pass year1/year2 alongside periodA/periodB (Year 1/
+// Year 2 is a second comparison axis -- see CapacityOverview); folding the
+// year into the plan name here keeps insight prose in sync with a YoY pick
+// instead of always reading like a same-year plan comparison.
+function planYear(plan, year) { return year ? `${plan} ${year}` : plan; }
 // Mirrors chartConfigs.js's own fK() so insight numbers match what each chart already displays.
 function fK(v) { return Math.abs(v) >= 1000 ? `${Math.round(v / 1000)}K` : `${Math.round(v)}`; }
 const TIER_LABEL = { excellent: 'Excellent', good: 'Good', fair: 'Fair', critical: 'Critical' };
@@ -62,46 +67,62 @@ export function histTrendInsight(d, curHistPlan) {
 // --- Capacity — Workforce Planning ---
 
 export function capVolumeInsight(d) {
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
   const pctDiff = round((1 - sum(d.bTotal) / sum(d.aTotal)) * 100);
   const dir = pctDiff >= 0 ? 'below' : 'above';
-  return `${d.periodB} projection volume runs ${Math.abs(pctDiff)}% ${dir} the ${d.periodA} plan across ${d.labels.length} periods, with OSP carrying the majority of both DB/OSP splits; total volume moved from ${fK(first(d.aTotal))} (${d.periodA}) to ${fK(last(d.bTotal))} (${d.periodB}).`;
+  return `${b} projection volume runs ${Math.abs(pctDiff)}% ${dir} the ${a} plan across ${d.labels.length} periods, with OSP carrying the majority of both DB/OSP splits; total volume moved from ${fK(first(d.aTotal))} (${a}) to ${fK(last(d.bTotal))} (${b}).`;
 }
 
 export function capHcInsight(d) {
-  return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.aTotalHc)} (${d.periodA}) to ${last(d.bTotalHc)} (${d.periodB}) over the same span.`;
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
+  return `Aug headcount average declined from ${first(d.augHcAvg)} to ${last(d.augHcAvg)}, while total HC dropped from ${first(d.aTotalHc)} (${a}) to ${last(d.bTotalHc)} (${b}) over the same span.`;
 }
 
 export function capExcessInsight(d) {
-  return `Excess headcount eased from ${first(d.aExcessHc)} (${d.periodA}) to ${last(d.bExcessHc)} (${d.periodB}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)} and training load moving from ${sum(d.aTraining)} to ${sum(d.bTraining)} total hours.`;
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
+  return `Excess headcount eased from ${first(d.aExcessHc)} (${a}) to ${last(d.bExcessHc)} (${b}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)} and training load moving from ${sum(d.aTraining)} to ${sum(d.bTraining)} total hours.`;
 }
 
 export function capHiringInsight(d) {
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
   const zeroQtrs = d.bHiring.filter((v) => v === 0).length;
-  return `${d.periodB} hiring dropped to zero in ${zeroQtrs} of ${d.bHiring.length} quarters versus the ${d.periodA} plan, which never fell below ${Math.min(...d.aHiring)} approved hires.`;
+  return `${b} hiring dropped to zero in ${zeroQtrs} of ${d.bHiring.length} quarters versus the ${a} plan, which never fell below ${Math.min(...d.aHiring)} approved hires.`;
 }
 
 export function capHiringBreakdownInsight(d) {
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
   const aApproved = sum(d.aApproved);
   const aTotal = aApproved + sum(d.aNonApproved);
   const bApproved = sum(d.bApproved);
   const bTotal = bApproved + sum(d.bNonApproved);
-  return `${d.periodA} approved hiring accounts for ${aApproved} of ${aTotal} total hires, versus ${d.periodB} at ${bApproved} of ${bTotal}.`;
+  return `${a} approved hiring accounts for ${aApproved} of ${aTotal} total hires, versus ${b} at ${bApproved} of ${bTotal}.`;
 }
 
 export function capCapacityInsight(d) {
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
   const lastVariance = Math.round(last(d.bCapPct) - last(d.aCapPct));
   const dir = lastVariance >= 0 ? `${lastVariance}pp above` : `${Math.abs(lastVariance)}pp below`;
-  return `${d.periodB} Capacity% runs ${dir} ${d.periodA}, peaking at ${Math.max(...d.bCapPct)}% (${d.periodB}) versus ${Math.max(...d.aCapPct)}% (${d.periodA}).`;
+  return `${b} Capacity% runs ${dir} ${a}, peaking at ${Math.max(...d.bCapPct)}% (${b}) versus ${Math.max(...d.aCapPct)}% (${a}).`;
 }
 
 export function capOspMixInsight(d) {
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
   const validA = d.aOspPct.filter((v) => v != null);
   const validB = d.bOspPct.filter((v) => v != null);
-  return `OSP mix climbed to a peak of ${Math.max(...validB)}% under ${d.periodB}, versus ${Math.max(...validA)}% under ${d.periodA}.`;
+  return `OSP mix climbed to a peak of ${Math.max(...validB)}% under ${b}, versus ${Math.max(...validA)}% under ${a}.`;
 }
 
 export function capHeadcountBifurcationInsight(d) {
-  return `${d.periodA} Total HC fell from ${first(d.aTotalHc).toLocaleString()} to ${last(d.aTotalHc).toLocaleString()} across ${d.labels.length} periods, versus ${d.periodB} at ${first(d.bTotalHc).toLocaleString()} to ${last(d.bTotalHc).toLocaleString()}; Excess HC eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)} (${d.periodA}) and ${first(d.bExcessHc)} to ${last(d.bExcessHc)} (${d.periodB}). Click a bar or point for that period's full breakdown.`;
+  const a = planYear(d.periodA, d.year1);
+  const b = planYear(d.periodB, d.year2);
+  return `${a} Total HC fell from ${first(d.aTotalHc).toLocaleString()} to ${last(d.aTotalHc).toLocaleString()} across ${d.labels.length} periods, versus ${b} at ${first(d.bTotalHc).toLocaleString()} to ${last(d.bTotalHc).toLocaleString()}; Excess HC eased from ${first(d.aExcessHc)} to ${last(d.aExcessHc)} (${a}) and ${first(d.bExcessHc)} to ${last(d.bExcessHc)} (${b}). Click a bar or point for that period's full breakdown.`;
 }
 
 export function capPopInsight(d) {

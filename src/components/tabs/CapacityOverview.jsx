@@ -15,6 +15,7 @@ import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
+  CAP_YEARS, CAP_YEAR_FACTOR,
   CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_TRAINING_KEYS, CAP_HIRING_KEYS,
   CAP_APPROVED_HIRING_KEYS, CAP_NONAPPROVED_HIRING_KEYS,
   CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
@@ -58,11 +59,25 @@ function volumeSeriesFor(plan) {
   return { db: capC1[k.db], osp: capC1[k.osp], total: capC2[k.total] };
 }
 
+// Year 1/Year 2 are a second comparison axis alongside Plan Name 1/Plan
+// Name 2: every chart's "A" series is Plan Name 1 as of Year 1, and "B" is
+// Plan Name 2 as of Year 2. There's no separate per-year dataset -- this
+// just scales the same base numbers by CAP_YEAR_FACTOR (FY26 = 1, the
+// dataset's native scale), same "numbers stay put" approach as the period
+// (Weekly/Monthly/QTR/Yearly) relabeling elsewhere in this file.
+function scaleForYear(arr, year) {
+  const factor = CAP_YEAR_FACTOR[year] ?? 1;
+  if (factor === 1) return arr;
+  return arr.map((v) => (v == null ? null : Math.round(v * factor)));
+}
+
 export default function CapacityOverview() {
   const { theme, curPeriod, fiscalYear, openHeadcountDetail } = useApp();
   const [sort, setSort] = useState({ col: null, dir: 'asc' });
   const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
   const [planName2, setPlanName2] = useState(CAP_OVERALL);
+  const [year1, setYear1] = useState('FY26');
+  const [year2, setYear2] = useState('FY26');
 
   const periodLabel = CAP_PERIOD_LABEL[curPeriod];
   const periodWord = CAP_PERIOD_WORD[curPeriod];
@@ -79,58 +94,60 @@ export default function CapacityOverview() {
     const a = volumeSeriesFor(planName1);
     const b = volumeSeriesFor(planName2);
     return {
-      labels: L6, periodA: planName1, periodB: planName2,
-      aDb: a.db, aOsp: a.osp, bDb: b.db, bOsp: b.osp,
-      aTotal: a.total, bTotal: b.total,
+      labels: L6, periodA: planName1, periodB: planName2, year1, year2,
+      aDb: scaleForYear(a.db, year1), aOsp: scaleForYear(a.osp, year1),
+      bDb: scaleForYear(b.db, year2), bOsp: scaleForYear(b.osp, year2),
+      aTotal: scaleForYear(a.total, year1), bTotal: scaleForYear(b.total, year2),
     };
-  }, [L6, planName1, planName2]);
-  // The 4 charts below don't have their own Compare Plans selector -- they
-  // read the same Plan Name 1/Plan Name 2 chosen above the Volume Comparison
-  // chart, so their legends and values stay in sync with that one control.
+  }, [L6, planName1, planName2, year1, year2]);
+  // The charts below don't have their own Compare Plans selector -- they
+  // read the same Plan Name 1/Plan Name 2/Year 1/Year 2 chosen above the
+  // Volume Comparison chart, so their legends and values stay in sync with
+  // that one control.
   const dC3 = useMemo(() => ({
-    ...capC3, labels: L8, periodA: planName1, periodB: planName2,
-    aTotalHc: seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1),
-    bTotalHc: seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2),
-  }), [L8, planName1, planName2]);
+    ...capC3, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
+    aTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1), year1),
+    bTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2), year2),
+  }), [L8, planName1, planName2, year1, year2]);
   const dC4 = useMemo(() => ({
-    ...capC4, labels: L8, periodA: planName1, periodB: planName2,
-    aExcessHc: seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1),
-    bExcessHc: seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2),
-    aLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1),
-    bLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2),
-    aTraining: seriesFor(CAP_TRAINING_KEYS, capC4, planName1),
-    bTraining: seriesFor(CAP_TRAINING_KEYS, capC4, planName2),
-  }), [L8, planName1, planName2]);
+    ...capC4, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
+    aExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1), year1),
+    bExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2), year2),
+    aLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1), year1),
+    bLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2), year2),
+    aTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName1), year1),
+    bTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName2), year2),
+  }), [L8, planName1, planName2, year1, year2]);
   const dC5 = useMemo(() => ({
-    ...capC5, labels: L8, periodA: planName1, periodB: planName2,
-    aHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName1),
-    bHiring: seriesFor(CAP_HIRING_KEYS, capC5, planName2),
-  }), [L8, planName1, planName2]);
+    ...capC5, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
+    aHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName1), year1),
+    bHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName2), year2),
+  }), [L8, planName1, planName2, year1, year2]);
   const dC6 = useMemo(() => ({
-    labels: L8, periodA: planName1, periodB: planName2,
-    aApproved: seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1),
-    bApproved: seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2),
-    aNonApproved: seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1),
-    bNonApproved: seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2),
-  }), [L8, planName1, planName2]);
+    labels: L8, periodA: planName1, periodB: planName2, year1, year2,
+    aApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1), year1),
+    bApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2), year2),
+    aNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1), year1),
+    bNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2), year2),
+  }), [L8, planName1, planName2, year1, year2]);
   const dC7 = useMemo(() => ({
-    ...capC7, labels: L8, periodA: planName1, periodB: planName2,
-    aCapPct: seriesFor(CAP_CAPACITY_KEYS, capC7, planName1),
-    bCapPct: seriesFor(CAP_CAPACITY_KEYS, capC7, planName2),
-    aOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1),
-    bOspPct: seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2),
-  }), [L8, planName1, planName2]);
+    ...capC7, labels: L8, periodA: planName1, periodB: planName2, year1, year2,
+    aCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName1), year1),
+    bCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName2), year2),
+    aOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1), year1),
+    bOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2), year2),
+  }), [L8, planName1, planName2, year1, year2]);
   const dHc = useMemo(() => ({
-    labels: L9, periodA: planName1, periodB: planName2,
-    aTotalHc: seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1),
-    bTotalHc: seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2),
-    aL1HcAvg: seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1),
-    bL1HcAvg: seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2),
-    aL1HcExit: seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1),
-    bL1HcExit: seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2),
-    aExcessHc: seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1),
-    bExcessHc: seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2),
-  }), [L9, planName1, planName2]);
+    labels: L9, periodA: planName1, periodB: planName2, year1, year2,
+    aTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1), year1),
+    bTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2), year2),
+    aL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1), year1),
+    bL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2), year2),
+    aL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1), year1),
+    bL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2), year2),
+    aExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1), year1),
+    bExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2), year2),
+  }), [L9, planName1, planName2, year1, year2]);
   const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
   const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
 
@@ -148,7 +165,7 @@ export default function CapacityOverview() {
     if (!els.length) return;
     const idx = els[0].index;
     openHeadcountDetail({
-      label: dHc.labels[idx], periodA: dHc.periodA, periodB: dHc.periodB,
+      label: dHc.labels[idx], periodA: dHc.periodA, periodB: dHc.periodB, year1: dHc.year1, year2: dHc.year2,
       aAvg: dHc.aL1HcAvg[idx], aExit: dHc.aL1HcExit[idx], aExcess: dHc.aExcessHc[idx], aTotal: dHc.aTotalHc[idx],
       bAvg: dHc.bL1HcAvg[idx], bExit: dHc.bL1HcExit[idx], bExcess: dHc.bExcessHc[idx], bTotal: dHc.bTotalHc[idx],
     });
@@ -229,6 +246,18 @@ export default function CapacityOverview() {
             {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
+        <div className="filter-group">
+          <label>Year 1</label>
+          <select value={year1} onChange={(e) => setYear1(e.target.value)}>
+            {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
+        <div className="filter-group">
+          <label>Year 2</label>
+          <select value={year2} onChange={(e) => setYear2(e.target.value)}>
+            {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
       </div>
 
       <div className="kpi-grid">
@@ -243,7 +272,7 @@ export default function CapacityOverview() {
             <div className="card-title">
               Volume Comparison
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1/Plan Name 2 selection above; Overall is the average of Jul and Aug." />
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above; Overall is the average of Jul and Aug." />
             </div>
           </div>
           <ChartCanvas config={c1Config} height="300px" />
@@ -263,7 +292,7 @@ export default function CapacityOverview() {
           <InsightBox text={capHcInsight(dC3)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount, LOA exits and training load for the Plan Name 1/Plan Name 2 selection above." /></div></div>
+          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount, LOA exits and training load for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
           <ChartCanvas config={c4Config} height="300px" />
           <InsightBox text={capExcessInsight(dC4)} />
         </div>
@@ -276,7 +305,7 @@ export default function CapacityOverview() {
           <InsightBox text={capHiringInsight(dC5)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line, for the Plan Name 1/Plan Name 2 selection above." /></div></div>
+          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line, for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
           <ChartCanvas config={c6Config} height="300px" />
           <InsightBox text={capHiringBreakdownInsight(dC6)} />
         </div>
@@ -284,12 +313,12 @@ export default function CapacityOverview() {
 
       <div className="s-grid">
         <div className="card">
-          <div className="card-header"><div className="card-title">Capacity Comparison <InfoBtn tip="<strong>Purpose</strong>Capacity % for the Plan Name 1/Plan Name 2 selection above, plus the variance between them." /></div></div>
+          <div className="card-header"><div className="card-title">Capacity Comparison <InfoBtn tip="<strong>Purpose</strong>Capacity % for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above, plus the variance between them." /></div></div>
           <ChartCanvas config={c7Config} height="300px" />
           <InsightBox text={capCapacityInsight(dC7)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">OSP Mix Comparison <InfoBtn tip="<strong>Purpose</strong>OSP mix % for the Plan Name 1/Plan Name 2 selection above." /></div></div>
+          <div className="card-header"><div className="card-title">OSP Mix Comparison <InfoBtn tip="<strong>Purpose</strong>OSP mix % for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
           <ChartCanvas config={c7bConfig} height="300px" />
           <InsightBox text={capOspMixInsight(dC7)} />
         </div>
@@ -300,7 +329,7 @@ export default function CapacityOverview() {
           <div className="card-header">
             <div className="card-title">
               Headcount Bifurcation{' '}
-              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC for the Plan Name 1/Plan Name 2 selection above.<strong>Tip</strong>💡 Click a bar or point for that period's full breakdown." />
+              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above.<strong>Tip</strong>💡 Click a bar or point for that period's full breakdown." />
             </div>
           </div>
           <ChartCanvas config={c8Config} height="300px" onClick={handleHcClick} />

@@ -117,6 +117,18 @@ export const CAP_VOL_KEYS = {
   Aug: { db: 'augDb', osp: 'augOsp', total: 'augTotal' },
 };
 
+// Year 1/Year 2 add a second, independent comparison axis alongside Plan
+// Name 1/Plan Name 2 -- every Compare-Plans-driven chart's "A" series is
+// really "Plan Name 1 as of Year 1" and its "B" series is "Plan Name 2 as
+// of Year 2", so one pairwise comparison carries both plan-vintage (PoP)
+// and year-over-year (YoY) differences at once instead of quadrupling the
+// series count. There's no separate per-year dataset -- CAP_YEAR_FACTOR is
+// a multiplier applied to the same base numbers (FY26 = 1, the dataset's
+// native scale), consistent with this file's existing "the numbers stay
+// put, only the labels/scale change" approach.
+export const CAP_YEARS = ['FY24', 'FY25', 'FY26', 'FY27'];
+export const CAP_YEAR_FACTOR = { FY24: 1.15, FY25: 1.08, FY26: 1, FY27: 0.92 };
+
 // Same Plan Name 1/Plan Name 2 selection above also drives which field each of
 // these charts reads for its comparison series, so their legends say the plan
 // that's actually selected instead of a hardcoded Jul/Aug.
