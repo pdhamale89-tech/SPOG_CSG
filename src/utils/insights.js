@@ -72,7 +72,7 @@ export function capHcInsight(d) {
 }
 
 export function capExcessInsight(d) {
-  return `Excess headcount eased from ${first(d.aExcessHc)} (${d.periodA}) to ${last(d.bExcessHc)} (${d.periodB}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)}.`;
+  return `Excess headcount eased from ${first(d.aExcessHc)} (${d.periodA}) to ${last(d.bExcessHc)} (${d.periodB}) across plans, with LOA exits narrowing from ${first(d.aLoaExit)} to ${last(d.bLoaExit)} and training load moving from ${sum(d.aTraining)} to ${sum(d.bTraining)} total hours.`;
 }
 
 export function capHiringInsight(d) {

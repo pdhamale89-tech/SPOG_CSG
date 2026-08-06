@@ -123,6 +123,7 @@ export const CAP_VOL_KEYS = {
 export const CAP_HC_TOTAL_KEYS = { Jul: 'julTotalHc', Aug: 'augTotalHc' };
 export const CAP_EXCESS_HC_KEYS = { Jul: 'julExcessHc', Aug: 'augExcessHc' };
 export const CAP_LOA_EXIT_KEYS = { Jul: 'julLoaExit', Aug: 'augLoaExit' };
+export const CAP_TRAINING_KEYS = { Jul: 'julTraining', Aug: 'augTraining' };
 export const CAP_HIRING_KEYS = { Jul: 'julOld', Aug: 'augNew' };
 export const CAP_CAPACITY_KEYS = { Jul: 'capPctOld', Aug: 'capPctNew' };
 export const CAP_OSP_PCT_KEYS = { Jul: 'ospPctOld', Aug: 'ospPctNew' };
@@ -142,6 +143,7 @@ export const capC4 = {
   julLoaExit: [79, 60, 56, 56, 52, 52, 52, 52],
   augLoaExit: [23, 18, 15, 15, 13, 13, 13, 13],
   julTraining: [13, 9, 11, 0, 10, 16, 1, 0],
+  augTraining: [8, 5, 6, 0, 4, 9, 0, 0],
 };
 
 export const capC5 = {

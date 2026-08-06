@@ -818,7 +818,8 @@ export function buildCapExcessConfig(d, theme) {
     { label: `${planLabel(d.periodB)} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
     { label: `${planLabel(d.periodA)} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
     { label: `${planLabel(d.periodB)} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-    { label: 'Training', data: d.julTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
+    { label: `${planLabel(d.periodA)} Training`, data: d.aTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
+    { label: `${planLabel(d.periodB)} Training`, data: d.bTraining, type: 'line', borderColor: '#0ea5e9', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
   ];
   return {
     type: 'bar',

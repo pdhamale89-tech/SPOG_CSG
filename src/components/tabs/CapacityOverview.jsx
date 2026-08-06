@@ -15,7 +15,7 @@ import {
   CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
   capA1, capWeeklyTable,
   capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
-  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_HIRING_KEYS,
+  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_TRAINING_KEYS, CAP_HIRING_KEYS,
   CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
 } from '../../data/capacityData';
 import {
@@ -96,6 +96,8 @@ export default function CapacityOverview() {
     bExcessHc: seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2),
     aLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1),
     bLoaExit: seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2),
+    aTraining: seriesFor(CAP_TRAINING_KEYS, capC4, planName1),
+    bTraining: seriesFor(CAP_TRAINING_KEYS, capC4, planName2),
   }), [L8, planName1, planName2]);
   const dC5 = useMemo(() => ({
     ...capC5, labels: L8, periodA: planName1, periodB: planName2,
@@ -242,7 +244,7 @@ export default function CapacityOverview() {
           <InsightBox text={capHcInsight(dC3)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount alongside LOA exits and training load." /></div></div>
+          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount, LOA exits and training load for the Plan Name 1/Plan Name 2 selection above." /></div></div>
           <ChartCanvas config={c4Config} height="300px" />
           <InsightBox text={capExcessInsight(dC4)} />
         </div>
