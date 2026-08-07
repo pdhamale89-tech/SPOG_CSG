@@ -210,20 +210,25 @@ const TABS = [
 ];
 
 export default function CapacityOverviewNew() {
-  const { theme } = useApp();
+  const { theme, fiscalYear } = useApp();
   const [planA, setPlanA] = useState('Jan');
   const [planB, setPlanB] = useState('Feb');
-  const [fiscalYear, setFiscalYear] = useState('FY27');
   const [activeTab, setActiveTab] = useState('volume');
   const [openDetail, setOpenDetail] = useState({});
 
-  const vA = VOL[planA][fiscalYear], vB = VOL[planB][fiscalYear];
-  const hA = HC[planA][fiscalYear], hB = HC[planB][fiscalYear];
+  // Fiscal Year now comes from the top Filters bar instead of its own
+  // dropdown here -- but that bar's fiscal years (FY24-FY27) and this
+  // page's ported dataset (FY25-FY28) only partly overlap, so fall back to
+  // FY26 rather than crash on a year this dataset never had (FY24).
+  const fy = YRS.includes(fiscalYear) ? fiscalYear : 'FY26';
+
+  const vA = VOL[planA][fy], vB = VOL[planB][fy];
+  const hA = HC[planA][fy], hB = HC[planB][fy];
 
   const dVol = useMemo(() => ({
-    labels: QL, pA: planA, pB: planB, fy: fiscalYear,
+    labels: QL, pA: planA, pB: planB, fy,
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
-  }), [vA, vB, planA, planB, fiscalYear]);
+  }), [vA, vB, planA, planB, fy]);
   const dHc = useMemo(() => ({
     labels: QL, pA: planA, pB: planB,
     aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, aHcExit: hA.HC_Exit, bHcExit: hB.HC_Exit, bExcessHc: hB.Excess_HC,
@@ -270,16 +275,10 @@ export default function CapacityOverviewNew() {
             {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
           </select>
         </div>
-        <div className="filter-group">
-          <label>Fiscal Year</label>
-          <select value={fiscalYear} onChange={(e) => setFiscalYear(e.target.value)}>
-            {YRS.map((y) => <option key={y} value={y}>{y}</option>)}
-          </select>
-        </div>
       </div>
 
       <div className="kpi-grid">
-        <KpiCard label={`${fiscalYear} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} />
+        <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} />
         <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} />
         <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} />
         <KpiCard label="Total Hiring" value={`${fmt(hirA)} → ${fmt(hirB)}`} delta={`Δ ${hirB - hirA > 0 ? '+' : ''}${hirB - hirA}`} />
@@ -290,7 +289,7 @@ export default function CapacityOverviewNew() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              Volume: {planA} vs {planB} — {fiscalYear}
+              Volume: {planA} vs {planB} — {fy}
               {' '}
               <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume (stacked per plan) plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B." />
             </div>
