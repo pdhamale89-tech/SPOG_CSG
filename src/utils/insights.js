@@ -130,6 +130,30 @@ export function capPopInsight(d) {
   return `Total volume PoP% has stayed negative every quarter it's tracked, averaging ${round(avg(valid))}%, while HC Avg PoP% held steady near ${round(avg(d.hcAvgPop))}%.`;
 }
 
+// --- Capacity Overview New (Workforce Planning Dashboard port) ---
+
+export function wpdVolumeInsight(d) {
+  const tA = sum(d.aTotal), tB = sum(d.bTotal);
+  const diffPct = tA ? round((tB - tA) / tA * 100) : 0;
+  const dir = diffPct >= 0 ? 'above' : 'below';
+  return `${d.pB} total volume runs ${Math.abs(diffPct)}% ${dir} ${d.pA} across the ${d.fy} quarters, moving from ${fK(first(d.aTotal))} to ${fK(last(d.bTotal))}.`;
+}
+
+export function wpdHcInsight(d) {
+  const aAvgFirst = first(d.aHcAvg), aAvgLast = last(d.aHcAvg);
+  const bAvgLast = last(d.bHcAvg);
+  return `${d.pA} HC Avg moved from ${aAvgFirst} to ${aAvgLast} across the quarter, versus ${d.pB} ending at ${bAvgLast}; ${d.pB} Excess HC closed at ${last(d.bExcessHc)}.`;
+}
+
+export function wpdCapHireInsight(d) {
+  const peakA = Math.max(...d.aCap), peakB = Math.max(...d.bCap);
+  return `${d.pA} Capacity% peaked at ${peakA}% versus ${d.pB} at ${peakB}%, while hiring totaled ${sum(d.aHiring)} (${d.pA}) and ${sum(d.bHiring)} (${d.pB}) over the same quarters.`;
+}
+
+export function wpdHireExitInsight(d) {
+  return `Overall hiring totaled ${sum(d.aHiring)} (${d.pA}) versus ${sum(d.bHiring)} (${d.pB}), against ${sum(d.bLoa)} LOA exits and ${sum(d.bTraining)} training exits tracked for ${d.pB}.`;
+}
+
 // --- Shipment / ASU ---
 
 export function shipUppInsight(region, labels) {

@@ -1057,4 +1057,125 @@ export function buildCapPopConfig(d, theme) {
   };
 }
 
+// ===== Capacity Overview New (Workforce Planning Dashboard port) =====
+// Same theme/helpers as every chart above (getColors/baseScales/legendPos/
+// dataLabelsDefault) instead of the reference HTML's own fixed dark-navy
+// palette, so this page renders like the rest of Capacity Overview in both
+// light and dark mode.
 
+export function buildWpdVolumeConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  const delta = d.aTotal.map((v, i) => (d.bTotal[i] && v ? Math.round((d.bTotal[i] - v) / v * 1000) / 10 : null));
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a' },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a' },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b' },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b' },
+        { label: `${d.pA} Total`, data: d.aTotal, type: 'line', yAxisID: 'y', borderColor: '#10b981', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false } },
+        { label: `${d.pB} Total`, data: d.bTotal, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false } },
+        {
+          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
+          datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => (v == null ? '' : v + '%') },
+        },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, stacked: true },
+        y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => (v / 1e6).toFixed(1) + 'M' }, grid: { color: gc }, stacked: true },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+export function buildWpdHcConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: `${d.pA} HC Avg`, data: d.aHcAvg, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2.5, datalabels: { display: false } },
+        { label: `${d.pB} HC Avg`, data: d.bHcAvg, borderColor: '#06b6d4', borderDash: [6, 3], fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2.5, datalabels: { display: false } },
+        { label: `${d.pA} HC Exit`, data: d.aHcExit, borderColor: '#f59e0b', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, datalabels: { display: false } },
+        { label: `${d.pB} HC Exit`, data: d.bHcExit, borderColor: '#ef4444', borderDash: [6, 3], fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, datalabels: { display: false } },
+        { label: `${d.pB} Excess HC`, data: d.bExcessHc, borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,.12)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, title: { display: true, text: 'HC Count', color: tc, font: { size: 9 } } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, title: { display: true, text: 'Excess HC', color: tc, font: { size: 9 } } },
+      },
+      plugins: { legend: LP },
+    },
+  };
+}
+
+export function buildWpdCapHireConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1' },
+        { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1' },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => v + '%' } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => v + '%' } },
+        { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        y: { min: 90, max: 135, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP },
+    },
+  };
+}
+
+export function buildWpdHireExitConfig(d, theme) {
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: `${d.pA} Overall`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 3 },
+        { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 3 },
+        { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(59,130,246,.5)', borderRadius: 3 },
+        { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3 },
+        { label: 'LOA Exit', data: d.bLoa, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Training Exit', data: d.bTraining, type: 'line', borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
+      scales: {
+        x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+        y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}

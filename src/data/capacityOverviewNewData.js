@@ -80,12 +80,3 @@ MONTHS.forEach((m, i) => {
     HC[m] = svH(i < 6 ? BASE_HC.Jan : BASE_HC.Feb, i);
   }
 });
-
-export const COMMENTS = [
-  'UKI ProSupp Client OOH (BGL) — moved 14 HC from NA Premium and cancelled normal hirings in FY27.',
-  'UKI Premium Support — added 1 hiring in FY28 to solve the queue.',
-  'UKI OOW VOLX CSMB — added 1 hiring in FY28 to solve the queue.',
-  'ProSupport BRZ Voice — With expected attrition and movements in Q1 FY27, capacity will not be fully covered without the 5 hiring. Hence, they are kept unchanged.',
-  'NA Chat_1 UR moved to managed service, 3 due to volume change.',
-  'Ger Voice — 1 NH reduced in FY27 and FY28 due to demand reduction.',
-];
