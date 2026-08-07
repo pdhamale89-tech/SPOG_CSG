@@ -27,6 +27,7 @@ const DEFAULTS = {
 // Planner reads as Forecaster here (it stays Capacity Planner everywhere
 // else, e.g. Capacity Overview, where that label was requested).
 const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
+const YEARLY_TABS = ['capacity-overview', 'capacity-overview-new'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 
@@ -59,14 +60,14 @@ export default function FilterBar() {
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
-  // Yearly only has real data on Capacity Overview (see capacityData.js) --
-  // every other tab indexes its own period-keyed dataset (forecastData.js's
+  // Yearly only has real data on the two Capacity tabs (see capacityData.js)
+  // -- every other tab indexes its own period-keyed dataset (forecastData.js's
   // D, etc.) with no 'yearly' entry and would throw. So the button only
-  // shows up while that tab is active, and if the user switches away from
-  // Capacity Overview while Yearly is selected, fall back to Monthly rather
-  // than carry an unsupported period into a tab that can't render it.
+  // shows up while one of those is active, and if the user switches away
+  // while Yearly is selected, fall back to Monthly rather than carry an
+  // unsupported period into a tab that can't render it.
   useEffect(() => {
-    if (currentTab !== 'capacity-overview' && curPeriod === 'yearly') {
+    if (!YEARLY_TABS.includes(currentTab) && curPeriod === 'yearly') {
       setCurPeriod('monthly');
     }
   }, [currentTab, curPeriod, setCurPeriod]);
@@ -99,7 +100,7 @@ export default function FilterBar() {
           <button className={'p-btn' + (curPeriod === 'weekly' ? ' active' : '')} onClick={() => setCurPeriod('weekly')}>Weekly</button>
           <button className={'p-btn' + (curPeriod === 'monthly' ? ' active' : '')} onClick={() => setCurPeriod('monthly')}>Monthly</button>
           <button className={'p-btn' + (curPeriod === 'qtr' ? ' active' : '')} onClick={() => setCurPeriod('qtr')}>QTR</button>
-          {currentTab === 'capacity-overview' && (
+          {YEARLY_TABS.includes(currentTab) && (
             <button className={'p-btn' + (curPeriod === 'yearly' ? ' active' : '')} onClick={() => setCurPeriod('yearly')}>Yearly</button>
           )}
         </div>
