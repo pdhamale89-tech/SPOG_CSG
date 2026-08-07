@@ -24,7 +24,7 @@ const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1))
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');
 const badgeCls = (d) => (d >= 0 ? 'up' : 'down');
 
-function CompCard({ title, arrA, arrB, formatFn = fmt, suffix = '' }) {
+function CompCard({ title, arrA, arrB, pA, pB, formatFn = fmt, suffix = '' }) {
   const totA = sum(arrA), totB = sum(arrB);
   const d = totB - totA;
   const dp = pct(totA, totB);
@@ -36,12 +36,12 @@ function CompCard({ title, arrA, arrB, formatFn = fmt, suffix = '' }) {
       </div>
       <div className="cmp-vals">
         <div className="cmp-val-block">
-          <div className="cmp-val-label">Plan A</div>
+          <div className="cmp-val-label">{pA}</div>
           <div className="cmp-val-num">{formatFn(totA)}{suffix}</div>
         </div>
         <span className="cmp-arrow">→</span>
         <div className="cmp-val-block">
-          <div className="cmp-val-label">Plan B</div>
+          <div className="cmp-val-label">{pB}</div>
           <div className="cmp-val-num">{formatFn(totB)}{suffix}</div>
         </div>
       </div>
@@ -96,9 +96,9 @@ function VolumeTab({ vA, vB, pA, pB, openDetail, toggle }) {
   return (
     <>
       <div className="cmp-grid">
-        <CompCard title="DB Volume" arrA={vA.DB} arrB={vB.DB} formatFn={fmtK} />
-        <CompCard title="OSP Volume" arrA={vA.OSP} arrB={vB.OSP} formatFn={fmtK} />
-        <CompCard title="Total Volume" arrA={vA.Total} arrB={vB.Total} formatFn={fmtK} />
+        <CompCard title="DB Volume" arrA={vA.DB} arrB={vB.DB} pA={pA} pB={pB} formatFn={fmtK} />
+        <CompCard title="OSP Volume" arrA={vA.OSP} arrB={vB.OSP} pA={pA} pB={pB} formatFn={fmtK} />
+        <CompCard title="Total Volume" arrA={vA.Total} arrB={vB.Total} pA={pA} pB={pB} formatFn={fmtK} />
       </div>
       <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.volume} onToggle={() => toggle('volume')} />
     </>
@@ -124,10 +124,10 @@ function HeadcountTab({ hA, hB, pA, pB, openDetail, toggle }) {
   return (
     <>
       <div className="cmp-grid">
-        <CompCard title="L1 HC Average" arrA={hA.HC_Avg} arrB={hB.HC_Avg} />
-        <CompCard title="L1 HC Exit" arrA={hA.HC_Exit} arrB={hB.HC_Exit} />
-        <CompCard title="Total HC" arrA={hA.Total_HC} arrB={hB.Total_HC} />
-        <CompCard title="Excess HC" arrA={hA.Excess_HC} arrB={hB.Excess_HC} />
+        <CompCard title="L1 HC Average" arrA={hA.HC_Avg} arrB={hB.HC_Avg} pA={pA} pB={pB} />
+        <CompCard title="L1 HC Exit" arrA={hA.HC_Exit} arrB={hB.HC_Exit} pA={pA} pB={pB} />
+        <CompCard title="Total HC" arrA={hA.Total_HC} arrB={hB.Total_HC} pA={pA} pB={pB} />
+        <CompCard title="Excess HC" arrA={hA.Excess_HC} arrB={hB.Excess_HC} pA={pA} pB={pB} />
       </div>
       <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.headcount} onToggle={() => toggle('headcount')} />
     </>
@@ -153,11 +153,11 @@ function HiringTab({ hA, hB, pA, pB, openDetail, toggle }) {
   return (
     <>
       <div className="cmp-grid">
-        <CompCard title="Overall Hiring" arrA={hA.Hiring} arrB={hB.Hiring} />
-        <CompCard title="UR Hiring" arrA={hA.UR_Hire} arrB={hB.UR_Hire} />
-        <CompCard title="Approved Hiring" arrA={hA.Appr_Hire} arrB={hB.Appr_Hire} />
-        <CompCard title="LOA Exit" arrA={hA.LOA} arrB={hB.LOA} />
-        <CompCard title="Training Exit" arrA={hA.Training} arrB={hB.Training} />
+        <CompCard title="Overall Hiring" arrA={hA.Hiring} arrB={hB.Hiring} pA={pA} pB={pB} />
+        <CompCard title="UR Hiring" arrA={hA.UR_Hire} arrB={hB.UR_Hire} pA={pA} pB={pB} />
+        <CompCard title="Approved Hiring" arrA={hA.Appr_Hire} arrB={hB.Appr_Hire} pA={pA} pB={pB} />
+        <CompCard title="LOA Exit" arrA={hA.LOA} arrB={hB.LOA} pA={pA} pB={pB} />
+        <CompCard title="Training Exit" arrA={hA.Training} arrB={hB.Training} pA={pA} pB={pB} />
       </div>
       <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.hiring} onToggle={() => toggle('hiring')} />
     </>
@@ -278,11 +278,11 @@ export default function CapacityOverviewNew() {
       </div>
 
       <div className="kpi-grid">
-        <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} />
-        <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} />
-        <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} />
-        <KpiCard label="Total Hiring" value={`${fmt(hirA)} → ${fmt(hirB)}`} delta={`Δ ${hirB - hirA > 0 ? '+' : ''}${hirB - hirA}`} />
-        <KpiCard label="Excess HC (Avg/Qtr)" value={`${fmt(exA)} → ${fmt(exB)}`} delta={`Δ ${exB - exA > 0 ? '+' : ''}${exB - exA}`} />
+        <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} sub={`${planA} → ${planB}`} />
+        <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} sub={`${planA} → ${planB}`} />
+        <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} sub={`${planA} → ${planB}`} />
+        <KpiCard label="Total Hiring" value={`${fmt(hirA)} → ${fmt(hirB)}`} delta={`Δ ${hirB - hirA > 0 ? '+' : ''}${hirB - hirA}`} sub={`${planA} → ${planB}`} />
+        <KpiCard label="Excess HC (Avg/Qtr)" value={`${fmt(exA)} → ${fmt(exB)}`} delta={`Δ ${exB - exA > 0 ? '+' : ''}${exB - exA}`} sub={`${planA} → ${planB}`} />
       </div>
 
       <div className="s-grid full">
