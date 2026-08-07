@@ -262,7 +262,7 @@ export default function CapacityOverviewNew() {
   return (
     <div className="tab-panel active">
       <div className="cap-plan-filters">
-        <span className="cap-plan-filters-title">🎛️ Plan-over-Plan Comparison</span>
+        <span className="cap-plan-filters-title">🎛️ Comparison Filter</span>
         <div className="filter-group">
           <label>Plan A</label>
           <select value={planA} onChange={(e) => setPlanA(e.target.value)}>
@@ -277,7 +277,7 @@ export default function CapacityOverviewNew() {
         </div>
       </div>
 
-      <div className="kpi-grid">
+      <div className="kpi-grid wpd-kpi-grid">
         <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} />
         <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} />
         <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} />

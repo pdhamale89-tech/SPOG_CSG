@@ -107,6 +107,7 @@
 .cmp-val-block{flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--bg-card);}
 .cmp-val-label{font-size:8px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.3px;}
 .cmp-val-num{font-size:13px;font-weight:800;color:var(--text-primary);margin-top:2px;}
+.wpd-kpi-grid .kpi-value{font-size:15px;letter-spacing:0;}
 .cmp-arrow{color:var(--text-muted);font-size:12px;}
 .cv-tbl-wrap{max-height:340px;overflow-y:auto;overflow-x:auto;border:1px solid var(--border);border-radius:6px;margin-top:10px;}
 .cv-tbl{width:100%;border-collapse:collapse;font-size:10px;min-width:640px;}

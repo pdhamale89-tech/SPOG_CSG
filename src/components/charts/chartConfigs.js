@@ -1068,6 +1068,14 @@ export function buildWpdVolumeConfig(d, theme) {
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   const delta = d.aTotal.map((v, i) => (d.bTotal[i] && v ? Math.round((d.bTotal[i] - v) / v * 1000) / 10 : null));
+  // The two unstacked Total lines share an implicit stack group once the y
+  // axis is stacked:true (needed so the DB+OSP bars stack correctly), so
+  // Chart.js's own auto-max summed both plans' totals together (~6.9M
+  // instead of the real ~3.4M per plan). Capping max explicitly from the
+  // actual data sidesteps that rather than depending on Chart.js's stack
+  // grouping for datasets that were never meant to stack with each other.
+  const rawMax = Math.max(...d.aTotal, ...d.bTotal);
+  const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
   return {
     type: 'bar',
     data: {
@@ -1089,7 +1097,7 @@ export function buildWpdVolumeConfig(d, theme) {
       responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, stacked: true },
-        y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => (v / 1e6).toFixed(1) + 'M' }, grid: { color: gc }, stacked: true },
+        y: { min: 0, max: yMax, ticks: { color: tc, font: { size: 9 }, callback: (v) => (v / 1e6).toFixed(1) + 'M' }, grid: { color: gc }, stacked: true },
         y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
       },
       plugins: { legend: LP, datalabels: DL },
