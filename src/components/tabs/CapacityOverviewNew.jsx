@@ -277,7 +277,7 @@ export default function CapacityOverviewNew() {
         </div>
       </div>
 
-      <div className="kpi-grid wpd-kpi-grid">
+      <div className="kpi-grid">
         <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} />
         <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} />
         <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} />
