@@ -30,6 +30,7 @@ export default function Sidebar() {
         <div className="sb-i" onClick={() => goSub('capacity-overview')}><span className="ic">⚙️</span>Capacity</div>
         <div className="sb-sub open">
           <div className={subItemClass('capacity-overview')} onClick={() => goSub('capacity-overview')}>Capacity Overview</div>
+          <div className={subItemClass('capacity-overview-new')} onClick={() => goSub('capacity-overview-new')}>Capacity Overview New</div>
         </div>
 
         <div className="sidebar-section-label">Tools</div>

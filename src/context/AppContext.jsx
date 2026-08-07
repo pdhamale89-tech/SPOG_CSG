@@ -3,13 +3,17 @@ import { formatIST } from '../utils/dateUtils';
 
 const AppContext = createContext(null);
 
-export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings'];
+// capacity-overview-new has its own Plan A/Plan B/Fiscal Year controls built
+// into the page (a self-contained dashboard port), so the outer filter bar
+// would be redundant/conflicting there -- same reasoning as Home/Reports.
+export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings', 'capacity-overview-new'];
 
 const BREADCRUMBS = {
   'forecast-overview': 'Forecast › Overview',
   'shipment-overview': 'Forecast › Shipment Overview',
   'asu-overview': 'Forecast › ASU Overview',
   'capacity-overview': 'Capacity › Overview',
+  'capacity-overview-new': 'Capacity › Overview New',
   'calendar-forecast': 'Calendar › Planning',
   'calendar-fiscal': 'Calendar › Fiscal',
 };
