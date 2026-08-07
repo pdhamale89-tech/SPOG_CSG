@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import InfoBtn from '../common/InfoBtn';
-import KpiCard from '../common/KpiCard';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpdHireExitConfig } from '../charts/chartConfigs';
@@ -23,6 +22,23 @@ const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
 const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');
 const badgeCls = (d) => (d >= 0 ? 'up' : 'down');
+
+function ComparisonKpi({ label, valueA, valueB, delta, suffix = '%', planA, planB }) {
+  const signed = delta > 0 ? `+${delta}` : `${delta}`;
+  return (
+    <div className="wpd-kpi-tile">
+      <div className="wpd-kpi-tile-label">{label}</div>
+      <div className="wpd-kpi-tile-main">
+        <span className="wpd-kpi-tile-a">{valueA}</span>
+        <span className="wpd-kpi-tile-arrow">→</span>
+        <span className="wpd-kpi-tile-b">{valueB}</span>
+      </div>
+      <div className="wpd-kpi-tile-sub">
+        {planA}→{planB} <span className={`wpd-kpi-tile-delta ${badgeCls(delta)}`}>{dirArrow(delta)} {signed}{suffix}</span>
+      </div>
+    </div>
+  );
+}
 
 function CompCard({ title, arrA, arrB, pA, pB, formatFn = fmt, suffix = '' }) {
   const totA = sum(arrA), totB = sum(arrB);
@@ -277,12 +293,12 @@ export default function CapacityOverviewNew() {
         </div>
       </div>
 
-      <div className="kpi-grid">
-        <KpiCard label={`${fy} Total Volume`} value={`${fmtM(tA)} → ${fmtM(tB)}`} delta={`${dirArrow(vD)} ${Math.abs(vD)}%`} sub={`${planA} → ${planB}`} />
-        <KpiCard label="Avg Headcount" value={`${fmt(hcA)} → ${fmt(hcB)}`} delta={`${dirArrow(hcD)} ${Math.abs(hcD)}%`} sub={`${planA} → ${planB}`} />
-        <KpiCard label="Excess Capacity" value={`${cA}% → ${cB}%`} delta={`${dirArrow(cB - cA)} ${Math.abs(cB - cA)}pp`} sub={`${planA} → ${planB}`} />
-        <KpiCard label="Total Hiring" value={`${fmt(hirA)} → ${fmt(hirB)}`} delta={`Δ ${hirB - hirA > 0 ? '+' : ''}${hirB - hirA}`} sub={`${planA} → ${planB}`} />
-        <KpiCard label="Excess HC (Avg/Qtr)" value={`${fmt(exA)} → ${fmt(exB)}`} delta={`Δ ${exB - exA > 0 ? '+' : ''}${exB - exA}`} sub={`${planA} → ${planB}`} />
+      <div className="kpi-grid cols-5 wpd-kpi-grid">
+        <ComparisonKpi label={`${fy} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fy} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fy} Excess Capacity`} valueA={`${cA}%`} valueB={`${cB}%`} delta={cB - cA} suffix="pp" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fy} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirB - hirA} suffix="" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fy} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exB - exA} suffix="" planA={planA} planB={planB} />
       </div>
 
       <div className="s-grid full">
