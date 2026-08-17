@@ -231,6 +231,7 @@ export default function CapacityOverviewNew() {
   const [planB, setPlanB] = useState('Feb');
   const [activeTab, setActiveTab] = useState('volume');
   const [openDetail, setOpenDetail] = useState({});
+  const [volMetric, setVolMetric] = useState('DB');
 
   // Fiscal Year now comes from the top Filters bar instead of its own
   // dropdown here -- but that bar's fiscal years (FY24-FY27) and this
@@ -242,9 +243,9 @@ export default function CapacityOverviewNew() {
   const hA = HC[planA][fy], hB = HC[planB][fy];
 
   const dVol = useMemo(() => ({
-    labels: QL, pA: planA, pB: planB, fy,
+    labels: QL, pA: planA, pB: planB, fy, labelMetric: volMetric,
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
-  }), [vA, vB, planA, planB, fy]);
+  }), [vA, vB, planA, planB, fy, volMetric]);
   const dHc = useMemo(() => {
     // Plan-over-Plan: New vs Old's L1 HC Exit % difference each quarter, so
     // the line reacts to Plan A/Plan B selection exactly like the bars do,
@@ -313,7 +314,13 @@ export default function CapacityOverviewNew() {
             <div className="card-title">
               Volume: {planA} vs {planB} — {fy}
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume (stacked per plan) plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B." />
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume (stacked per plan) plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B. Use the DB/OSP toggle to show that segment's own value labels." />
+            </div>
+            <div className="card-dd">
+              <div className="plan-sel">
+                <button className={'plan-btn' + (volMetric === 'DB' ? ' active' : '')} onClick={() => setVolMetric('DB')}>DB</button>
+                <button className={'plan-btn' + (volMetric === 'OSP' ? ' active' : '')} onClick={() => setVolMetric('OSP')}>OSP</button>
+              </div>
             </div>
           </div>
           <ChartCanvas config={volConfig} height="300px" />

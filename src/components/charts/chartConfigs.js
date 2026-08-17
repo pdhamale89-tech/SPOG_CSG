@@ -1064,9 +1064,8 @@ export function buildCapPopConfig(d, theme) {
 // light and dark mode.
 
 export function buildWpdVolumeConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, bgCard: bg, textPrimary: tp } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
   const delta = d.aTotal.map((v, i) => (d.bTotal[i] && v ? Math.round((d.bTotal[i] - v) / v * 1000) / 10 : null));
   // The two unstacked Total lines share an implicit stack group once the y
   // axis is stacked:true (needed so the DB+OSP bars stack correctly), so
@@ -1076,17 +1075,31 @@ export function buildWpdVolumeConfig(d, theme) {
   // grouping for datasets that were never meant to stack with each other.
   const rawMax = Math.max(...d.aTotal, ...d.bTotal);
   const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
+  const totalFmt = (v) => (v == null ? '' : (v / 1e6).toFixed(2) + 'M');
+  // Only the metric picked by the DB/OSP toggle gets its own segment labels
+  // -- both segments and the two Total lines shown together would be too
+  // cluttered, so the toggle lets the user pick which breakdown to inspect.
+  const segDL = (metric) => ({
+    display: d.labelMetric === metric,
+    color: tp, font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', textStrokeColor: bg, textStrokeWidth: 2,
+  });
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a' },
-        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a' },
-        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b' },
-        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b' },
-        { label: `${d.pA} Total`, data: d.aTotal, type: 'line', yAxisID: 'y', borderColor: '#10b981', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false } },
-        { label: `${d.pB} Total`, data: d.bTotal, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false } },
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', datalabels: segDL('DB') },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', datalabels: segDL('OSP') },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', datalabels: segDL('DB') },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', datalabels: segDL('OSP') },
+        {
+          label: `${d.pA} Total`, data: d.aTotal, type: 'line', yAxisID: 'y', borderColor: '#10b981', pointRadius: 4, pointBackgroundColor: '#10b981', tension: 0.3, borderWidth: 2.5, fill: false,
+          datalabels: { display: true, color: '#10b981', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'top', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },
+        },
+        {
+          label: `${d.pB} Total`, data: d.bTotal, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 4, pointBackgroundColor: '#f59e0b', tension: 0.3, borderWidth: 2.5, fill: false,
+          datalabels: { display: true, color: '#f59e0b', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },
+        },
         {
           label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
           datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => (v == null ? '' : v + '%') },
@@ -1100,7 +1113,7 @@ export function buildWpdVolumeConfig(d, theme) {
         y: { min: 0, max: yMax, ticks: { color: tc, font: { size: 9 }, callback: (v) => (v / 1e6).toFixed(1) + 'M' }, grid: { color: gc }, stacked: true },
         y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
       },
-      plugins: { legend: LP, datalabels: DL },
+      plugins: { legend: LP },
     },
   };
 }
