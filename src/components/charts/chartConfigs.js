@@ -1133,8 +1133,9 @@ export function buildWpdHcConfig(d, theme) {
 }
 
 export function buildWpdCapHireConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
+  const DL = dataLabelsDefault(theme);
   return {
     type: 'bar',
     data: {
@@ -1142,8 +1143,8 @@ export function buildWpdCapHireConfig(d, theme) {
       datasets: [
         { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1' },
         { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1' },
-        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => v + '%' } },
-        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => v + '%' } },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
         { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
       ],
     },
@@ -1154,7 +1155,7 @@ export function buildWpdCapHireConfig(d, theme) {
         y: { min: 90, max: 135, ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc } },
         y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
       },
-      plugins: { legend: LP },
+      plugins: { legend: LP, datalabels: DL },
     },
   };
 }
