@@ -1098,8 +1098,8 @@ export function buildWpdVolumeConfig(d, theme) {
           datalabels: { display: true, color: '#f59e0b', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },
         },
         {
-          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
-          datalabels: { display: true, color: tc, font: { size: 9, weight: 'bold' }, formatter: (v) => (v == null ? '' : v + '%') },
+          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
+          datalabels: { display: true, color: '#8b5cf6', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
     },
@@ -1108,7 +1108,7 @@ export function buildWpdVolumeConfig(d, theme) {
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, stacked: true },
         y: { min: 0, max: yMax, ticks: { color: tc, font: { size: 9 }, callback: (v) => (v / 1e6).toFixed(1) + 'M' }, grid: { color: gc }, stacked: true },
-        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => Number(v.toFixed(2)) + '%' }, grid: { display: false } },
       },
       plugins: { legend: LP },
     },
