@@ -1076,22 +1076,19 @@ export function buildWpdVolumeConfig(d, theme) {
   const rawMax = Math.max(...d.aTotal, ...d.bTotal);
   const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
   const totalFmt = (v) => (v == null ? '' : (v / 1e6).toFixed(2) + 'M');
-  // Only the metric picked by the DB/OSP toggle gets its own segment labels
-  // -- both segments and the two Total lines shown together would be too
-  // cluttered, so the toggle lets the user pick which breakdown to inspect.
-  const segDL = (metric) => ({
-    display: d.labelMetric === metric,
-    color: tp, font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', textStrokeColor: bg, textStrokeWidth: 2,
-  });
+  // The DB/OSP toggle fully hides the other metric's bars rather than just
+  // its label, so the chart shows a clean single-metric comparison instead
+  // of a stacked DB+OSP bar with only one segment labeled.
+  const segDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', datalabels: segDL('DB') },
-        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', datalabels: segDL('OSP') },
-        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', datalabels: segDL('DB') },
-        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', datalabels: segDL('OSP') },
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', hidden: d.labelMetric !== 'DB', datalabels: segDL },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', hidden: d.labelMetric !== 'OSP', datalabels: segDL },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', hidden: d.labelMetric !== 'DB', datalabels: segDL },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', hidden: d.labelMetric !== 'OSP', datalabels: segDL },
         {
           label: `${d.pA} Total`, data: d.aTotal, type: 'line', yAxisID: 'y', borderColor: '#10b981', pointRadius: 4, pointBackgroundColor: '#10b981', tension: 0.3, borderWidth: 2.5, fill: false,
           datalabels: { display: true, color: '#10b981', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'top', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },

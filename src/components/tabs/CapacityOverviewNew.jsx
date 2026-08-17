@@ -314,7 +314,7 @@ export default function CapacityOverviewNew() {
             <div className="card-title">
               Volume: {planA} vs {planB} — {fy}
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume (stacked per plan) plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B. Use the DB/OSP toggle to show that segment's own value labels." />
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume per plan plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B. Use the DB/OSP toggle to switch which metric's bars are shown." />
             </div>
             <div className="card-dd">
               <div className="plan-sel">
