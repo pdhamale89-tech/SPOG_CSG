@@ -1163,7 +1163,7 @@ export function buildWpdCapHireConfig(d, theme) {
 }
 
 export function buildWpdHireExitConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   return {
@@ -1175,8 +1175,14 @@ export function buildWpdHireExitConfig(d, theme) {
         { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 3 },
         { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(59,130,246,.5)', borderRadius: 3 },
         { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3 },
-        { label: 'LOA Exit', data: d.bLoa, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
-        { label: 'Training Exit', data: d.bTraining, type: 'line', borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+        {
+          label: 'LOA Exit', data: d.bLoa, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
+        },
+        {
+          label: 'Training Exit', data: d.bTraining, type: 'line', borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          datalabels: { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
+        },
       ],
     },
     options: {
