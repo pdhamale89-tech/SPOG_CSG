@@ -1,7 +1,7 @@
 import { useApp } from '../../context/AppContext';
 
 export default function Sidebar() {
-  const { currentTab, goSub, navTo } = useApp();
+  const { currentTab, goSub, navTo, workspace } = useApp();
 
   const subItemClass = (pid) => 'sb-i' + (currentTab === pid ? ' active' : '');
   const topItemClass = (pid) => 'sb-i' + (currentTab === pid ? ' active' : '');
@@ -20,18 +20,24 @@ export default function Sidebar() {
         <div className="sidebar-section-label">Main</div>
         <div className={topItemClass('home')} onClick={() => navTo('home')}><span className="ic">🏠</span>Home</div>
 
-        <div className="sidebar-section-label">Forecast &amp; Capacity Overview</div>
-        <div className="sb-i active" onClick={() => goSub('forecast-overview')}><span className="ic">📊</span>Forecast</div>
-        <div className="sb-sub open">
-          <div className={subItemClass('forecast-overview')} onClick={() => goSub('forecast-overview')}>Forecast Overview</div>
-          <div className={subItemClass('shipment-overview')} onClick={() => goSub('shipment-overview')}>Shipment Overview</div>
-          <div className={subItemClass('asu-overview')} onClick={() => goSub('asu-overview')}>ASU Overview</div>
-        </div>
-        <div className="sb-i" onClick={() => goSub('capacity-overview')}><span className="ic">⚙️</span>Capacity</div>
-        <div className="sb-sub open">
-          <div className={subItemClass('capacity-overview')} onClick={() => goSub('capacity-overview')}>Capacity Overview</div>
-          <div className={subItemClass('capacity-overview-new')} onClick={() => goSub('capacity-overview-new')}>Capacity Overview New</div>
-        </div>
+        {workspace === 'care' ? (
+          <div className={topItemClass('care-overview')} onClick={() => goSub('care-overview')}><span className="ic">💙</span>Care Overview</div>
+        ) : (
+          <>
+            <div className="sidebar-section-label">Forecast &amp; Capacity Overview</div>
+            <div className="sb-i active" onClick={() => goSub('forecast-overview')}><span className="ic">📊</span>Forecast</div>
+            <div className="sb-sub open">
+              <div className={subItemClass('forecast-overview')} onClick={() => goSub('forecast-overview')}>Forecast Overview</div>
+              <div className={subItemClass('shipment-overview')} onClick={() => goSub('shipment-overview')}>Shipment Overview</div>
+              <div className={subItemClass('asu-overview')} onClick={() => goSub('asu-overview')}>ASU Overview</div>
+            </div>
+            <div className="sb-i" onClick={() => goSub('capacity-overview')}><span className="ic">⚙️</span>Capacity</div>
+            <div className="sb-sub open">
+              <div className={subItemClass('capacity-overview')} onClick={() => goSub('capacity-overview')}>Capacity Overview</div>
+              <div className={subItemClass('capacity-overview-new')} onClick={() => goSub('capacity-overview-new')}>Capacity Overview New</div>
+            </div>
+          </>
+        )}
 
         <div className="sidebar-section-label">Tools</div>
         <div className={topItemClass('reports')} onClick={() => navTo('reports')}><span className="ic">📋</span>Reports</div>

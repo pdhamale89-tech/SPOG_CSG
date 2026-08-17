@@ -3,7 +3,7 @@ import { formatIST } from '../utils/dateUtils';
 
 const AppContext = createContext(null);
 
-export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings'];
+export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings', 'care-overview'];
 
 const BREADCRUMBS = {
   'forecast-overview': 'Forecast › Overview',
@@ -13,6 +13,7 @@ const BREADCRUMBS = {
   'capacity-overview-new': 'Capacity › Overview New',
   'calendar-forecast': 'Calendar › Planning',
   'calendar-fiscal': 'Calendar › Fiscal',
+  'care-overview': 'Care › Overview',
 };
 
 function defaultBreadcrumb(pid) {
@@ -23,6 +24,10 @@ export function AppProvider({ children }) {
   const [theme, setTheme] = useState('light');
   const [currentTab, setCurrentTabState] = useState('forecast-overview');
   const [breadcrumb, setBreadcrumb] = useState('Forecast › Overview');
+  // Which business the Sidebar's nav belongs to -- set from the Home page's
+  // business cards. Only 'csg' and 'care' render inside this app; ISG is a
+  // separate deployment the Home page navigates away to entirely.
+  const [workspace, setWorkspace] = useState('csg');
 
   // Snapshot of when this dashboard session loaded, shown in the topbar and info popups.
   // No backend exists yet, so "last refreshed" is the page load time rather than a real data-pull time.
@@ -176,6 +181,7 @@ export function AppProvider({ children }) {
   const value = useMemo(() => ({
     theme, toggleTheme, lastUpdated,
     currentTab, navTo, goSub, breadcrumb,
+    workspace, setWorkspace,
     curRegion, setCurRegion, curPeriod, setCurPeriod, fiscalYear, setFiscalYear,
     chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
@@ -193,7 +199,7 @@ export function AppProvider({ children }) {
     forwardModal, openForward, closeForward, submitForward,
     drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
-  }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb,
+  }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb, workspace,
     curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan,

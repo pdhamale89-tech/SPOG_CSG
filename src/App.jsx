@@ -19,6 +19,7 @@ import ShipmentOverview from './components/tabs/ShipmentOverview';
 import AsuOverview from './components/tabs/AsuOverview';
 import CapacityOverview from './components/tabs/CapacityOverview';
 import CapacityOverviewNew from './components/tabs/CapacityOverviewNew';
+import CareOverview from './components/tabs/CareOverview';
 import CalendarForecast from './components/tabs/CalendarForecast';
 import CalendarFiscal from './components/tabs/CalendarFiscal';
 import Reports from './components/tabs/Reports';
@@ -32,6 +33,7 @@ const TABS = {
   'asu-overview': AsuOverview,
   'capacity-overview': CapacityOverview,
   'capacity-overview-new': CapacityOverviewNew,
+  'care-overview': CareOverview,
   'calendar-forecast': CalendarForecast,
   'calendar-fiscal': CalendarFiscal,
   'reports': Reports,
