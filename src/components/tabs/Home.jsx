@@ -19,14 +19,23 @@ const BUSINESSES = [
     desc: 'ESG and HES forecasting, capacity planning and shared calendar tools.',
     chips: ['ESG', 'HES', 'Calendar'],
   },
+  {
+    key: 'care',
+    code: 'Care',
+    name: 'Care',
+    icon: '💙',
+    desc: 'Care forecast, capacity planning and reporting dashboard.',
+    chips: ['Coming Soon'],
+  },
 ];
 
 export default function Home() {
-  const { goSub } = useApp();
+  const { goSub, showToast } = useApp();
 
   function openBusiness(key) {
     if (key === 'csg') goSub('forecast-overview');
-    else window.location.href = ISG_URL;
+    else if (key === 'isg') window.location.href = ISG_URL;
+    else showToast('Care dashboard coming soon', 'toast-success');
   }
 
   return (
