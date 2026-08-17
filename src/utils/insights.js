@@ -136,7 +136,7 @@ export function wpdVolumeInsight(d) {
   const tA = sum(d.aTotal), tB = sum(d.bTotal);
   const diffPct = tA ? round((tB - tA) / tA * 100) : 0;
   const dir = diffPct >= 0 ? 'above' : 'below';
-  return `${d.pB} total volume runs ${Math.abs(diffPct)}% ${dir} ${d.pA} across the ${d.fy} quarters, moving from ${fK(first(d.aTotal))} to ${fK(last(d.bTotal))}.`;
+  return `${d.pB} total volume runs ${Math.abs(diffPct)}% ${dir} ${d.pA} across ${d.fy}, moving from ${fK(first(d.aTotal))} to ${fK(last(d.bTotal))}.`;
 }
 
 export function wpdHcInsight(d) {
