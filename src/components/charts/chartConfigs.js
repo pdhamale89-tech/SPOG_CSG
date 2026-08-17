@@ -1114,10 +1114,10 @@ export function buildWpdHcConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Old', data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, datalabels: barDL },
-        { label: 'New', data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, datalabels: barDL },
+        { label: `${d.pA} HC`, data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, datalabels: barDL },
+        { label: `${d.pB} HC`, data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, datalabels: barDL },
         {
-          label: 'L1 HC_Exit POP', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
+          label: 'L1 HC Exit', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
           datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
