@@ -245,10 +245,18 @@ export default function CapacityOverviewNew() {
     labels: QL, pA: planA, pB: planB, fy,
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
   }), [vA, vB, planA, planB, fy]);
-  const dHc = useMemo(() => ({
-    labels: QL, pA: planA, pB: planB,
-    aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, aHcExit: hA.HC_Exit, bHcExit: hB.HC_Exit, bExcessHc: hB.Excess_HC,
-  }), [hA, hB, planA, planB]);
+  const dHc = useMemo(() => {
+    // Q1's period-over-period % needs a prior quarter -- pull the previous
+    // fiscal year's Q4 for New/Plan B when one exists in this page's dataset,
+    // otherwise Q1 has no baseline and its point is left blank.
+    const prevFy = YRS[YRS.indexOf(fy) - 1];
+    const prevQ4 = prevFy ? HC[planB][prevFy].HC_Exit[3] : null;
+    const bHcExitPop = hB.HC_Exit.map((v, i) => {
+      const prev = i === 0 ? prevQ4 : hB.HC_Exit[i - 1];
+      return prev != null && prev !== 0 ? Math.round(((v - prev) / prev) * 1000) / 10 : null;
+    });
+    return { labels: QL, pA: planA, pB: planB, aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, bHcExitPop };
+  }, [hA, hB, planA, planB, fy]);
   const dCapHire = useMemo(() => ({
     labels: QL, pA: planA, pB: planB, aHiring: hA.Hiring, bHiring: hB.Hiring, aCap: hA.Excess_Cap, bCap: hB.Excess_Cap,
   }), [hA, hB, planA, planB]);
@@ -319,9 +327,9 @@ export default function CapacityOverviewNew() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              HC Avg, Exit &amp; Excess
+              HC Avg (Old vs New) &amp; L1 HC Exit POP
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend for Plan A vs Plan B, with Plan B's Excess HC overlaid on a secondary axis." />
+              <InfoBtn tip="<strong>Purpose</strong>HC Avg for Plan A (Old) vs Plan B (New) as bars, with L1 HC Exit period-over-period % change as a line on a secondary axis." />
             </div>
           </div>
           <ChartCanvas config={hcConfig} height="300px" />

@@ -140,9 +140,10 @@ export function wpdVolumeInsight(d) {
 }
 
 export function wpdHcInsight(d) {
-  const aAvgFirst = first(d.aHcAvg), aAvgLast = last(d.aHcAvg);
-  const bAvgLast = last(d.bHcAvg);
-  return `${d.pA} HC Avg moved from ${aAvgFirst} to ${aAvgLast} across the quarter, versus ${d.pB} ending at ${bAvgLast}; ${d.pB} Excess HC closed at ${last(d.bExcessHc)}.`;
+  const aAvgLast = last(d.aHcAvg), bAvgLast = last(d.bHcAvg);
+  const lastPop = last(d.bHcExitPop);
+  const popText = lastPop == null ? 'unavailable for the first quarter shown' : `${lastPop}% period-over-period`;
+  return `HC Avg closed at ${aAvgLast} (Old) versus ${bAvgLast} (New); L1 HC Exit moved ${popText} in the latest quarter.`;
 }
 
 export function wpdCapHireInsight(d) {

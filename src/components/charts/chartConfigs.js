@@ -1106,26 +1106,28 @@ export function buildWpdVolumeConfig(d, theme) {
 }
 
 export function buildWpdHcConfig(d, theme) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
+  const barDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
   return {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} HC Avg`, data: d.aHcAvg, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2.5, datalabels: { display: false } },
-        { label: `${d.pB} HC Avg`, data: d.bHcAvg, borderColor: '#06b6d4', borderDash: [6, 3], fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2.5, datalabels: { display: false } },
-        { label: `${d.pA} HC Exit`, data: d.aHcExit, borderColor: '#f59e0b', fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, datalabels: { display: false } },
-        { label: `${d.pB} HC Exit`, data: d.bHcExit, borderColor: '#ef4444', borderDash: [6, 3], fill: false, tension: 0.3, pointRadius: 3, borderWidth: 2, datalabels: { display: false } },
-        { label: `${d.pB} Excess HC`, data: d.bExcessHc, borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,.12)', fill: true, tension: 0.3, pointRadius: 3, borderWidth: 2, yAxisID: 'y1', datalabels: { display: false } },
+        { label: 'Old', data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, datalabels: barDL },
+        { label: 'New', data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, datalabels: barDL },
+        {
+          label: 'L1 HC_Exit POP', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
+          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
+        },
       ],
     },
     options: {
       responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT,
       scales: {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { display: false } },
-        y: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, title: { display: true, text: 'HC Count', color: tc, font: { size: 9 } } },
-        y1: { position: 'right', ticks: { color: tc, font: { size: 9 } }, grid: { display: false }, title: { display: true, text: 'Excess HC', color: tc, font: { size: 9 } } },
+        y: { min: 0, ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, title: { display: true, text: 'HC Count', color: tc, font: { size: 9 } } },
+        y1: { position: 'right', ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false } },
       },
       plugins: { legend: LP },
     },
