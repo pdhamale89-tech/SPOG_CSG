@@ -246,17 +246,15 @@ export default function CapacityOverviewNew() {
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
   }), [vA, vB, planA, planB, fy]);
   const dHc = useMemo(() => {
-    // Q1's period-over-period % needs a prior quarter -- pull the previous
-    // fiscal year's Q4 for New/Plan B when one exists in this page's dataset,
-    // otherwise Q1 has no baseline and its point is left blank.
-    const prevFy = YRS[YRS.indexOf(fy) - 1];
-    const prevQ4 = prevFy ? HC[planB][prevFy].HC_Exit[3] : null;
+    // Plan-over-Plan: New vs Old's L1 HC Exit % difference each quarter, so
+    // the line reacts to Plan A/Plan B selection exactly like the bars do,
+    // instead of a time-based quarter-over-quarter change.
     const bHcExitPop = hB.HC_Exit.map((v, i) => {
-      const prev = i === 0 ? prevQ4 : hB.HC_Exit[i - 1];
-      return prev != null && prev !== 0 ? Math.round(((v - prev) / prev) * 1000) / 10 : null;
+      const base = hA.HC_Exit[i];
+      return base ? Math.round(((v - base) / base) * 1000) / 10 : null;
     });
     return { labels: QL, pA: planA, pB: planB, aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, bHcExitPop };
-  }, [hA, hB, planA, planB, fy]);
+  }, [hA, hB, planA, planB]);
   const dCapHire = useMemo(() => ({
     labels: QL, pA: planA, pB: planB, aHiring: hA.Hiring, bHiring: hB.Hiring, aCap: hA.Excess_Cap, bCap: hB.Excess_Cap,
   }), [hA, hB, planA, planB]);
@@ -327,9 +325,9 @@ export default function CapacityOverviewNew() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              HC Avg (Old vs New) &amp; L1 HC Exit POP
+              HC Avg &amp; L1 HC Exit POP
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>HC Avg for Plan A (Old) vs Plan B (New) as bars, with L1 HC Exit period-over-period % change as a line on a secondary axis." />
+              <InfoBtn tip="<strong>Purpose</strong>HC Avg for Plan A (Old) vs Plan B (New) as bars, with L1 HC Exit Plan-over-Plan % difference as a line on a secondary axis." />
             </div>
           </div>
           <ChartCanvas config={hcConfig} height="300px" />
