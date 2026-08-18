@@ -134,16 +134,16 @@ export function capPopInsight(d) {
 
 export function wpdVolumeInsight(d) {
   const tA = sum(d.aTotal), tB = sum(d.bTotal);
-  const diffPct = tA ? round((tB - tA) / tA * 100) : 0;
+  const diffPct = tB ? round((tA - tB) / tB * 100) : 0;
   const dir = diffPct >= 0 ? 'above' : 'below';
-  return `${d.pB} total volume runs ${Math.abs(diffPct)}% ${dir} ${d.pA} across ${d.fy}, moving from ${fK(first(d.aTotal))} to ${fK(last(d.bTotal))}.`;
+  return `${d.pA} total volume runs ${Math.abs(diffPct)}% ${dir} ${d.pB} across ${d.fy}, moving from ${fK(first(d.bTotal))} to ${fK(last(d.aTotal))}.`;
 }
 
 export function wpdHcInsight(d) {
   const aAvgLast = last(d.aHcAvg), bAvgLast = last(d.bHcAvg);
   const lastPop = last(d.bHcExitPop);
   const popText = lastPop == null ? 'flat' : `${lastPop >= 0 ? '+' : ''}${lastPop}%`;
-  return `HC Avg closed at ${aAvgLast} (Old) versus ${bAvgLast} (New); L1 HC Exit runs ${popText} Plan-over-Plan in the latest quarter.`;
+  return `HC Avg closed at ${aAvgLast} (Current) versus ${bAvgLast} (Previous); L1 HC Exit runs ${popText} Plan-over-Plan in the latest quarter.`;
 }
 
 export function wpdCapHireInsight(d) {

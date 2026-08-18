@@ -86,8 +86,11 @@ function ComparisonKpi({ label, valueA, valueB, delta, suffix = '%', planA, plan
 
 function CompCard({ title, arrA, arrB, pA, pB, formatFn = fmt, suffix = '' }) {
   const totA = sum(arrA), totB = sum(arrB);
-  const d = totB - totA;
-  const dp = pct(totA, totB);
+  // arrA is always the Current Plan and arrB the Previous Plan, so the delta
+  // reads as Current minus Previous, relative to Previous -- not "whichever
+  // was picked second minus whichever was picked first".
+  const d = totA - totB;
+  const dp = pct(totB, totA);
   return (
     <div className="cmp-card">
       <div className="cmp-card-head">
@@ -144,7 +147,7 @@ function VolumeTab({ vA, vB, pA, pB, labels, openDetail, toggle }) {
   const headers = ['Partner', ...labels.map((l) => `${pA} ${l}`), `${pA} Total`, ...labels.map((l) => `${pB} ${l}`), `${pB} Total`, 'Δ Total'];
   const rows = ['DB', 'OSP', 'Total'].map((p) => {
     const a = vA[p], b = vB[p];
-    const tA = sum(a), tB = sum(b), d = tB - tA;
+    const tA = sum(a), tB = sum(b), d = tA - tB;
     const cells = [{ val: p }];
     a.forEach((v) => cells.push({ val: fmt(v) }));
     cells.push({ val: fmt(tA) });
@@ -176,7 +179,7 @@ function HeadcountTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
     const a = hA[m.k], b = hB[m.k];
     const cells = [{ val: m.l }];
     labels.forEach((_, i) => {
-      const d = (b[i] || 0) - (a[i] || 0);
+      const d = (a[i] || 0) - (b[i] || 0);
       cells.push({ val: fmt(a[i]) }, { val: fmt(b[i]) }, deltaCell(d));
     });
     return { cells, isTotal: m.k === 'Total_HC' };
@@ -205,7 +208,7 @@ function HiringTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
     const a = hA[m.k], b = hB[m.k];
     const cells = [{ val: m.l }];
     labels.forEach((_, i) => {
-      const d = (b[i] || 0) - (a[i] || 0);
+      const d = (a[i] || 0) - (b[i] || 0);
       cells.push({ val: fmt(a[i]) }, { val: fmt(b[i]) }, deltaCell(d));
     });
     return { cells };
@@ -227,21 +230,21 @@ function HiringTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
 function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
   const headers = ['Period', `${pA} Cap%`, `${pB} Cap%`, 'Δ pp', `${pA} ExHC`, `${pB} ExHC`, 'Δ ExHC'];
   const rows = labels.map((l, i) => {
-    const ca = hA.Excess_Cap[i], cb = hB.Excess_Cap[i], dc = cb - ca;
-    const ea = hA.Excess_HC[i], eb = hB.Excess_HC[i], de = eb - ea;
+    const ca = hA.Excess_Cap[i], cb = hB.Excess_Cap[i], dc = ca - cb;
+    const ea = hA.Excess_HC[i], eb = hB.Excess_HC[i], de = ea - eb;
     return { cells: [{ val: l }, { val: ca + '%' }, { val: cb + '%' }, deltaCell(dc, 'pp'), { val: fmt(ea) }, { val: fmt(eb) }, deltaCell(de)] };
   });
   const avgCA = Math.round(sum(hA.Excess_Cap) / 4), avgCB = Math.round(sum(hB.Excess_Cap) / 4);
   const avgEA = Math.round(sum(hA.Excess_HC) / 4), avgEB = Math.round(sum(hB.Excess_HC) / 4);
   rows.push({
     isTotal: true,
-    cells: [{ val: 'Average' }, { val: avgCA + '%' }, { val: avgCB + '%' }, deltaCell(avgCB - avgCA, 'pp'), { val: fmt(avgEA) }, { val: fmt(avgEB) }, deltaCell(avgEB - avgEA)],
+    cells: [{ val: 'Average' }, { val: avgCA + '%' }, { val: avgCB + '%' }, deltaCell(avgCA - avgCB, 'pp'), { val: fmt(avgEA) }, { val: fmt(avgEB) }, deltaCell(avgEA - avgEB)],
   });
   return (
     <>
       <div className="cmp-grid">
         {labels.map((l, i) => {
-          const capA = hA.Excess_Cap[i], capB = hB.Excess_Cap[i], d = capB - capA;
+          const capA = hA.Excess_Cap[i], capB = hB.Excess_Cap[i], d = capA - capB;
           return (
             <div className="cmp-card" key={l}>
               <div className="cmp-card-head">
@@ -297,12 +300,13 @@ export default function CapacityOverview() {
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
   }), [labels, vA, vB, planA, planB, fy, isYearly, volMetric]);
   const dHc = useMemo(() => {
-    // Plan-over-Plan: New vs Old's L1 HC Exit % difference each period, so
-    // the line reacts to Plan A/Plan B selection exactly like the bars do,
-    // instead of a time-based quarter-over-quarter change.
-    const bHcExitPop = hB.HC_Exit.map((v, i) => {
-      const base = hA.HC_Exit[i];
-      return base ? Math.round(((v - base) / base) * 1000) / 10 : null;
+    // Plan-over-Plan: Current vs Previous's L1 HC Exit % difference each
+    // period, so the line reacts to the Comparison Filter selection exactly
+    // like the bars do, instead of a time-based quarter-over-quarter change.
+    // Relative to Previous (the baseline), matching Current minus Previous.
+    const bHcExitPop = hB.HC_Exit.map((prev, i) => {
+      const cur = hA.HC_Exit[i];
+      return prev ? Math.round(((cur - prev) / prev) * 1000) / 10 : null;
     });
     return { labels, pA: planA, pB: planB, aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, bHcExitPop };
   }, [labels, hA, hB, planA, planB]);
@@ -318,10 +322,13 @@ export default function CapacityOverview() {
   const capHireConfig = useMemo(() => buildWpdCapHireConfig(dCapHire, theme), [dCapHire, theme]);
   const hireExitConfig = useMemo(() => buildWpdHireExitConfig(dHireExit, theme), [dHireExit, theme]);
 
+  // planA/vA/hA is always the Current Plan and planB/vB/hB the Previous Plan
+  // (see AppContext's compPlanA/compPlanB), so every delta below reads as
+  // Current minus Previous -- not "whichever dropdown is B minus A".
   const tA = sum(vA.Total), tB = sum(vB.Total);
-  const vD = pct(tA, tB);
+  const vD = pct(tB, tA);
   const hcA = Math.round(sum(hA.HC_Avg) / 4), hcB = Math.round(sum(hB.HC_Avg) / 4);
-  const hcD = pct(hcA, hcB);
+  const hcD = pct(hcB, hcA);
   const cA = Math.round(sum(hA.Excess_Cap) / 4), cB = Math.round(sum(hB.Excess_Cap) / 4);
   const hirA = sum(hA.Hiring), hirB = sum(hB.Hiring);
   const exA = Math.round(sum(hA.Excess_HC) / 4), exB = Math.round(sum(hB.Excess_HC) / 4);
@@ -338,9 +345,9 @@ export default function CapacityOverview() {
       <div className="kpi-grid cols-5 wpd-kpi-grid">
         <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={`${cA}%`} valueB={`${cB}%`} delta={cB - cA} suffix="pp" planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirB - hirA} suffix="" planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exB - exA} suffix="" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={`${cA}%`} valueB={`${cB}%`} delta={cA - cB} suffix="pp" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirA - hirB} suffix="" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exA - exB} suffix="" planA={planA} planB={planB} />
       </div>
 
       <div className="s-grid full">
@@ -369,7 +376,7 @@ export default function CapacityOverview() {
             <div className="card-title">
               HC Avg &amp; L1 HC Exit POP
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>HC Avg for Plan A (Old) vs Plan B (New) as bars, with L1 HC Exit Plan-over-Plan % difference as a line on a secondary axis." />
+              <InfoBtn tip="<strong>Purpose</strong>HC Avg for the Current Plan vs the Previous Plan as bars, with L1 HC Exit Plan-over-Plan % difference (Current vs Previous) as a line on a secondary axis." />
             </div>
           </div>
           <ChartCanvas config={hcConfig} height="300px" />

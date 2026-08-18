@@ -1066,7 +1066,9 @@ export function buildCapPopConfig(d, theme) {
 export function buildWpdVolumeConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, bgCard: bg, textPrimary: tp } = getColors(theme);
   const LP = legendPos(theme);
-  const delta = d.aTotal.map((v, i) => (d.bTotal[i] && v ? Math.round((d.bTotal[i] - v) / v * 1000) / 10 : null));
+  // aTotal is always the Current Plan and bTotal the Previous Plan, so this
+  // reads as Current minus Previous, relative to Previous.
+  const delta = d.aTotal.map((v, i) => (d.bTotal[i] ? Math.round((v - d.bTotal[i]) / d.bTotal[i] * 1000) / 10 : null));
   // The two unstacked Total lines share an implicit stack group once the y
   // axis is stacked:true (needed so the DB+OSP bars stack correctly), so
   // Chart.js's own auto-max summed both plans' totals together (~6.9M
