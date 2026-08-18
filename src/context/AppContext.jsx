@@ -35,6 +35,11 @@ export function AppProvider({ children }) {
   const [curRegion, setCurRegion] = useState('Global');
   const [curPeriod, setCurPeriod] = useState('monthly');
   const [fiscalYear, setFiscalYear] = useState('FY26');
+  // Capacity Overview's Plan A/Plan B comparison picker -- lives here (not
+  // local to that page) because it now renders inside the shared FilterBar,
+  // alongside the rest of the Filters panel, instead of its own box on the page.
+  const [compPlanA, setCompPlanA] = useState('Jan');
+  const [compPlanB, setCompPlanB] = useState('Feb');
   const [chartRegions, setChartRegions] = useState({});
   const [chartSubRegions, setChartSubRegions] = useState({});
   const [chartCountries, setChartCountries] = useState({});
@@ -103,6 +108,8 @@ export function AppProvider({ children }) {
     setChartRegions({});
     setChartSubRegions({});
     setChartCountries({});
+    setCompPlanA('Jan');
+    setCompPlanB('Feb');
   }, []);
 
   const showToast = useCallback((msg, cls) => {
@@ -177,6 +184,7 @@ export function AppProvider({ children }) {
     currentTab, navTo, goSub, breadcrumb,
     workspace, setWorkspace,
     curRegion, setCurRegion, curPeriod, setCurPeriod, fiscalYear, setFiscalYear,
+    compPlanA, setCompPlanA, compPlanB, setCompPlanB,
     chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor,
@@ -193,7 +201,7 @@ export function AppProvider({ children }) {
     drillDownModal, openDrillDown, closeDrillDown,
     actionLog, logAction,
   }), [theme, toggleTheme, lastUpdated, currentTab, navTo, goSub, breadcrumb, workspace,
-    curRegion, curPeriod, fiscalYear, chartRegions, setChartRegion, chartRegionFor,
+    curRegion, curPeriod, fiscalYear, compPlanA, compPlanB, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan,
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,

@@ -4,7 +4,7 @@ import InfoBtn from '../common/InfoBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpdHireExitConfig } from '../charts/chartConfigs';
-import { MONTHS, MONTH_LABELS, YRS, VOL, HC } from '../../data/capacityOverviewNewData';
+import { YRS, VOL, HC } from '../../data/capacityOverviewNewData';
 import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight } from '../../utils/insights';
 import { buildPeriodLabels } from '../../utils/periodLabels';
 
@@ -270,9 +270,7 @@ const TABS = [
 ];
 
 export default function CapacityOverview() {
-  const { theme, fiscalYear, curPeriod } = useApp();
-  const [planA, setPlanA] = useState('Jan');
-  const [planB, setPlanB] = useState('Feb');
+  const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB } = useApp();
   const [activeTab, setActiveTab] = useState('volume');
   const [openDetail, setOpenDetail] = useState({});
   const [volMetric, setVolMetric] = useState('DB');
@@ -337,22 +335,6 @@ export default function CapacityOverview() {
 
   return (
     <div className="tab-panel active">
-      <div className="cap-plan-filters">
-        <span className="cap-plan-filters-title">🎛️ Comparison Filter</span>
-        <div className="filter-group">
-          <label>Plan A</label>
-          <select value={planA} onChange={(e) => setPlanA(e.target.value)}>
-            {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
-          </select>
-        </div>
-        <div className="filter-group">
-          <label>Plan B</label>
-          <select value={planB} onChange={(e) => setPlanB(e.target.value)}>
-            {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
-          </select>
-        </div>
-      </div>
-
       <div className="kpi-grid cols-5 wpd-kpi-grid">
         <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />

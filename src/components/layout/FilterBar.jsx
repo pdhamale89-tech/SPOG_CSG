@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { M8 } from '../../data/forecastData';
+import { MONTHS, MONTH_LABELS } from '../../data/capacityOverviewNewData';
 
 const FISCAL_YEARS = ['FY24', 'FY25', 'FY26', 'FY27'];
 
@@ -56,7 +57,9 @@ export default function FilterBar() {
   const {
     showFilters, currentTab, curRegion, applyFilters, curPeriod, setCurPeriod,
     fiscalYear, setFiscalYear, clearFilters,
+    compPlanA, setCompPlanA, compPlanB, setCompPlanB,
   } = useApp();
+  const isCapacityOverview = currentTab === 'capacity-overview';
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
@@ -130,9 +133,28 @@ export default function FilterBar() {
             {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
             {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
           </div>
-          <div className="filter-clear-row">
-            <button type="button" className="clear-all-btn" onClick={handleClear}>✕ Clear All</button>
-          </div>
+          {isCapacityOverview ? (
+            <div className="cap-plan-filters">
+              <span className="cap-plan-filters-title">⠿ Comparison Filter</span>
+              <div className="filter-group">
+                <label>Plan A</label>
+                <select value={compPlanA} onChange={(e) => setCompPlanA(e.target.value)}>
+                  {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Plan B</label>
+                <select value={compPlanB} onChange={(e) => setCompPlanB(e.target.value)}>
+                  {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
+                </select>
+              </div>
+              <button type="button" className="clear-all-btn cap-plan-filters-clear" onClick={handleClear}>✕ Clear All</button>
+            </div>
+          ) : (
+            <div className="filter-clear-row">
+              <button type="button" className="clear-all-btn" onClick={handleClear}>✕ Clear All</button>
+            </div>
+          )}
         </>
       )}
     </div>
