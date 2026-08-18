@@ -211,14 +211,18 @@ export function buildDbOspVolumeConfig(d, theme) {
 export function buildDmsConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
+  // Segment backgrounds here are fixed brand colors, not theme-driven, so
+  // each label color is chosen for contrast against its OWN segment (not
+  // the page theme) and stays correct in both light and dark mode.
+  const segLabel = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', formatter: (v) => v + '%' });
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#FFA700', datalabels: { color: '#000' } },
-        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#B3CBE8', datalabels: { color: '#000' } },
-        { label: 'Assisted', data: d.dmsAs, backgroundColor: '#0D4C91' },
+        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#FFA700', datalabels: segLabel('#000') },
+        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#B3CBE8', datalabels: segLabel('#000') },
+        { label: 'Assisted', data: d.dmsAs, backgroundColor: '#0D4C91', datalabels: segLabel('#fff') },
       ],
     },
     options: {
@@ -228,7 +232,7 @@ export function buildDmsConfig(d, theme) {
         x: { ticks: { color: tc, font: { size: 9 } }, grid: { color: gc }, stacked: true },
         y: { ticks: { color: tc, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: gc }, stacked: true, max: 100 },
       },
-      plugins: { legend: LP, datalabels: { display: true, color: '#fff', font: { size: 9, weight: 'bold' }, anchor: 'center', formatter: (v) => v + '%' } },
+      plugins: { legend: LP },
     },
   };
 }
@@ -319,38 +323,45 @@ export function buildPartnerLockConfig(data, theme, isPartnerView, targetPct) {
 export function buildHistTrendConfig(d, theme, curHistPlan) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const { bgCard: bg } = getColors(theme);
   const pd = d[curHistPlan] || d.plan1;
   const planLabel = curHistPlan === 'plan1' ? 'Jul Pro' : curHistPlan === 'plan2' ? 'Jun Pro' : 'Aug Pro';
+  // 4 lines sharing one anchor/align would collide wherever they run close
+  // together, so each gets its own color, position (above/below), and
+  // offset, spreading them out instead of stacking on the same spot.
+  const lineDL = (color, align, offset) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset, textStrokeColor: bg, textStrokeWidth: 3 });
   return {
     type: 'line',
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'FY2026', data: d.fy26, borderColor: '#166534', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false },
-        { label: 'FY2027', data: d.fy27act, borderColor: '#7c3aed', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false },
-        { label: planLabel, data: pd, borderColor: '#06b6d4', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false },
-        { label: 'ML Forecast', data: d.mlfc, borderColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false },
+        { label: 'FY2026', data: d.fy26, borderColor: '#166534', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#166534', 'top', 4) },
+        { label: 'FY2027', data: d.fy27act, borderColor: '#7c3aed', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#7c3aed', 'top', 16) },
+        { label: planLabel, data: pd, borderColor: '#06b6d4', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#06b6d4', 'bottom', 4) },
+        { label: 'ML Forecast', data: d.mlfc, borderColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#f59e0b', 'bottom', 16) },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
   };
 }
 
 export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const { bgCard: bg } = getColors(theme);
+  // Actual and AOP track within a few points of each other throughout, so
+  // one is labeled above its line and the other below to keep them legible.
+  const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   return {
     type: 'line',
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#3b82f6', tension: 0.4, fill: false },
-        { label: 'AOP', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
+        { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#3b82f6', tension: 0.4, fill: false, datalabels: lineDL('#3b82f6', 'top') },
+        { label: 'AOP', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
   };
 }
 
@@ -403,7 +414,7 @@ function fyYearLabels(fiscalYear, count) {
 }
 
 export function buildExitTrendConfig(theme, fiscalYear) {
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const labels = fyYearLabels(fiscalYear, 6);
 
@@ -428,7 +439,7 @@ export function buildExitTrendConfig(theme, fiscalYear) {
           borderDash: [4, 3],
           borderRadius: 2,
           datalabels: {
-            display: true, color: '#1a1f36', font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'end', offset: 6,
+            display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'end', offset: 6, textStrokeColor: bg, textStrokeWidth: 3,
             formatter: (v, ctx) => { const p = shipmentPct[ctx.dataIndex]; return p == null ? '' : `${p >= 0 ? '+' : ''}${p}%`; },
           },
         },
@@ -533,7 +544,13 @@ export function buildSegmentSoldConfig(theme, curPeriod, fiscalYear, view = 'seg
         legend: LP,
         datalabels: {
           display: true,
+          // Segment backgrounds here are a fixed brand palette (not
+          // theme-driven), so white text is chosen for contrast against
+          // those specific colors, with a dark halo as insurance against
+          // any lighter segment in the palette.
           color: '#fff',
+          textStrokeColor: 'rgba(0,0,0,.45)',
+          textStrokeWidth: 2,
           font: { size: 9, weight: 'bold' },
           anchor: 'center',
           align: 'center',
@@ -591,17 +608,20 @@ export function buildShipmentGrowthConfig(theme) {
 export function buildAsuTrendConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const { bgCard: bg } = getColors(theme);
+  // ASU and Plan stay within 10-30 units of each other throughout, so one
+  // labels above its line and the other below to avoid collisions.
+  const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   return {
     type: 'line',
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#10b981', tension: 0.4, fill: false },
-        { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false },
+        { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#10b981', tension: 0.4, fill: false, datalabels: lineDL('#10b981', 'top') },
+        { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
   };
 }
 
@@ -687,7 +707,7 @@ function buildCutoverPlugin(cutoverIndex) {
 // Value labels for the trend lines, thinned to roughly one per ~16 points
 // (plus the final point) so a 156-point weekly view doesn't drown in text;
 // monthly/quarterly views have few enough points to label every one.
-function trendDatalabels(color, bg, n) {
+function trendDatalabels(color, bg, n, align = 'top') {
   const step = Math.max(1, Math.ceil(n / 16));
   return {
     display: (ctx) => {
@@ -698,7 +718,7 @@ function trendDatalabels(color, bg, n) {
     color,
     font: { size: 8, weight: 'bold' },
     anchor: 'end',
-    align: 'top',
+    align,
     offset: 4,
     textStrokeColor: bg,
     textStrokeWidth: 3,
@@ -732,7 +752,9 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
     return {
       label: `${m} Projection`, type: 'line', data, borderColor: color, backgroundColor: color, fill: false,
       pointRadius: 0, borderWidth: 2, borderDash: [6, 3], tension: 0.2, yAxisID: 'y', order: idx, spanGaps: false,
-      datalabels: trendDatalabels(color, bg, n),
+      // Bottom-anchored (vs Actual's top) so the two don't collide during
+      // the few overlapping points right at the cutover.
+      datalabels: trendDatalabels(color, bg, n, 'bottom'),
     };
   });
 
@@ -754,6 +776,7 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
       interaction: { mode: 'index', intersect: false },
       scales: {
         x: { ticks: { color: tc, font: { size: 7 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 18 }, grid: { display: false } },
@@ -804,11 +827,15 @@ export function buildCapHcConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const { bgCard: bg } = getColors(theme);
+  // The two Total HC lines track close together, so one labels above and
+  // the other below instead of both defaulting to the same top anchor.
+  const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   const datasets = [
     { label: 'Avg HC', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
     { label: 'Exit HC', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-    { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#3b82f6', 'top') },
+    { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#8b5cf6', 'bottom') },
   ];
   return {
     type: 'bar',
@@ -821,11 +848,15 @@ export function buildCapExcessConfig(d, theme) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  const { bgCard: bg } = getColors(theme);
+  // The two LOA Exit lines track close together, so one labels above and
+  // the other below instead of both defaulting to the same top anchor.
+  const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   const datasets = [
     { label: `${planYearLabel(d.periodA, d.year1)} Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
     { label: `${planYearLabel(d.periodB, d.year2)} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
-    { label: `${planYearLabel(d.periodB, d.year2)} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false },
+    { label: `${planYearLabel(d.periodA, d.year1)} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#f59e0b', 'top') },
+    { label: `${planYearLabel(d.periodB, d.year2)} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#ef4444', 'bottom') },
     { label: `${planYearLabel(d.periodA, d.year1)} Training`, data: d.aTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
     { label: `${planYearLabel(d.periodB, d.year2)} Training`, data: d.bTraining, type: 'line', borderColor: '#0ea5e9', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
   ];
@@ -949,7 +980,7 @@ export function buildCapHeadcountBifurcationConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
   const totalHcDL = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() });
-  const excessDL = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, formatter: (v) => v.toLocaleString() });
+  const excessDL = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() });
   return {
     type: 'bar',
     data: {
@@ -1016,6 +1047,10 @@ export function buildCapPopConfig(d, theme) {
   // them. align:'end' is bar-direction-aware -- it follows the bar outward
   // from its tip whichever way that is, so these two don't collide.
   const negBarDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'end', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') };
+  // Three lines sharing PDL's identical top anchor would stack their labels
+  // on top of each other -- each gets its own color and a distinct
+  // align/offset instead.
+  const volLineDL = (color, align, offset) => ({ ...PDL, color, align, offset });
   return {
     type: 'bar',
     data: {
@@ -1025,15 +1060,15 @@ export function buildCapPopConfig(d, theme) {
         { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', datalabels: negBarDL },
         {
           label: 'DB Vol PoP%', data: d.dbVolPop, type: 'line', yAxisID: 'y1',
-          borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+          borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#ef4444', 'top', 4),
         },
         {
           label: 'OSP Vol PoP%', data: d.ospVolPop, type: 'line', yAxisID: 'y1',
-          borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+          borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#f59e0b', 'bottom', 4),
         },
         {
           label: 'Total Vol PoP%', data: d.totalVolPop, type: 'line', yAxisID: 'y1',
-          borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: PDL,
+          borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#3b82f6', 'top', 16),
         },
       ],
     },
