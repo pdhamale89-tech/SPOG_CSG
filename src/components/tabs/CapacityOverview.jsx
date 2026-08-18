@@ -276,7 +276,6 @@ export default function CapacityOverview() {
   const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB } = useApp();
   const [activeTab, setActiveTab] = useState('volume');
   const [openDetail, setOpenDetail] = useState({});
-  const [volMetric, setVolMetric] = useState('DB');
 
   // Fiscal Year comes from the top Filters bar -- but that bar's fiscal
   // years (FY24-FY27) and this page's dataset (FY25-FY28) only partly
@@ -296,9 +295,9 @@ export default function CapacityOverview() {
   const hB = useMemo(() => (isYearly ? yearlyHc(planB) : periodHc(HC[planB][fy], curPeriod)), [isYearly, planB, fy, curPeriod]);
 
   const dVol = useMemo(() => ({
-    labels, pA: planA, pB: planB, fy: isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy, labelMetric: volMetric,
+    labels, pA: planA, pB: planB, fy: isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy,
     aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
-  }), [labels, vA, vB, planA, planB, fy, isYearly, volMetric]);
+  }), [labels, vA, vB, planA, planB, fy, isYearly]);
   const dHc = useMemo(() => {
     // Plan-over-Plan: Current vs Previous's L1 HC Exit % difference each
     // period, so the line reacts to the Comparison Filter selection exactly
@@ -356,13 +355,7 @@ export default function CapacityOverview() {
             <div className="card-title">
               Volume: {planA} vs {planB} — {fyLabel}
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume per plan plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B. Use the DB/OSP toggle to switch which metric's bars are shown." />
-            </div>
-            <div className="card-dd">
-              <div className="plan-sel">
-                <button className={'plan-btn' + (volMetric === 'DB' ? ' active' : '')} onClick={() => setVolMetric('DB')}>DB</button>
-                <button className={'plan-btn' + (volMetric === 'OSP' ? ' active' : '')} onClick={() => setVolMetric('OSP')}>OSP</button>
-              </div>
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume per plan (stacked) plus Total volume as its own bar, and the period-over-period % delta between the Current and Previous Plan." />
             </div>
           </div>
           <ChartCanvas config={volConfig} height="300px" />

@@ -1069,36 +1069,25 @@ export function buildWpdVolumeConfig(d, theme) {
   // aTotal is always the Current Plan and bTotal the Previous Plan, so this
   // reads as Current minus Previous, relative to Previous.
   const delta = d.aTotal.map((v, i) => (d.bTotal[i] ? Math.round((v - d.bTotal[i]) / d.bTotal[i] * 1000) / 10 : null));
-  // The two unstacked Total lines share an implicit stack group once the y
-  // axis is stacked:true (needed so the DB+OSP bars stack correctly), so
-  // Chart.js's own auto-max summed both plans' totals together (~6.9M
-  // instead of the real ~3.4M per plan). Capping max explicitly from the
-  // actual data sidesteps that rather than depending on Chart.js's stack
-  // grouping for datasets that were never meant to stack with each other.
+  // Explicit headroom above the tallest Total bar so its top data label
+  // never gets clipped by the chart's top edge.
   const rawMax = Math.max(...d.aTotal, ...d.bTotal);
   const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
   const totalFmt = (v) => (v == null ? '' : (v / 1e6).toFixed(2) + 'M');
-  // The DB/OSP toggle fully hides the other metric's bars rather than just
-  // its label, so the chart shows a clean single-metric comparison instead
-  // of a stacked DB+OSP bar with only one segment labeled.
   const segDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
   return {
     type: 'bar',
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', hidden: d.labelMetric !== 'DB', datalabels: segDL },
-        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', hidden: d.labelMetric !== 'OSP', datalabels: segDL },
-        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', hidden: d.labelMetric !== 'DB', datalabels: segDL },
-        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', hidden: d.labelMetric !== 'OSP', datalabels: segDL },
-        {
-          label: `${d.pA} Total`, data: d.aTotal, type: 'line', yAxisID: 'y', borderColor: '#10b981', pointRadius: 4, pointBackgroundColor: '#10b981', tension: 0.3, borderWidth: 2.5, fill: false,
-          datalabels: { display: true, color: '#10b981', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'top', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },
-        },
-        {
-          label: `${d.pB} Total`, data: d.bTotal, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 4, pointBackgroundColor: '#f59e0b', tension: 0.3, borderWidth: 2.5, fill: false,
-          datalabels: { display: true, color: '#f59e0b', font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 8, textStrokeColor: bg, textStrokeWidth: 3, formatter: totalFmt },
-        },
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', datalabels: segDL },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', datalabels: segDL },
+        // Total gets its own stack group -- not summed into the DB+OSP bar --
+        // so it renders as its own full-height bar right next to it.
+        { label: `${d.pA} Total`, data: d.aTotal, backgroundColor: '#10b981', borderRadius: 3, stack: 'a-total', datalabels: { ...segDL, color: '#10b981', formatter: totalFmt } },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', datalabels: segDL },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', datalabels: segDL },
+        { label: `${d.pB} Total`, data: d.bTotal, backgroundColor: '#f59e0b', borderRadius: 3, stack: 'b-total', datalabels: { ...segDL, color: '#f59e0b', formatter: totalFmt } },
         {
           label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
           datalabels: { display: true, color: '#8b5cf6', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
