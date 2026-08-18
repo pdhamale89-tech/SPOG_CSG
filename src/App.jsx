@@ -11,14 +11,12 @@ import ForwardModal from './components/modals/ForwardModal';
 import DrillDownModal from './components/modals/DrillDownModal';
 import AdherenceModal from './components/modals/AdherenceModal';
 import SegmentGrowthModal from './components/modals/SegmentGrowthModal';
-import HeadcountDetailModal from './components/modals/HeadcountDetailModal';
 
 import Home from './components/tabs/Home';
 import ForecastOverview from './components/tabs/ForecastOverview';
 import ShipmentOverview from './components/tabs/ShipmentOverview';
 import AsuOverview from './components/tabs/AsuOverview';
 import CapacityOverview from './components/tabs/CapacityOverview';
-import CapacityOverviewNew from './components/tabs/CapacityOverviewNew';
 import CareOverview from './components/tabs/CareOverview';
 import CalendarForecast from './components/tabs/CalendarForecast';
 import CalendarFiscal from './components/tabs/CalendarFiscal';
@@ -32,7 +30,6 @@ const TABS = {
   'shipment-overview': ShipmentOverview,
   'asu-overview': AsuOverview,
   'capacity-overview': CapacityOverview,
-  'capacity-overview-new': CapacityOverviewNew,
   'care-overview': CareOverview,
   'calendar-forecast': CalendarForecast,
   'calendar-fiscal': CalendarFiscal,
@@ -70,7 +67,6 @@ function DashboardShell() {
       <DrillDownModal />
       <AdherenceModal />
       <SegmentGrowthModal />
-      <HeadcountDetailModal />
       <Toast />
     </div>
   );

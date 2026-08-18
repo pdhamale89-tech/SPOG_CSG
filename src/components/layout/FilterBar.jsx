@@ -27,7 +27,7 @@ const DEFAULTS = {
 // Planner reads as Forecaster here (it stays Capacity Planner everywhere
 // else, e.g. Capacity Overview, where that label was requested).
 const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
-const YEARLY_TABS = ['capacity-overview', 'capacity-overview-new'];
+const YEARLY_TABS = ['capacity-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 

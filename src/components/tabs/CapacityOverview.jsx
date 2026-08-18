@@ -1,339 +1,408 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import InfoBtn from '../common/InfoBtn';
-import KpiCard from '../common/KpiCard';
-import MiniStat from '../common/MiniStat';
-import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
-import {
-  buildCapVolumeConfig, buildCapHcConfig, buildCapExcessConfig,
-  buildCapHiringConfig, buildCapHiringBreakdownConfig, buildCapCapacityConfig, buildCapOspMixConfig,
-  buildCapHeadcountBifurcationConfig, buildCapPopConfig,
-} from '../charts/chartConfigs';
-import {
-  CAP_KPIS, CAP_MINI_STATS, capC1, capC2, capC3, capC4, capC5, capC6, capC7, capHcBifurcation,
-  capA1, capWeeklyTable,
-  capLabelsFor, CAP_PERIOD_LABEL, CAP_PERIOD_WORD, CAP_OVERALL, CAP_VOL_PERIODS, CAP_VOL_KEYS,
-  CAP_YEARS, CAP_YEAR_FACTOR,
-  CAP_HC_TOTAL_KEYS, CAP_EXCESS_HC_KEYS, CAP_LOA_EXIT_KEYS, CAP_TRAINING_KEYS, CAP_HIRING_KEYS,
-  CAP_APPROVED_HIRING_KEYS, CAP_NONAPPROVED_HIRING_KEYS,
-  CAP_CAPACITY_KEYS, CAP_OSP_PCT_KEYS,
-  CAP_HC_BIF_TOTAL_KEYS, CAP_HC_BIF_AVG_KEYS, CAP_HC_BIF_EXIT_KEYS, CAP_HC_BIF_EXCESS_KEYS,
-} from '../../data/capacityData';
-import {
-  capVolumeInsight, capHcInsight, capExcessInsight, capHiringInsight,
-  capHiringBreakdownInsight, capCapacityInsight, capOspMixInsight, capHeadcountBifurcationInsight, capPopInsight,
-} from '../../utils/insights';
+import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpdHireExitConfig } from '../charts/chartConfigs';
+import { MONTHS, MONTH_LABELS, YRS, VOL, HC } from '../../data/capacityOverviewNewData';
+import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight } from '../../utils/insights';
+import { buildPeriodLabels } from '../../utils/periodLabels';
 
-const DIR_ARROW = { up: '▲ ', dn: '▼ ', flat: '— ' };
+// Workforce Planning Dashboard-style Capacity Overview: Plan A/Plan B by
+// month x Fiscal Year comparison, 4 charts, a tabbed detail explorer with
+// expandable per-metric tables, all built from the app's own shared
+// components/theme (.card/.card-header/.card-title, InfoBtn, InsightBox,
+// .cap-plan-filters).
 
-// Overall isn't "no plan selected" -- Jul and Aug are two alternate plan
-// vintages forecasting the same periods, not additive sub-totals, so
-// Overall is their average (a blended baseline), not a sum and not a blank
-// state. Every metric below is that same kind of "two forecasts of one
-// number" relationship, so average is the correct blend in all of them.
-function overallSeries(julArr, augArr) {
-  return julArr.map((v, i) => {
-    const b = augArr[i];
-    return v == null || b == null ? null : Math.round((v + b) / 2);
-  });
+const fmt = (n) => (n != null && n !== 0 ? n.toLocaleString() : '—');
+const fmtM = (n) => (n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
+const fmtK = (n) => (n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
+const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
+const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
+const dirArrow = (d) => (d >= 0 ? '▲' : '▼');
+const badgeCls = (d) => (d >= 0 ? 'up' : 'down');
+
+// This page's source data is quarterly-only (4 points per fiscal year), so
+// Weekly/Monthly/QTR don't have real sub-quarter data to switch to. Instead,
+// flow metrics (volume, hiring, exits) are scaled to approximate that
+// period's slice of a quarter -- the same "flow vs stock" split the rest of
+// the app already uses for its period-aware KPI cards (capacityData.js) --
+// while stock metrics (HC Avg/Exit, Total HC, Excess HC/Capacity) are left
+// unscaled since they're point-in-time state, not something to sum. Yearly
+// is handled separately: it aggregates across this page's 4 fiscal years
+// instead of scaling a single year's quarters.
+const FLOW_VOL_FIELDS = ['DB', 'OSP', 'Total'];
+const FLOW_HC_FIELDS = ['Hiring', 'UR_Hire', 'Appr_Hire', 'LOA', 'Training'];
+const STOCK_HC_FIELDS = ['HC_Avg', 'HC_Exit', 'Excess_Cap', 'Excess_HC', 'Total_HC'];
+const PERIOD_FLOW_FACTOR = { weekly: 1 / 13, monthly: 1 / 3, qtr: 1 };
+
+function scaleFlowArr(arr, factor) {
+  return arr.map((v) => (v == null ? v : Math.round(v * factor)));
 }
 
-// Looks up a single metric's array for a given plan slot (Jul/Aug/Overall)
-// given the {Jul: 'fieldName', Aug: 'fieldName'} key map for that metric.
-function seriesFor(keyMap, dataObj, plan) {
-  if (plan === CAP_OVERALL) return overallSeries(dataObj[keyMap.Jul], dataObj[keyMap.Aug]);
-  return dataObj[keyMap[plan]];
+function periodVol(rawVol, curPeriod) {
+  const f = PERIOD_FLOW_FACTOR[curPeriod] ?? 1;
+  const out = {};
+  FLOW_VOL_FIELDS.forEach((k) => { out[k] = scaleFlowArr(rawVol[k], f); });
+  return out;
 }
 
-function volumeSeriesFor(plan) {
-  if (plan === CAP_OVERALL) {
-    return {
-      db: overallSeries(capC1[CAP_VOL_KEYS.Jul.db], capC1[CAP_VOL_KEYS.Aug.db]),
-      osp: overallSeries(capC1[CAP_VOL_KEYS.Jul.osp], capC1[CAP_VOL_KEYS.Aug.osp]),
-      total: overallSeries(capC2[CAP_VOL_KEYS.Jul.total], capC2[CAP_VOL_KEYS.Aug.total]),
-    };
-  }
-  const k = CAP_VOL_KEYS[plan];
-  return { db: capC1[k.db], osp: capC1[k.osp], total: capC2[k.total] };
+function periodHc(rawHc, curPeriod) {
+  const f = PERIOD_FLOW_FACTOR[curPeriod] ?? 1;
+  const out = { ...rawHc };
+  FLOW_HC_FIELDS.forEach((k) => { out[k] = scaleFlowArr(rawHc[k], f); });
+  return out;
 }
 
-// Year 1/Year 2 are a second comparison axis alongside Plan Name 1/Plan
-// Name 2: every chart's "A" series is Plan Name 1 as of Year 1, and "B" is
-// Plan Name 2 as of Year 2. There's no separate per-year dataset -- this
-// just scales the same base numbers by CAP_YEAR_FACTOR (FY26 = 1, the
-// dataset's native scale), same "numbers stay put" approach as the period
-// (Weekly/Monthly/QTR/Yearly) relabeling elsewhere in this file.
-function scaleForYear(arr, year) {
-  const factor = CAP_YEAR_FACTOR[year] ?? 1;
-  if (factor === 1) return arr;
-  return arr.map((v) => (v == null ? null : Math.round(v * factor)));
+function yearlyVol(plan) {
+  const out = {};
+  FLOW_VOL_FIELDS.forEach((k) => { out[k] = YRS.map((y) => sum(VOL[plan][y][k])); });
+  return out;
 }
 
-export default function CapacityOverview() {
-  const { theme, curPeriod, fiscalYear, openHeadcountDetail } = useApp();
-  const [sort, setSort] = useState({ col: null, dir: 'asc' });
-  const [planName1, setPlanName1] = useState(CAP_VOL_PERIODS[0]);
-  const [planName2, setPlanName2] = useState(CAP_OVERALL);
-  const [year1, setYear1] = useState('FY26');
-  const [year2, setYear2] = useState('FY26');
-  // Comparing years only makes sense once you're already looking at yearly
-  // cadence -- so the Year 1/Year 2 dropdowns (and their effect on every
-  // chart below) only kick in when the Weekly/Monthly/QTR/Yearly toggle is
-  // set to Yearly. Otherwise both effectively pin to FY26 (factor 1, no-op)
-  // regardless of what's stored, so flipping back to Yearly later doesn't
-  // resurrect a stale year pick from an unrelated session.
-  const yearFilterActive = curPeriod === 'yearly';
-  const effectiveYear1 = yearFilterActive ? year1 : 'FY26';
-  const effectiveYear2 = yearFilterActive ? year2 : 'FY26';
+function yearlyHc(plan) {
+  const out = {};
+  FLOW_HC_FIELDS.forEach((k) => { out[k] = YRS.map((y) => sum(HC[plan][y][k])); });
+  STOCK_HC_FIELDS.forEach((k) => { out[k] = YRS.map((y) => Math.round(sum(HC[plan][y][k]) / 4)); });
+  return out;
+}
 
-  const periodLabel = CAP_PERIOD_LABEL[curPeriod];
-  const periodWord = CAP_PERIOD_WORD[curPeriod];
-  const capKpis = CAP_KPIS[curPeriod];
-  const capMiniStats = CAP_MINI_STATS[curPeriod];
-  const L6 = useMemo(() => capLabelsFor(curPeriod, 6, fiscalYear), [curPeriod, fiscalYear]);
-  const L8 = useMemo(() => capLabelsFor(curPeriod, 8, fiscalYear), [curPeriod, fiscalYear]);
-  // Headcount Bifurcation is its own standalone trend (not a Jul/Aug plan
-  // comparison), with one more period than the other charts on this page,
-  // so it gets its own period-label array sized to match.
-  const L9 = useMemo(() => capLabelsFor(curPeriod, 9, fiscalYear), [curPeriod, fiscalYear]);
-
-  const dC1 = useMemo(() => {
-    const a = volumeSeriesFor(planName1);
-    const b = volumeSeriesFor(planName2);
-    return {
-      labels: L6, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-      aDb: scaleForYear(a.db, effectiveYear1), aOsp: scaleForYear(a.osp, effectiveYear1),
-      bDb: scaleForYear(b.db, effectiveYear2), bOsp: scaleForYear(b.osp, effectiveYear2),
-      aTotal: scaleForYear(a.total, effectiveYear1), bTotal: scaleForYear(b.total, effectiveYear2),
-    };
-  }, [L6, planName1, planName2, effectiveYear1, effectiveYear2]);
-  // The charts below don't have their own Compare Plans selector -- they
-  // read the same Plan Name 1/Plan Name 2/Year 1/Year 2 chosen above the
-  // Volume Comparison chart, so their legends and values stay in sync with
-  // that one control.
-  const dC3 = useMemo(() => ({
-    ...capC3, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName1), effectiveYear1),
-    bTotalHc: scaleForYear(seriesFor(CAP_HC_TOTAL_KEYS, capC3, planName2), effectiveYear2),
-  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dC4 = useMemo(() => ({
-    ...capC4, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName1), effectiveYear1),
-    bExcessHc: scaleForYear(seriesFor(CAP_EXCESS_HC_KEYS, capC4, planName2), effectiveYear2),
-    aLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName1), effectiveYear1),
-    bLoaExit: scaleForYear(seriesFor(CAP_LOA_EXIT_KEYS, capC4, planName2), effectiveYear2),
-    aTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName1), effectiveYear1),
-    bTraining: scaleForYear(seriesFor(CAP_TRAINING_KEYS, capC4, planName2), effectiveYear2),
-  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dC5 = useMemo(() => ({
-    ...capC5, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName1), effectiveYear1),
-    bHiring: scaleForYear(seriesFor(CAP_HIRING_KEYS, capC5, planName2), effectiveYear2),
-  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dC6 = useMemo(() => ({
-    labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName1), effectiveYear1),
-    bApproved: scaleForYear(seriesFor(CAP_APPROVED_HIRING_KEYS, capC6, planName2), effectiveYear2),
-    aNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName1), effectiveYear1),
-    bNonApproved: scaleForYear(seriesFor(CAP_NONAPPROVED_HIRING_KEYS, capC6, planName2), effectiveYear2),
-  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dC7 = useMemo(() => ({
-    ...capC7, labels: L8, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName1), effectiveYear1),
-    bCapPct: scaleForYear(seriesFor(CAP_CAPACITY_KEYS, capC7, planName2), effectiveYear2),
-    aOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName1), effectiveYear1),
-    bOspPct: scaleForYear(seriesFor(CAP_OSP_PCT_KEYS, capC7, planName2), effectiveYear2),
-  }), [L8, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dHc = useMemo(() => ({
-    labels: L9, periodA: planName1, periodB: planName2, year1: effectiveYear1, year2: effectiveYear2,
-    aTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName1), effectiveYear1),
-    bTotalHc: scaleForYear(seriesFor(CAP_HC_BIF_TOTAL_KEYS, capHcBifurcation, planName2), effectiveYear2),
-    aL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName1), effectiveYear1),
-    bL1HcAvg: scaleForYear(seriesFor(CAP_HC_BIF_AVG_KEYS, capHcBifurcation, planName2), effectiveYear2),
-    aL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName1), effectiveYear1),
-    bL1HcExit: scaleForYear(seriesFor(CAP_HC_BIF_EXIT_KEYS, capHcBifurcation, planName2), effectiveYear2),
-    aExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName1), effectiveYear1),
-    bExcessHc: scaleForYear(seriesFor(CAP_HC_BIF_EXCESS_KEYS, capHcBifurcation, planName2), effectiveYear2),
-  }), [L9, planName1, planName2, effectiveYear1, effectiveYear2]);
-  const dA1 = useMemo(() => ({ ...capA1, labels: L8 }), [L8]);
-  const detailTable = useMemo(() => ({ ...capWeeklyTable, cols: L6 }), [L6]);
-
-  const c1Config = useMemo(() => buildCapVolumeConfig(dC1, theme), [dC1, theme]);
-  const c3Config = useMemo(() => buildCapHcConfig(dC3, theme), [dC3, theme]);
-  const c4Config = useMemo(() => buildCapExcessConfig(dC4, theme), [dC4, theme]);
-  const c5Config = useMemo(() => buildCapHiringConfig(dC5, theme), [dC5, theme]);
-  const c6Config = useMemo(() => buildCapHiringBreakdownConfig(dC6, theme), [dC6, theme]);
-  const c7Config = useMemo(() => buildCapCapacityConfig(dC7, theme), [dC7, theme]);
-  const c7bConfig = useMemo(() => buildCapOspMixConfig(dC7, theme), [dC7, theme]);
-  const c8Config = useMemo(() => buildCapHeadcountBifurcationConfig(dHc, theme), [dHc, theme]);
-  const a1Config = useMemo(() => buildCapPopConfig(dA1, theme), [dA1, theme]);
-
-  function handleHcClick(evt, els) {
-    if (!els.length) return;
-    const idx = els[0].index;
-    openHeadcountDetail({
-      label: dHc.labels[idx], periodA: dHc.periodA, periodB: dHc.periodB, year1: dHc.year1, year2: dHc.year2,
-      aAvg: dHc.aL1HcAvg[idx], aExit: dHc.aL1HcExit[idx], aExcess: dHc.aExcessHc[idx], aTotal: dHc.aTotalHc[idx],
-      bAvg: dHc.bL1HcAvg[idx], bExit: dHc.bL1HcExit[idx], bExcess: dHc.bExcessHc[idx], bTotal: dHc.bTotalHc[idx],
-    });
-  }
-
-  function toggleSort(col) {
-    setSort((s) => ({ col, dir: s.col === col && s.dir === 'asc' ? 'desc' : 'asc' }));
-  }
-  const sortIcon = (col) => (sort.col === col ? (sort.dir === 'asc' ? '▲' : '▼') : '');
-  const sortedRows = useMemo(() => {
-    if (sort.col === null) return capWeeklyTable.rows;
-    const copy = [...capWeeklyTable.rows];
-    copy.sort((a, b) => {
-      const av = sort.col === 'queue' ? a.queue : a.vals[sort.col];
-      const bv = sort.col === 'queue' ? b.queue : b.vals[sort.col];
-      if (typeof av === 'number' && typeof bv === 'number') return sort.dir === 'asc' ? av - bv : bv - av;
-      return sort.dir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
-    });
-    return copy;
-  }, [sort]);
-
-  const cqnDetailCard = (
-    <div className="card" style={{ marginBottom: '14px' }}>
-      <div className="card-header">
-        <div className="card-title">{periodWord} CQN Detail <InfoBtn tip="<strong>Purpose</strong>Per-queue gap detail. Click a column header to sort." /></div>
-        <DownloadBtn
-          filename="cqn-detail"
-          title="Download CQN detail"
-          rows={[
-            ['Queue', ...detailTable.cols],
-            ...sortedRows.map((r) => [r.queue, ...r.vals]),
-            [capWeeklyTable.total.queue, ...capWeeklyTable.total.vals],
-          ]}
-        />
+function ComparisonKpi({ label, valueA, valueB, delta, suffix = '%', planA, planB }) {
+  const signed = delta > 0 ? `+${delta}` : `${delta}`;
+  return (
+    <div className="wpd-kpi-tile">
+      <div className="wpd-kpi-tile-label">{label}</div>
+      <div className="wpd-kpi-tile-main">
+        <span className="wpd-kpi-tile-a">{valueA}</span>
+        <span className="wpd-kpi-tile-arrow">→</span>
+        <span className="wpd-kpi-tile-b">{valueB}</span>
       </div>
-      <div className="tw">
-        <table>
-          <thead>
-            <tr>
-              <th className="sortable-th" onClick={() => toggleSort('queue')}>Queue<span className="sort-ic">{sortIcon('queue')}</span></th>
-              {detailTable.cols.map((c, i) => (
-                <th className="sortable-th" key={c} onClick={() => toggleSort(i)}>{c}<span className="sort-ic">{sortIcon(i)}</span></th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sortedRows.map((r) => (
-              <tr key={r.queue}>
-                <td>{r.queue}</td>
-                {r.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
-              </tr>
-            ))}
-            <tr className="tbl-total">
-              <td>{capWeeklyTable.total.queue}</td>
-              {capWeeklyTable.total.vals.map((v, i) => <td className="tbl-neg" key={i}>{v.toLocaleString()}</td>)}
-            </tr>
-          </tbody>
-        </table>
+      <div className="wpd-kpi-tile-sub">
+        {planA}→{planB} <span className={`wpd-kpi-tile-delta ${badgeCls(delta)}`}>{dirArrow(delta)} {signed}{suffix}</span>
       </div>
     </div>
   );
+}
+
+function CompCard({ title, arrA, arrB, pA, pB, formatFn = fmt, suffix = '' }) {
+  const totA = sum(arrA), totB = sum(arrB);
+  const d = totB - totA;
+  const dp = pct(totA, totB);
+  return (
+    <div className="cmp-card">
+      <div className="cmp-card-head">
+        <span className="cmp-card-title">{title}</span>
+        <span className={`cmp-badge ${badgeCls(d)}`}>{dirArrow(d)} {Math.abs(dp)}%</span>
+      </div>
+      <div className="cmp-vals">
+        <div className="cmp-val-block">
+          <div className="cmp-val-label">{pA}</div>
+          <div className="cmp-val-num">{formatFn(totA)}{suffix}</div>
+        </div>
+        <span className="cmp-arrow">→</span>
+        <div className="cmp-val-block">
+          <div className="cmp-val-label">{pB}</div>
+          <div className="cmp-val-num">{formatFn(totB)}{suffix}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailTable({ headers, rows, isOpen, onToggle }) {
+  return (
+    <div style={{ marginTop: '12px' }}>
+      <div className="filter-panel-title" onClick={onToggle}>
+        View Details
+        <span className={'filter-panel-caret' + (isOpen ? '' : ' collapsed')}>▾</span>
+      </div>
+      {isOpen && (
+        <div className="tw" style={{ marginTop: '8px' }}>
+          <table>
+            <thead>
+              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {rows.map((row, ri) => (
+                <tr key={ri} className={row.isTotal ? 'tbl-total' : undefined}>
+                  {row.cells.map((cell, ci) => <td key={ci} className={cell.cls}>{cell.val}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function deltaCell(d, suffix = '') {
+  return { val: (d > 0 ? '+' : '') + d + suffix, cls: d > 0 ? 'tbl-pos' : d < 0 ? 'tbl-neg' : undefined };
+}
+
+function VolumeTab({ vA, vB, pA, pB, labels, openDetail, toggle }) {
+  const headers = ['Partner', ...labels.map((l) => `${pA} ${l}`), `${pA} Total`, ...labels.map((l) => `${pB} ${l}`), `${pB} Total`, 'Δ Total'];
+  const rows = ['DB', 'OSP', 'Total'].map((p) => {
+    const a = vA[p], b = vB[p];
+    const tA = sum(a), tB = sum(b), d = tB - tA;
+    const cells = [{ val: p }];
+    a.forEach((v) => cells.push({ val: fmt(v) }));
+    cells.push({ val: fmt(tA) });
+    b.forEach((v) => cells.push({ val: fmt(v) }));
+    cells.push({ val: fmt(tB) });
+    cells.push(deltaCell(d));
+    return { cells, isTotal: p === 'Total' };
+  });
+  return (
+    <>
+      <div className="cmp-grid">
+        <CompCard title="DB Volume" arrA={vA.DB} arrB={vB.DB} pA={pA} pB={pB} formatFn={fmtK} />
+        <CompCard title="OSP Volume" arrA={vA.OSP} arrB={vB.OSP} pA={pA} pB={pB} formatFn={fmtK} />
+        <CompCard title="Total Volume" arrA={vA.Total} arrB={vB.Total} pA={pA} pB={pB} formatFn={fmtK} />
+      </div>
+      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.volume} onToggle={() => toggle('volume')} />
+    </>
+  );
+}
+
+function HeadcountTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+  const metrics = [
+    { k: 'HC_Avg', l: 'L1 HC Avg' }, { k: 'HC_Exit', l: 'L1 HC Exit' }, { k: 'Total_HC', l: 'Total HC' },
+    { k: 'Excess_HC', l: 'Excess HC' }, { k: 'LOA', l: 'LOA Exit' }, { k: 'Training', l: 'Training Exit' },
+  ];
+  const headers = ['Metric'];
+  labels.forEach((l) => headers.push(`${pA} ${l}`, `${pB} ${l}`, 'Δ'));
+  const rows = metrics.map((m) => {
+    const a = hA[m.k], b = hB[m.k];
+    const cells = [{ val: m.l }];
+    labels.forEach((_, i) => {
+      const d = (b[i] || 0) - (a[i] || 0);
+      cells.push({ val: fmt(a[i]) }, { val: fmt(b[i]) }, deltaCell(d));
+    });
+    return { cells, isTotal: m.k === 'Total_HC' };
+  });
+  return (
+    <>
+      <div className="cmp-grid">
+        <CompCard title="L1 HC Average" arrA={hA.HC_Avg} arrB={hB.HC_Avg} pA={pA} pB={pB} />
+        <CompCard title="L1 HC Exit" arrA={hA.HC_Exit} arrB={hB.HC_Exit} pA={pA} pB={pB} />
+        <CompCard title="Total HC" arrA={hA.Total_HC} arrB={hB.Total_HC} pA={pA} pB={pB} />
+        <CompCard title="Excess HC" arrA={hA.Excess_HC} arrB={hB.Excess_HC} pA={pA} pB={pB} />
+      </div>
+      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.headcount} onToggle={() => toggle('headcount')} />
+    </>
+  );
+}
+
+function HiringTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+  const metrics = [
+    { k: 'Hiring', l: 'Overall Hiring' }, { k: 'UR_Hire', l: 'UR Hiring' }, { k: 'Appr_Hire', l: 'Approved Hiring' },
+    { k: 'LOA', l: 'LOA Exit' }, { k: 'Training', l: 'Training Exit' },
+  ];
+  const headers = ['Metric'];
+  labels.forEach((l) => headers.push(`${pA} ${l}`, `${pB} ${l}`, 'Δ'));
+  const rows = metrics.map((m) => {
+    const a = hA[m.k], b = hB[m.k];
+    const cells = [{ val: m.l }];
+    labels.forEach((_, i) => {
+      const d = (b[i] || 0) - (a[i] || 0);
+      cells.push({ val: fmt(a[i]) }, { val: fmt(b[i]) }, deltaCell(d));
+    });
+    return { cells };
+  });
+  return (
+    <>
+      <div className="cmp-grid">
+        <CompCard title="Overall Hiring" arrA={hA.Hiring} arrB={hB.Hiring} pA={pA} pB={pB} />
+        <CompCard title="UR Hiring" arrA={hA.UR_Hire} arrB={hB.UR_Hire} pA={pA} pB={pB} />
+        <CompCard title="Approved Hiring" arrA={hA.Appr_Hire} arrB={hB.Appr_Hire} pA={pA} pB={pB} />
+        <CompCard title="LOA Exit" arrA={hA.LOA} arrB={hB.LOA} pA={pA} pB={pB} />
+        <CompCard title="Training Exit" arrA={hA.Training} arrB={hB.Training} pA={pA} pB={pB} />
+      </div>
+      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.hiring} onToggle={() => toggle('hiring')} />
+    </>
+  );
+}
+
+function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+  const headers = ['Period', `${pA} Cap%`, `${pB} Cap%`, 'Δ pp', `${pA} ExHC`, `${pB} ExHC`, 'Δ ExHC'];
+  const rows = labels.map((l, i) => {
+    const ca = hA.Excess_Cap[i], cb = hB.Excess_Cap[i], dc = cb - ca;
+    const ea = hA.Excess_HC[i], eb = hB.Excess_HC[i], de = eb - ea;
+    return { cells: [{ val: l }, { val: ca + '%' }, { val: cb + '%' }, deltaCell(dc, 'pp'), { val: fmt(ea) }, { val: fmt(eb) }, deltaCell(de)] };
+  });
+  const avgCA = Math.round(sum(hA.Excess_Cap) / 4), avgCB = Math.round(sum(hB.Excess_Cap) / 4);
+  const avgEA = Math.round(sum(hA.Excess_HC) / 4), avgEB = Math.round(sum(hB.Excess_HC) / 4);
+  rows.push({
+    isTotal: true,
+    cells: [{ val: 'Average' }, { val: avgCA + '%' }, { val: avgCB + '%' }, deltaCell(avgCB - avgCA, 'pp'), { val: fmt(avgEA) }, { val: fmt(avgEB) }, deltaCell(avgEB - avgEA)],
+  });
+  return (
+    <>
+      <div className="cmp-grid">
+        {labels.map((l, i) => {
+          const capA = hA.Excess_Cap[i], capB = hB.Excess_Cap[i], d = capB - capA;
+          return (
+            <div className="cmp-card" key={l}>
+              <div className="cmp-card-head">
+                <span className="cmp-card-title">{l} Capacity</span>
+                <span className={`cmp-badge ${badgeCls(d)}`}>{d > 0 ? '+' : ''}{d}pp</span>
+              </div>
+              <div className="cmp-vals">
+                <div className="cmp-val-block"><div className="cmp-val-label">{pA}</div><div className="cmp-val-num">{capA}%</div></div>
+                <span className="cmp-arrow">→</span>
+                <div className="cmp-val-block"><div className="cmp-val-label">{pB}</div><div className="cmp-val-num">{capB}%</div></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.capacity} onToggle={() => toggle('capacity')} />
+    </>
+  );
+}
+
+const TABS = [
+  { id: 'volume', icon: '📦', label: 'Volume' },
+  { id: 'headcount', icon: '👥', label: 'Headcount' },
+  { id: 'hiring', icon: '📋', label: 'Hiring & Exits' },
+  { id: 'capacity', icon: '📊', label: 'Capacity' },
+];
+
+export default function CapacityOverview() {
+  const { theme, fiscalYear, curPeriod } = useApp();
+  const [planA, setPlanA] = useState('Jan');
+  const [planB, setPlanB] = useState('Feb');
+  const [activeTab, setActiveTab] = useState('volume');
+  const [openDetail, setOpenDetail] = useState({});
+  const [volMetric, setVolMetric] = useState('DB');
+
+  // Fiscal Year comes from the top Filters bar -- but that bar's fiscal
+  // years (FY24-FY27) and this page's dataset (FY25-FY28) only partly
+  // overlap, so fall back to FY26 rather than crash on a year this dataset
+  // never had (FY24).
+  const fy = YRS.includes(fiscalYear) ? fiscalYear : 'FY26';
+
+  // Weekly/Monthly/QTR/Yearly toggle: qtr is this page's native resolution
+  // (4 quarters of the selected fiscal year); weekly/monthly scale flow
+  // metrics down to approximate that period's slice of a quarter; yearly
+  // swaps the whole 4-point axis to this page's 4 fiscal years instead.
+  const isYearly = curPeriod === 'yearly';
+  const labels = useMemo(() => (isYearly ? YRS : buildPeriodLabels(fy, curPeriod, 4)), [isYearly, fy, curPeriod]);
+  const vA = useMemo(() => (isYearly ? yearlyVol(planA) : periodVol(VOL[planA][fy], curPeriod)), [isYearly, planA, fy, curPeriod]);
+  const vB = useMemo(() => (isYearly ? yearlyVol(planB) : periodVol(VOL[planB][fy], curPeriod)), [isYearly, planB, fy, curPeriod]);
+  const hA = useMemo(() => (isYearly ? yearlyHc(planA) : periodHc(HC[planA][fy], curPeriod)), [isYearly, planA, fy, curPeriod]);
+  const hB = useMemo(() => (isYearly ? yearlyHc(planB) : periodHc(HC[planB][fy], curPeriod)), [isYearly, planB, fy, curPeriod]);
+
+  const dVol = useMemo(() => ({
+    labels, pA: planA, pB: planB, fy: isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy, labelMetric: volMetric,
+    aDb: vA.DB, aOsp: vA.OSP, aTotal: vA.Total, bDb: vB.DB, bOsp: vB.OSP, bTotal: vB.Total,
+  }), [labels, vA, vB, planA, planB, fy, isYearly, volMetric]);
+  const dHc = useMemo(() => {
+    // Plan-over-Plan: New vs Old's L1 HC Exit % difference each period, so
+    // the line reacts to Plan A/Plan B selection exactly like the bars do,
+    // instead of a time-based quarter-over-quarter change.
+    const bHcExitPop = hB.HC_Exit.map((v, i) => {
+      const base = hA.HC_Exit[i];
+      return base ? Math.round(((v - base) / base) * 1000) / 10 : null;
+    });
+    return { labels, pA: planA, pB: planB, aHcAvg: hA.HC_Avg, bHcAvg: hB.HC_Avg, bHcExitPop };
+  }, [labels, hA, hB, planA, planB]);
+  const dCapHire = useMemo(() => ({
+    labels, pA: planA, pB: planB, aHiring: hA.Hiring, bHiring: hB.Hiring, aCap: hA.Excess_Cap, bCap: hB.Excess_Cap,
+  }), [labels, hA, hB, planA, planB]);
+  const dHireExit = useMemo(() => ({
+    labels, pA: planA, pB: planB, aHiring: hA.Hiring, bHiring: hB.Hiring, aUrHire: hA.UR_Hire, bUrHire: hB.UR_Hire, bLoa: hB.LOA, bTraining: hB.Training,
+  }), [labels, hA, hB, planA, planB]);
+
+  const volConfig = useMemo(() => buildWpdVolumeConfig(dVol, theme), [dVol, theme]);
+  const hcConfig = useMemo(() => buildWpdHcConfig(dHc, theme), [dHc, theme]);
+  const capHireConfig = useMemo(() => buildWpdCapHireConfig(dCapHire, theme), [dCapHire, theme]);
+  const hireExitConfig = useMemo(() => buildWpdHireExitConfig(dHireExit, theme), [dHireExit, theme]);
+
+  const tA = sum(vA.Total), tB = sum(vB.Total);
+  const vD = pct(tA, tB);
+  const hcA = Math.round(sum(hA.HC_Avg) / 4), hcB = Math.round(sum(hB.HC_Avg) / 4);
+  const hcD = pct(hcA, hcB);
+  const cA = Math.round(sum(hA.Excess_Cap) / 4), cB = Math.round(sum(hB.Excess_Cap) / 4);
+  const hirA = sum(hA.Hiring), hirB = sum(hB.Hiring);
+  const exA = Math.round(sum(hA.Excess_HC) / 4), exB = Math.round(sum(hB.Excess_HC) / 4);
+
+  function toggleDetail(id) {
+    setOpenDetail((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
+
+  const tabProps = { hA, hB, vA, vB, pA: planA, pB: planB, labels, openDetail, toggle: toggleDetail };
+  const fyLabel = isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy;
 
   return (
     <div className="tab-panel active">
       <div className="cap-plan-filters">
-        <span className="cap-plan-filters-title">🆚 Compare Plans</span>
+        <span className="cap-plan-filters-title">🎛️ Comparison Filter</span>
         <div className="filter-group">
-          <label>Plan Name 1</label>
-          <select value={planName1} onChange={(e) => setPlanName1(e.target.value)}>
-            <option value={CAP_OVERALL}>Overall</option>
-            {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+          <label>Plan A</label>
+          <select value={planA} onChange={(e) => setPlanA(e.target.value)}>
+            {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
           </select>
         </div>
         <div className="filter-group">
-          <label>Plan Name 2</label>
-          <select value={planName2} onChange={(e) => setPlanName2(e.target.value)}>
-            <option value={CAP_OVERALL}>Overall</option>
-            {CAP_VOL_PERIODS.map((p) => <option key={p} value={p}>{p}</option>)}
+          <label>Plan B</label>
+          <select value={planB} onChange={(e) => setPlanB(e.target.value)}>
+            {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
           </select>
         </div>
-        {yearFilterActive && (
-          <>
-            <div className="filter-group">
-              <label>Year 1</label>
-              <select value={year1} onChange={(e) => setYear1(e.target.value)}>
-                {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Year 2</label>
-              <select value={year2} onChange={(e) => setYear2(e.target.value)}>
-                {CAP_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-              </select>
-            </div>
-          </>
-        )}
       </div>
 
-      <div className="kpi-grid">
-        {capKpis.map((k) => (
-          <KpiCard key={k.label} label={k.label} value={k.value} delta={DIR_ARROW[k.dir] + k.delta} sub={k.sub} />
-        ))}
+      <div className="kpi-grid cols-5 wpd-kpi-grid">
+        <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={`${cA}%`} valueB={`${cB}%`} delta={cB - cA} suffix="pp" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirB - hirA} suffix="" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exB - exA} suffix="" planA={planA} planB={planB} />
       </div>
 
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              Volume Comparison
+              Volume: {planA} vs {planB} — {fyLabel}
               {' '}
-              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume plus the Total Volume trend for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above; Overall is the average of Jul and Aug." />
+              <InfoBtn tip="<strong>Purpose</strong>DB/OSP volume per plan plus the Total Volume trend and the period-over-period % delta between Plan A and Plan B. Use the DB/OSP toggle to switch which metric's bars are shown." />
+            </div>
+            <div className="card-dd">
+              <div className="plan-sel">
+                <button className={'plan-btn' + (volMetric === 'DB' ? ' active' : '')} onClick={() => setVolMetric('DB')}>DB</button>
+                <button className={'plan-btn' + (volMetric === 'OSP' ? ' active' : '')} onClick={() => setVolMetric('OSP')}>OSP</button>
+              </div>
             </div>
           </div>
-          <ChartCanvas config={c1Config} height="300px" />
-          <InsightBox text={capVolumeInsight(dC1)} />
-        </div>
-      </div>
-
-      <div className="mini-row">
-        {capMiniStats.map((m) => (
-          <MiniStat key={m.label} label={m.label} value={m.value} tone={m.tone} tip={m.tip} />
-        ))}
-      </div>
-      <div className="s-grid">
-        <div className="card">
-          <div className="card-header"><div className="card-title">HC Avg, Exit &amp; Total <InfoBtn tip="<strong>Purpose</strong>Headcount average and exit trend with total headcount overlay." /></div></div>
-          <ChartCanvas config={c3Config} height="300px" />
-          <InsightBox text={capHcInsight(dC3)} />
-        </div>
-        <div className="card">
-          <div className="card-header"><div className="card-title">Excess HC + LOA + Training <InfoBtn tip="<strong>Purpose</strong>Excess headcount, LOA exits and training load for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
-          <ChartCanvas config={c4Config} height="300px" />
-          <InsightBox text={capExcessInsight(dC4)} />
+          <ChartCanvas config={volConfig} height="300px" />
+          <InsightBox text={wpdVolumeInsight(dVol)} />
         </div>
       </div>
 
       <div className="s-grid">
         <div className="card">
-          <div className="card-header"><div className="card-title">Hiring PoP — Old vs New + Annual ({periodLabel}) <InfoBtn tip="<strong>Purpose</strong>Old vs new hiring plan comparison." /></div></div>
-          <ChartCanvas config={c5Config} height="300px" />
-          <InsightBox text={capHiringInsight(dC5)} />
+          <div className="card-header">
+            <div className="card-title">
+              HC Avg &amp; L1 HC Exit POP
+              {' '}
+              <InfoBtn tip="<strong>Purpose</strong>HC Avg for Plan A (Old) vs Plan B (New) as bars, with L1 HC Exit Plan-over-Plan % difference as a line on a secondary axis." />
+            </div>
+          </div>
+          <ChartCanvas config={hcConfig} height="300px" />
+          <InsightBox text={wpdHcInsight(dHc)} />
         </div>
         <div className="card">
-          <div className="card-header"><div className="card-title">Hiring Breakdown <InfoBtn tip="<strong>Purpose</strong>Approved vs non-approved hiring, with total hiring as a trend line, for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
-          <ChartCanvas config={c6Config} height="300px" />
-          <InsightBox text={capHiringBreakdownInsight(dC6)} />
-        </div>
-      </div>
-
-      <div className="s-grid">
-        <div className="card">
-          <div className="card-header"><div className="card-title">Capacity Comparison <InfoBtn tip="<strong>Purpose</strong>Capacity % for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above, plus the variance between them." /></div></div>
-          <ChartCanvas config={c7Config} height="300px" />
-          <InsightBox text={capCapacityInsight(dC7)} />
-        </div>
-        <div className="card">
-          <div className="card-header"><div className="card-title">OSP Mix Comparison <InfoBtn tip="<strong>Purpose</strong>OSP mix % for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above." /></div></div>
-          <ChartCanvas config={c7bConfig} height="300px" />
-          <InsightBox text={capOspMixInsight(dC7)} />
+          <div className="card-header">
+            <div className="card-title">
+              Capacity % &amp; Hiring
+              {' '}
+              <InfoBtn tip="<strong>Purpose</strong>Capacity % for Plan A vs Plan B against a 100% baseline, with hiring counts as bars on a secondary axis." />
+            </div>
+          </div>
+          <ChartCanvas config={capHireConfig} height="300px" />
+          <InsightBox text={wpdCapHireInsight(dCapHire)} />
         </div>
       </div>
 
@@ -341,24 +410,36 @@ export default function CapacityOverview() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">
-              Headcount Bifurcation{' '}
-              <InfoBtn tip="<strong>Purpose</strong>Total HC alongside L1 HC Avg/Exit and Excess HC for the Plan Name 1/Plan Name 2 and Year 1/Year 2 selection above.<strong>Tip</strong>💡 Click a bar or point for that period's full breakdown." />
+              Hiring Breakdown
+              {' '}
+              <InfoBtn tip="<strong>Purpose</strong>Overall vs UR hiring for Plan A/Plan B, with Plan B's LOA and Training exits on a secondary axis." />
             </div>
           </div>
-          <ChartCanvas config={c8Config} height="300px" onClick={handleHcClick} />
-          <InsightBox text={capHeadcountBifurcationInsight(dHc)} />
+          <ChartCanvas config={hireExitConfig} height="300px" />
+          <InsightBox text={wpdHireExitInsight(dHireExit)} />
         </div>
       </div>
 
-      <div className="s-grid full">
-        <div className="card">
-          <div className="card-header"><div className="card-title">Volume PoP% and HC PoP% <InfoBtn tip="<strong>Purpose</strong>HC Avg/Exit PoP% as bars on the left axis; DB/OSP/Total Volume PoP% as lines on the right axis." /></div></div>
-          <ChartCanvas config={a1Config} height="300px" />
-          <InsightBox text={capPopInsight(dA1)} />
+      <div className="card" style={{ marginBottom: '14px' }}>
+        <div className="card-header">
+          <div className="card-title">
+            Detailed Data Explorer
+            {' '}
+            <InfoBtn tip="<strong>Purpose</strong>Per-period Plan A vs Plan B breakdown, by Volume, Headcount, Hiring &amp; Exits, or Capacity. Reacts to the Weekly/Monthly/QTR/Yearly toggle above." />
+          </div>
         </div>
+        <div className="drilldown-toggle">
+          {TABS.map((t) => (
+            <button key={t.id} className={'drilldown-toggle-btn' + (activeTab === t.id ? ' active' : '')} onClick={() => setActiveTab(t.id)}>
+              {t.icon} {t.label}
+            </button>
+          ))}
+        </div>
+        {activeTab === 'volume' && <VolumeTab {...tabProps} />}
+        {activeTab === 'headcount' && <HeadcountTab {...tabProps} />}
+        {activeTab === 'hiring' && <HiringTab {...tabProps} />}
+        {activeTab === 'capacity' && <CapacityTab {...tabProps} />}
       </div>
-
-      {cqnDetailCard}
     </div>
   );
 }
