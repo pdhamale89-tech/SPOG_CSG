@@ -137,13 +137,13 @@ export default function FilterBar() {
             <div className="cap-plan-filters">
               <span className="cap-plan-filters-title">⠿ Comparison Filter</span>
               <div className="filter-group">
-                <label>Plan A</label>
+                <label>Current Plan</label>
                 <select value={compPlanA} onChange={(e) => setCompPlanA(e.target.value)}>
                   {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
                 </select>
               </div>
               <div className="filter-group">
-                <label>Plan B</label>
+                <label>Previous Plan</label>
                 <select value={compPlanB} onChange={(e) => setCompPlanB(e.target.value)}>
                   {MONTHS.map((m) => <option key={m} value={m}>{MONTH_LABELS[m]}</option>)}
                 </select>
