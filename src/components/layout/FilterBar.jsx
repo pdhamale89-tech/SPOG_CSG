@@ -78,6 +78,7 @@ export default function FilterBar() {
   function handleClear() {
     setDecor(DEFAULTS);
     setFiscalYear('FY26');
+    setCurPeriod('monthly');
     clearFilters();
   }
 
