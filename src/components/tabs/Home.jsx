@@ -19,23 +19,14 @@ const BUSINESSES = [
     desc: 'ESG and HES forecasting, capacity planning and shared calendar tools.',
     chips: ['ESG', 'HES', 'Calendar'],
   },
-  {
-    key: 'care',
-    code: 'Care',
-    name: 'Care',
-    icon: '💙',
-    desc: 'Care overview, reports and shared calendar tools.',
-    chips: ['Overview', 'Reports', 'Calendar'],
-  },
 ];
 
 export default function Home() {
-  const { goSub, setWorkspace } = useApp();
+  const { goSub } = useApp();
 
   function openBusiness(key) {
-    if (key === 'csg') { setWorkspace('csg'); goSub('forecast-overview'); }
-    else if (key === 'isg') window.location.href = ISG_URL;
-    else { setWorkspace('care'); goSub('care-overview'); }
+    if (key === 'csg') goSub('forecast-overview');
+    else window.location.href = ISG_URL;
   }
 
   return (
@@ -43,7 +34,7 @@ export default function Home() {
       <div className="home-hero-header">
         <div className="home-hero-eyebrow">SPOG · Single Pane of Glass</div>
         <h1 className="home-hero-h1">Choose a business to open its dashboard</h1>
-        <p className="home-hero-sub">One workspace, three businesses — CSG, ISG and Care each have their own forecast, capacity and reporting views.</p>
+        <p className="home-hero-sub">One workspace, two businesses — CSG and ISG each have their own forecast, capacity and reporting views.</p>
       </div>
 
       <div className="home-hero-grid">
