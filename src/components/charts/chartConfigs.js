@@ -259,12 +259,14 @@ export function buildPartnerLockConfig(data, theme, isPartnerView, targetPct) {
       borderRadius: 5,
       barPercentage: 0.55,
       categoryPercentage: 0.75,
+      order: 2,
       datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
     },
     {
       label: 'Target',
       data: data.map(() => targetPct),
       type: 'line',
+      order: 1,
       borderColor: accentOrange,
       borderWidth: 2,
       borderDash: [6, 4],
@@ -796,17 +798,19 @@ export function buildCapVolumeConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
+  // Lines get a lower `order` than the bars so Chart.js always draws them
+  // last (on top) instead of letting them get buried behind the bar fills.
   const datasets = [
-    { label: `${planYearLabel(d.periodA, d.year1)} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodB, d.year2)} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodB, d.year2)} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3 },
+    { label: `${planYearLabel(d.periodA, d.year1)} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodA, d.year1)} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodB, d.year2)} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodB, d.year2)} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, order: 2 },
     {
-      label: `${planYearLabel(d.periodA, d.year1)} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y',
+      label: `${planYearLabel(d.periodA, d.year1)} Total Volume`, data: d.aTotal, type: 'line', yAxisID: 'y', order: 1,
       borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
     },
     {
-      label: `${planYearLabel(d.periodB, d.year2)} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y',
+      label: `${planYearLabel(d.periodB, d.year2)} Total Volume`, data: d.bTotal, type: 'line', yAxisID: 'y', order: 1,
       borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: { display: false },
     },
   ];
@@ -832,10 +836,10 @@ export function buildCapHcConfig(d, theme) {
   // the other below instead of both defaulting to the same top anchor.
   const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   const datasets = [
-    { label: 'Avg HC', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3 },
-    { label: 'Exit HC', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, type: 'line', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#3b82f6', 'top') },
-    { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, type: 'line', borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#8b5cf6', 'bottom') },
+    { label: 'Avg HC', data: d.augHcAvg, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, order: 2 },
+    { label: 'Exit HC', data: d.augHcExit, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, type: 'line', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#3b82f6', 'top') },
+    { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, type: 'line', order: 1, borderColor: '#8b5cf6', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#8b5cf6', 'bottom') },
   ];
   return {
     type: 'bar',
@@ -853,12 +857,12 @@ export function buildCapExcessConfig(d, theme) {
   // the other below instead of both defaulting to the same top anchor.
   const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   const datasets = [
-    { label: `${planYearLabel(d.periodA, d.year1)} Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodB, d.year2)} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} LOA Exit`, data: d.aLoaExit, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#f59e0b', 'top') },
-    { label: `${planYearLabel(d.periodB, d.year2)} LOA Exit`, data: d.bLoaExit, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#ef4444', 'bottom') },
-    { label: `${planYearLabel(d.periodA, d.year1)} Training`, data: d.aTraining, type: 'line', borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
-    { label: `${planYearLabel(d.periodB, d.year2)} Training`, data: d.bTraining, type: 'line', borderColor: '#0ea5e9', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
+    { label: `${planYearLabel(d.periodA, d.year1)} Excess HC`, data: d.aExcessHc, backgroundColor: 'rgba(59,130,246,.55)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodB, d.year2)} Excess HC`, data: d.bExcessHc, backgroundColor: 'rgba(139,92,246,.7)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodA, d.year1)} LOA Exit`, data: d.aLoaExit, type: 'line', order: 1, borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#f59e0b', 'top') },
+    { label: `${planYearLabel(d.periodB, d.year2)} LOA Exit`, data: d.bLoaExit, type: 'line', order: 1, borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: lineDL('#ef4444', 'bottom') },
+    { label: `${planYearLabel(d.periodA, d.year1)} Training`, data: d.aTraining, type: 'line', order: 1, borderColor: '#8b5cf6', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
+    { label: `${planYearLabel(d.periodB, d.year2)} Training`, data: d.bTraining, type: 'line', order: 1, borderColor: '#0ea5e9', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false } },
   ];
   return {
     type: 'bar',
@@ -872,10 +876,10 @@ export function buildCapHiringConfig(d, theme) {
   const LP = legendPos(theme);
   const DL = dataLabelsDefault(theme);
   const datasets = [
-    { label: `${planYearLabel(d.periodA, d.year1)} (Old)`, data: d.aHiring, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodB, d.year2)} (New)`, data: d.bHiring, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
-    { label: `${planYearLabel(d.periodA, d.year1)} Total`, data: d.aHiring, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
-    { label: `${planYearLabel(d.periodB, d.year2)} Total`, data: d.bHiring, type: 'line', borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+    { label: `${planYearLabel(d.periodA, d.year1)} (Old)`, data: d.aHiring, backgroundColor: 'rgba(59,130,246,.6)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodB, d.year2)} (New)`, data: d.bHiring, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3, order: 2 },
+    { label: `${planYearLabel(d.periodA, d.year1)} Total`, data: d.aHiring, type: 'line', order: 1, borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+    { label: `${planYearLabel(d.periodB, d.year2)} Total`, data: d.bHiring, type: 'line', order: 1, borderColor: '#7c3aed', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
   ];
   return {
     type: 'bar',
@@ -898,12 +902,12 @@ export function buildCapHiringBreakdownConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${planYearLabel(d.periodA, d.year1)} Approved`, data: d.aApproved, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3 },
-        { label: `${planYearLabel(d.periodB, d.year2)} Approved`, data: d.bApproved, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3 },
-        { label: `${planYearLabel(d.periodA, d.year1)} Non-Approved`, data: d.aNonApproved, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3 },
-        { label: `${planYearLabel(d.periodB, d.year2)} Non-Approved`, data: d.bNonApproved, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3 },
-        { label: `${planYearLabel(d.periodA, d.year1)} Total`, data: aTotal, type: 'line', borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
-        { label: `${planYearLabel(d.periodB, d.year2)} Total`, data: bTotal, type: 'line', borderColor: '#0ea5e9', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: `${planYearLabel(d.periodA, d.year1)} Approved`, data: d.aApproved, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3, order: 2 },
+        { label: `${planYearLabel(d.periodB, d.year2)} Approved`, data: d.bApproved, backgroundColor: 'rgba(139,92,246,.75)', borderRadius: 3, order: 2 },
+        { label: `${planYearLabel(d.periodA, d.year1)} Non-Approved`, data: d.aNonApproved, backgroundColor: 'rgba(245,158,11,.8)', borderRadius: 3, order: 2 },
+        { label: `${planYearLabel(d.periodB, d.year2)} Non-Approved`, data: d.bNonApproved, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 3, order: 2 },
+        { label: `${planYearLabel(d.periodA, d.year1)} Total`, data: aTotal, type: 'line', order: 1, borderColor: '#ef4444', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
+        { label: `${planYearLabel(d.periodB, d.year2)} Total`, data: bTotal, type: 'line', order: 1, borderColor: '#0ea5e9', pointRadius: 3, tension: 0.3, borderWidth: 2, fill: false, datalabels: { display: false } },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, datalabels: DL } },
@@ -920,10 +924,10 @@ export function buildCapCapacityConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${planYearLabel(d.periodA, d.year1)} Cap%`, data: d.aCapPct, backgroundColor: 'rgba(59,130,246,.3)', borderRadius: 3 },
-        { label: `${planYearLabel(d.periodB, d.year2)} Cap%`, data: d.bCapPct, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3 },
+        { label: `${planYearLabel(d.periodA, d.year1)} Cap%`, data: d.aCapPct, backgroundColor: 'rgba(59,130,246,.3)', borderRadius: 3, order: 2 },
+        { label: `${planYearLabel(d.periodB, d.year2)} Cap%`, data: d.bCapPct, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3, order: 2 },
         {
-          label: `Variance (${planYearLabel(d.periodB, d.year2)} − ${planYearLabel(d.periodA, d.year1)})`, data: variance, type: 'line', yAxisID: 'y1',
+          label: `Variance (${planYearLabel(d.periodB, d.year2)} − ${planYearLabel(d.periodA, d.year1)})`, data: variance, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#f59e0b', borderDash: [4, 3], pointRadius: 2, tension: 0.3, borderWidth: 1.5, fill: false, datalabels: { display: false },
         },
       ],
@@ -986,30 +990,30 @@ export function buildCapHeadcountBifurcationConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, backgroundColor: 'rgba(59,130,246,.25)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL(tp) },
-        { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, backgroundColor: 'rgba(139,92,246,.3)', borderRadius: 3, yAxisID: 'y', datalabels: totalHcDL(tp) },
+        { label: `${planYearLabel(d.periodA, d.year1)} Total HC`, data: d.aTotalHc, backgroundColor: 'rgba(59,130,246,.25)', borderRadius: 3, yAxisID: 'y', order: 2, datalabels: totalHcDL(tp) },
+        { label: `${planYearLabel(d.periodB, d.year2)} Total HC`, data: d.bTotalHc, backgroundColor: 'rgba(139,92,246,.3)', borderRadius: 3, yAxisID: 'y', order: 2, datalabels: totalHcDL(tp) },
         {
-          label: `${planYearLabel(d.periodA, d.year1)} L1 HC Avg`, data: d.aL1HcAvg, type: 'line', yAxisID: 'y',
+          label: `${planYearLabel(d.periodA, d.year1)} L1 HC Avg`, data: d.aL1HcAvg, type: 'line', yAxisID: 'y', order: 1,
           borderColor: '#2563eb', backgroundColor: '#2563eb', pointRadius: 3, pointStyle: 'circle', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: `${planYearLabel(d.periodB, d.year2)} L1 HC Avg`, data: d.bL1HcAvg, type: 'line', yAxisID: 'y',
+          label: `${planYearLabel(d.periodB, d.year2)} L1 HC Avg`, data: d.bL1HcAvg, type: 'line', yAxisID: 'y', order: 1,
           borderColor: '#7c3aed', backgroundColor: '#7c3aed', pointRadius: 3, pointStyle: 'circle', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: `${planYearLabel(d.periodA, d.year1)} L1 HC Exit`, data: d.aL1HcExit, type: 'line', yAxisID: 'y',
+          label: `${planYearLabel(d.periodA, d.year1)} L1 HC Exit`, data: d.aL1HcExit, type: 'line', yAxisID: 'y', order: 1,
           borderColor: '#16a34a', backgroundColor: '#16a34a', borderDash: [6, 3], pointRadius: 3, pointStyle: 'rect', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: `${planYearLabel(d.periodB, d.year2)} L1 HC Exit`, data: d.bL1HcExit, type: 'line', yAxisID: 'y',
+          label: `${planYearLabel(d.periodB, d.year2)} L1 HC Exit`, data: d.bL1HcExit, type: 'line', yAxisID: 'y', order: 1,
           borderColor: '#0d9488', backgroundColor: '#0d9488', borderDash: [6, 3], pointRadius: 3, pointStyle: 'rect', tension: 0.25, borderWidth: 2, fill: false, datalabels: { display: false },
         },
         {
-          label: `${planYearLabel(d.periodA, d.year1)} Excess HC`, data: d.aExcessHc, type: 'line', yAxisID: 'y1',
+          label: `${planYearLabel(d.periodA, d.year1)} Excess HC`, data: d.aExcessHc, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#ef4444', backgroundColor: '#ef4444', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL('#ef4444'),
         },
         {
-          label: `${planYearLabel(d.periodB, d.year2)} Excess HC`, data: d.bExcessHc, type: 'line', yAxisID: 'y1',
+          label: `${planYearLabel(d.periodB, d.year2)} Excess HC`, data: d.bExcessHc, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#f59e0b', backgroundColor: '#f59e0b', borderDash: [2, 2], pointRadius: 3, pointStyle: 'rectRot', tension: 0.25, borderWidth: 1.5, fill: false, datalabels: excessDL('#f59e0b'),
         },
       ],
@@ -1056,18 +1060,18 @@ export function buildCapPopConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'HC Avg PoP%', data: d.hcAvgPop, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, yAxisID: 'y', datalabels: negBarDL },
-        { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', datalabels: negBarDL },
+        { label: 'HC Avg PoP%', data: d.hcAvgPop, backgroundColor: 'rgba(139,92,246,.6)', borderRadius: 3, yAxisID: 'y', order: 2, datalabels: negBarDL },
+        { label: 'HC Exit PoP%', data: d.hcExitPop, backgroundColor: 'rgba(6,182,212,.6)', borderRadius: 3, yAxisID: 'y', order: 2, datalabels: negBarDL },
         {
-          label: 'DB Vol PoP%', data: d.dbVolPop, type: 'line', yAxisID: 'y1',
+          label: 'DB Vol PoP%', data: d.dbVolPop, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#ef4444', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#ef4444', 'top', 4),
         },
         {
-          label: 'OSP Vol PoP%', data: d.ospVolPop, type: 'line', yAxisID: 'y1',
+          label: 'OSP Vol PoP%', data: d.ospVolPop, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#f59e0b', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#f59e0b', 'bottom', 4),
         },
         {
-          label: 'Total Vol PoP%', data: d.totalVolPop, type: 'line', yAxisID: 'y1',
+          label: 'Total Vol PoP%', data: d.totalVolPop, type: 'line', yAxisID: 'y1', order: 1,
           borderColor: '#3b82f6', pointRadius: 4, tension: 0.3, borderWidth: 2.5, fill: false, datalabels: volLineDL('#3b82f6', 'top', 16),
         },
       ],
@@ -1115,16 +1119,17 @@ export function buildWpdVolumeConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', datalabels: segDL },
-        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', datalabels: segDL },
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
         // Total gets its own stack group -- not summed into the DB+OSP bar --
         // so it renders as its own full-height bar right next to it.
-        { label: `${d.pA} Total`, data: d.aTotal, backgroundColor: '#10b981', borderRadius: 3, stack: 'a-total', datalabels: { ...segDL, color: '#10b981', formatter: totalFmt } },
-        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', datalabels: segDL },
-        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', datalabels: segDL },
-        { label: `${d.pB} Total`, data: d.bTotal, backgroundColor: '#f59e0b', borderRadius: 3, stack: 'b-total', datalabels: { ...segDL, color: '#f59e0b', formatter: totalFmt } },
+        { label: `${d.pA} Total`, data: d.aTotal, backgroundColor: '#10b981', borderRadius: 3, stack: 'a-total', order: 2, datalabels: { ...segDL, color: '#10b981', formatter: totalFmt } },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
+        { label: `${d.pB} Total`, data: d.bTotal, backgroundColor: '#f59e0b', borderRadius: 3, stack: 'b-total', order: 2, datalabels: { ...segDL, color: '#f59e0b', formatter: totalFmt } },
         {
-          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
+          // Lower order than every bar so the PoP% line always draws on top.
+          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
           datalabels: { display: true, color: '#8b5cf6', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
@@ -1150,10 +1155,12 @@ export function buildWpdHcConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} HC`, data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, datalabels: barDL },
-        { label: `${d.pB} HC`, data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, datalabels: barDL },
+        { label: `${d.pA} HC`, data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, order: 2, datalabels: barDL },
+        { label: `${d.pB} HC`, data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, order: 2, datalabels: barDL },
         {
-          label: 'L1 HC Exit', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
+          // Lower order than the bars so the line (and its points/labels)
+          // always draws on top of them instead of getting buried behind.
+          label: 'L1 HC Exit', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
           datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
@@ -1179,11 +1186,11 @@ export function buildWpdCapHireConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1' },
-        { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1' },
-        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
-        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
-        { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
+        { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
+        { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
+        { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', order: 1, borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
       ],
     },
     options: {
@@ -1207,16 +1214,16 @@ export function buildWpdHireExitConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} Overall`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 3 },
-        { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 3 },
-        { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(59,130,246,.5)', borderRadius: 3 },
-        { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3 },
+        { label: `${d.pA} Overall`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 3, order: 2 },
+        { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 3, order: 2 },
+        { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(59,130,246,.5)', borderRadius: 3, order: 2 },
+        { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3, order: 2 },
         {
-          label: 'LOA Exit', data: d.bLoa, type: 'line', borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          label: 'LOA Exit', data: d.bLoa, type: 'line', order: 1, borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
           datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
         },
         {
-          label: 'Training Exit', data: d.bTraining, type: 'line', borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          label: 'Training Exit', data: d.bTraining, type: 'line', order: 1, borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
           datalabels: { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
         },
       ],
