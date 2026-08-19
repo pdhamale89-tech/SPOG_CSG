@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { D, dmsDrillData, hvData } from '../../data/forecastData';
+import { D, dmsDrillData, hvData, hvDownloadRows } from '../../data/forecastData';
 import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
@@ -155,7 +155,7 @@ export default function ForecastOverview() {
             <DownloadBtn
               filename="historical-volume"
               title="Download historical volume"
-              rows={[(hvData[curPeriod] || hvData.monthly).cols, (hvData[curPeriod] || hvData.monthly).total, ...(hvData[curPeriod] || hvData.monthly).rows]}
+              rows={hvDownloadRows(hvData[curPeriod] || hvData.monthly)}
             />
           </div>
         </div>

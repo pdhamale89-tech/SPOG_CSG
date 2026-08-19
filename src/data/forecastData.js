@@ -88,28 +88,69 @@ qtr.Global.labels = ['Q1','Q2','Q3','Q4','Q1 FY25','Q2 FY25'];
 
 export const D = { monthly, weekly, qtr };
 
+// Each period has one group per DP/OSP channel type, DB and OSP, each with
+// its own bold total row plus expandable period-by-period detail rows --
+// DB's numbers are a separate, smaller series (not just a copy of OSP's).
 export const hvData = {
   monthly: {
     cols: ['DP/OSP','Channel','Month','QTR','FY2024','FY2025','Actual FY2026','Forecast FY2026','Off%','YoY'],
-    total: ['OSP','Chat','—','—','29,752','30,901','26,367','29,741','89%','-77%'],
-    rows: [
-      ['','Chat','Feb','Q1','2,174','2,429','3,114','2,535','123%','-58%'],
-      ['','Chat','Mar','Q1','2,431','2,720','2,411','2,634','92%','-40%'],
+    groups: [
+      {
+        total: ['OSP','Chat','—','—','29,752','30,901','26,367','29,741','89%','-77%'],
+        rows: [
+          ['','Chat','Feb','Q1','2,174','2,429','3,114','2,535','123%','-58%'],
+          ['','Chat','Mar','Q1','2,431','2,720','2,411','2,634','92%','-40%'],
+        ],
+      },
+      {
+        total: ['DB','Chat','—','—','18,430','19,120','21,845','20,560','106%','-33%'],
+        rows: [
+          ['','Chat','Feb','Q1','1,340','1,410','1,605','1,520','106%','-34%'],
+          ['','Chat','Mar','Q1','1,505','1,585','1,720','1,650','104%','-33%'],
+        ],
+      },
     ],
   },
   weekly: {
     cols: ['DP/OSP','Channel','Week','FY2024','FY2025','Actual FY2026','Forecast FY2026','Off%','YoY'],
-    total: ['OSP','Chat','Total','29,752','30,901','26,367','29,741','89%','-42%'],
-    rows: [
-      ['','Chat','W1','544','607','779','634','123%','-58%'],
-      ['','Chat','W2','608','680','603','658','92%','-40%'],
+    groups: [
+      {
+        total: ['OSP','Chat','Total','29,752','30,901','26,367','29,741','89%','-42%'],
+        rows: [
+          ['','Chat','W1','544','607','779','634','123%','-58%'],
+          ['','Chat','W2','608','680','603','658','92%','-40%'],
+        ],
+      },
+      {
+        total: ['DB','Chat','Total','18,430','19,120','21,845','20,560','106%','-19%'],
+        rows: [
+          ['','Chat','W1','337','355','404','380','106%','-20%'],
+          ['','Chat','W2','378','397','430','410','104%','-18%'],
+        ],
+      },
     ],
   },
   qtr: {
     cols: ['DP/OSP','Channel','QTR','FY2024','FY2025','Actual FY2026','Forecast FY2026','Off%','YoY'],
-    total: ['OSP','Chat','Total','29,752','30,901','26,367','29,741','89%','-77%'],
-    rows: [
-      ['','Chat','Q1','7,250','8,080','8,317','8,283','100%','-46%'],
+    groups: [
+      {
+        total: ['OSP','Chat','Total','29,752','30,901','26,367','29,741','89%','-77%'],
+        rows: [
+          ['','Chat','Q1','7,250','8,080','8,317','8,283','100%','-46%'],
+        ],
+      },
+      {
+        total: ['DB','Chat','Total','18,430','19,120','21,845','20,560','106%','-19%'],
+        rows: [
+          ['','Chat','Q1','4,480','4,690','5,320','5,090','105%','-17%'],
+        ],
+      },
     ],
   },
 };
+
+// Flattened [cols, ...every group's total + rows] shape for the download
+// button, which just wants one flat list of rows regardless of grouping.
+export function hvDownloadRows(pd) {
+  return [pd.cols, ...pd.groups.flatMap((g) => [g.total, ...g.rows])];
+}
