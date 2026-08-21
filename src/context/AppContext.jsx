@@ -3,7 +3,7 @@ import { formatIST } from '../utils/dateUtils';
 
 const AppContext = createContext(null);
 
-export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings'];
+export const NO_FILTER_TABS = ['calendar-forecast', 'calendar-fiscal', 'home', 'reports', 'notifications', 'settings', 'glossary'];
 
 const BREADCRUMBS = {
   'forecast-overview': 'Forecast › Overview',
@@ -12,6 +12,7 @@ const BREADCRUMBS = {
   'capacity-overview': 'Capacity › Overview',
   'calendar-forecast': 'Calendar › Planning',
   'calendar-fiscal': 'Calendar › Fiscal',
+  'glossary': 'Tools › Glossary',
 };
 
 function defaultBreadcrumb(pid) {

@@ -19,6 +19,7 @@ import AsuOverview from './components/tabs/AsuOverview';
 import CapacityOverview from './components/tabs/CapacityOverview';
 import CalendarForecast from './components/tabs/CalendarForecast';
 import CalendarFiscal from './components/tabs/CalendarFiscal';
+import Glossary from './components/tabs/Glossary';
 import Reports from './components/tabs/Reports';
 import Notifications from './components/tabs/Notifications';
 import Settings from './components/tabs/Settings';
@@ -31,6 +32,7 @@ const TABS = {
   'capacity-overview': CapacityOverview,
   'calendar-forecast': CalendarForecast,
   'calendar-fiscal': CalendarFiscal,
+  'glossary': Glossary,
   'reports': Reports,
   'notifications': Notifications,
   'settings': Settings,
