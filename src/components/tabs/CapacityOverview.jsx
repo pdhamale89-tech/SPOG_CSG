@@ -7,6 +7,7 @@ import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpd
 import { YRS, VOL, HC } from '../../data/capacityOverviewNewData';
 import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight } from '../../utils/insights';
 import { buildPeriodLabels } from '../../utils/periodLabels';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 // Workforce Planning Dashboard-style Capacity Overview: Plan A/Plan B by
 // month x Fiscal Year comparison, 4 charts, a tabbed detail explorer with
@@ -14,9 +15,12 @@ import { buildPeriodLabels } from '../../utils/periodLabels';
 // components/theme (.card/.card-header/.card-title, InfoBtn, InsightBox,
 // .cap-plan-filters).
 
-const fmt = (n) => (n != null && n !== 0 ? n.toLocaleString() : '—');
-const fmtM = (n) => (n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
-const fmtK = (n) => (n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
+// Wrapped through scaleDisplayValue for the CSG display-only 10% whole-number
+// reduction -- it no-ops on anything with a decimal point (fmtM's output) or
+// a %, so only plain/K-suffixed whole numbers are actually affected.
+const fmt = (n) => scaleDisplayValue(n != null && n !== 0 ? n.toLocaleString() : '—');
+const fmtM = (n) => scaleDisplayValue(n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
+const fmtK = (n) => scaleDisplayValue(n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
 const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
 const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');

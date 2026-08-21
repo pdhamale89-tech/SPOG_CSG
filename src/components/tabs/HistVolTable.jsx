@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { hvData } from '../../data/forecastData';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 export default function HistVolTable({ period }) {
   const [expanded, setExpanded] = useState(false);
@@ -18,7 +19,7 @@ export default function HistVolTable({ period }) {
                 <td className="hv-expand" onClick={() => setExpanded((e) => !e)}>{expanded ? '▼' : '▶'} {g.total[0]}</td>
                 {g.total.slice(1).map((v, i) => {
                   const isNegPct = v.indexOf('-') === 0 && v.indexOf('%') > 0;
-                  return <td key={i} className={isNegPct ? 'hv-red' : ''}><strong>{v}</strong></td>;
+                  return <td key={i} className={isNegPct ? 'hv-red' : ''}><strong>{scaleDisplayValue(v)}</strong></td>;
                 })}
               </tr>
               {expanded && g.rows.map((row, ri) => (
@@ -26,7 +27,7 @@ export default function HistVolTable({ period }) {
                   {row.map((v, ci) => {
                     const isLast = ci === row.length - 1;
                     const isNeg = isLast && v.indexOf('-') === 0;
-                    return <td key={ci} className={isNeg ? 'hv-red' : ''}>{v}</td>;
+                    return <td key={ci} className={isNeg ? 'hv-red' : ''}>{scaleDisplayValue(v)}</td>;
                   })}
                 </tr>
               ))}

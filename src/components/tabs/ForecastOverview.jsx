@@ -14,6 +14,7 @@ import PartnerMinimum from './PartnerMinimum';
 import ContactVolumeDetail from './ContactVolumeDetail';
 import VolumeByPeriodTable from './VolumeByPeriodTable';
 import InsightBox from '../common/InsightBox';
+import { scaleDisplayValue } from '../../utils/displayScale';
 import {
   buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
   buildDmsConfig, buildHistTrendConfig,
@@ -299,7 +300,7 @@ export default function ForecastOverview() {
                 return (
                   <tr key={q.id}>
                     <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
-                    <td>{q.forecast.toLocaleString()}</td><td>{q.actual.toLocaleString()}</td><td>{accRaw.toFixed(1)}%</td>
+                    <td>{scaleDisplayValue(q.forecast.toLocaleString())}</td><td>{scaleDisplayValue(q.actual.toLocaleString())}</td><td>{accRaw.toFixed(1)}%</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                     <td>
                       <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>

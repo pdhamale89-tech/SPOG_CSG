@@ -3,6 +3,7 @@ import { buildPeriodLabels } from '../../utils/periodLabels';
 import { VOL_OFFERINGS, VOL_ROWS_BY_PERIOD, VOL_GRAND_TOTAL, volRowTotal } from '../../data/volumeByPeriod';
 import InfoBtn from '../common/InfoBtn';
 import DownloadBtn from '../common/DownloadBtn';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 const PERIOD_HEADER = { weekly: 'Fiscal Week', monthly: 'Fiscal Month', qtr: 'Fiscal Quarter' };
 
@@ -42,14 +43,14 @@ export default function VolumeByPeriodTable() {
             {rows.map((r, i) => (
               <tr key={labels[i]}>
                 <td>{labels[i]}</td>
-                {VOL_OFFERINGS.map((o) => <td key={o}>{r[o].toLocaleString()}</td>)}
-                <td className="vbp-total-col">{volRowTotal(r).toLocaleString()}</td>
+                {VOL_OFFERINGS.map((o) => <td key={o}>{scaleDisplayValue(r[o].toLocaleString())}</td>)}
+                <td className="vbp-total-col">{scaleDisplayValue(volRowTotal(r).toLocaleString())}</td>
               </tr>
             ))}
             <tr className="vbp-grand-row">
               <td>Grand Total</td>
-              {VOL_OFFERINGS.map((o) => <td key={o}>{VOL_GRAND_TOTAL[o].toLocaleString()}</td>)}
-              <td>{grandTotal.toLocaleString()}</td>
+              {VOL_OFFERINGS.map((o) => <td key={o}>{scaleDisplayValue(VOL_GRAND_TOTAL[o].toLocaleString())}</td>)}
+              <td>{scaleDisplayValue(grandTotal.toLocaleString())}</td>
             </tr>
           </tbody>
         </table>

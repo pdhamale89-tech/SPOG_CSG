@@ -11,6 +11,7 @@ import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
 import ShipmentAdherenceDetail from './ShipmentAdherenceDetail';
+import { scaleDisplayValue } from '../../utils/displayScale';
 import {
   buildShipUppConfig, buildShipmentTrendStaticConfig, buildSegmentSoldConfig,
   buildProductTrendConfig, buildShipmentGrowthConfig, segmentSoldGrowthPct,
@@ -165,7 +166,7 @@ export default function ShipmentOverview() {
                 return (
                   <tr key={s.segment}>
                     <td>{s.segment}</td><td>{s.regions}</td><td>{s.offerings}</td>
-                    <td>{s.forecast.toLocaleString()}</td><td>{s.actual.toLocaleString()}</td>
+                    <td>{scaleDisplayValue(s.forecast.toLocaleString())}</td><td>{scaleDisplayValue(s.actual.toLocaleString())}</td>
                     <td style={tier === 'r' ? { color: 'var(--accent-red)' } : undefined}>{adh.toFixed(1)}%</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                   </tr>

@@ -1,3 +1,5 @@
+import { scaleDisplayValue } from '../../utils/displayScale';
+
 export default function KpiCard({ label, value, delta, sub, onClick }) {
   return (
     <div
@@ -6,7 +8,7 @@ export default function KpiCard({ label, value, delta, sub, onClick }) {
       title={onClick ? 'Click for more information' : undefined}
     >
       <div className="kpi-label">{label}</div>
-      <div className="kpi-value">{value}</div>
+      <div className="kpi-value">{scaleDisplayValue(value)}</div>
       {delta && <div className="kpi-sub">{delta}</div>}
       {sub && <div className="kpi-sub">{sub}</div>}
     </div>

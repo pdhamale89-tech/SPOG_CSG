@@ -4,6 +4,7 @@ import {
 } from '../../data/asuRegionalMetrics';
 import InfoBtn from '../common/InfoBtn';
 import DownloadBtn from '../common/DownloadBtn';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 const ALL = 'All';
 const ALL_SUBREGIONS = Object.values(ASU_SUBREGIONS_BY_REGION).flat();
@@ -17,7 +18,7 @@ function pctClass(pct) {
 function tierCells(tierData) {
   return (
     <>
-      <td className="arm-vol">{tierData.vol}</td>
+      <td className="arm-vol">{scaleDisplayValue(tierData.vol)}</td>
       <td className={'arm-pct ' + pctClass(tierData.pct)}>{tierData.pct}%</td>
     </>
   );

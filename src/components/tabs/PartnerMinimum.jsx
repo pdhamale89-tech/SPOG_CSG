@@ -4,6 +4,7 @@ import { PARTNER_PERIODS, partnerAgg, queueAgg } from '../../data/partnerLockDat
 import { buildPartnerLockConfig } from '../charts/chartConfigs';
 import ChartCanvas from '../charts/ChartCanvas';
 import InfoBtn from '../common/InfoBtn';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 // The chart follows the global Weekly/Monthly/QTR filter instead of owning
 // its own granularity tabs; PARTNER_PERIODS just uses "quarterly" as the key.
@@ -90,13 +91,13 @@ export default function PartnerMinimum() {
       </div>
 
       <div className="pm-summary">
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{totalQueues}</div><div className="pm-summary-lbl">Total Queues</div></div>
-        {isPartnerView && <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{data.length}</div><div className="pm-summary-lbl">Partners</div></div>}
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{totalLock.toLocaleString()}</div><div className="pm-summary-lbl">Lock Offered</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{totalActual.toLocaleString()}</div><div className="pm-summary-lbl">Actual Offered</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{scaleDisplayValue(String(totalQueues))}</div><div className="pm-summary-lbl">Total Queues</div></div>
+        {isPartnerView && <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{scaleDisplayValue(String(data.length))}</div><div className="pm-summary-lbl">Partners</div></div>}
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{scaleDisplayValue(totalLock.toLocaleString())}</div><div className="pm-summary-lbl">Lock Offered</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{scaleDisplayValue(totalActual.toLocaleString())}</div><div className="pm-summary-lbl">Actual Offered</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: overallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPct}%</div><div className="pm-summary-lbl">Lock%</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: change ? change.color : 'var(--text-muted)' }}>{change ? `${change.symbol}${change.diff >= 0 ? '+' : ''}${change.diff}%` : '—'}</div><div className="pm-summary-lbl">vs Prev</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{gap.toLocaleString()}</div><div className="pm-summary-lbl">Gap</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{scaleDisplayValue(gap.toLocaleString())}</div><div className="pm-summary-lbl">Gap</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: meetTarget >= data.length / 2 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{meetTarget}/{data.length}</div><div className="pm-summary-lbl">On Target</div></div>
       </div>
 
