@@ -162,12 +162,16 @@ export default function ShipmentOverview() {
             <tbody>
               {SEGMENT_DETAIL_ROWS.map((s) => {
                 const adh = (s.actual / s.forecast) * 100;
-                const tier = adh >= 95 ? 'g' : adh >= 80 ? 'o' : 'r';
+                // Classify off the reduced percentage so the status dot
+                // always matches the number actually shown.
+                const adhText = scaleDisplayValue(adh.toFixed(1) + '%');
+                const adhReduced = parseFloat(adhText);
+                const tier = adhReduced >= 95 ? 'g' : adhReduced >= 80 ? 'o' : 'r';
                 return (
                   <tr key={s.segment}>
                     <td>{s.segment}</td><td>{s.regions}</td><td>{s.offerings}</td>
                     <td>{scaleDisplayValue(s.forecast.toLocaleString())}</td><td>{scaleDisplayValue(s.actual.toLocaleString())}</td>
-                    <td style={tier === 'r' ? { color: 'var(--accent-red)' } : undefined}>{adh.toFixed(1)}%</td>
+                    <td style={tier === 'r' ? { color: 'var(--accent-red)' } : undefined}>{adhText}</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                   </tr>
                 );

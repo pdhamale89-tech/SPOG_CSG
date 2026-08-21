@@ -32,6 +32,10 @@ const QUEUE_ROWS = [
 const DMS_COUNTRIES = Object.keys(dmsDrillData.country);
 const DMS_OFFERINGS = Object.keys(dmsDrillData.offering);
 const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
+// Reduces a standalone percentage number by the CSG 5-point rule and hands
+// back the numeric result (not just text) so it can also drive tier
+// classification, staying consistent with what's actually displayed.
+const reducedPct = (n) => parseFloat(scaleDisplayValue(`${n}%`));
 
 export default function ForecastOverview() {
   const {
@@ -200,16 +204,16 @@ export default function ForecastOverview() {
           <div className="dbosp-metrics">
             <div className="dbosp-metric-card">
               <div className="dbosp-metric-label">Accuracy</div>
-              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-blue)' }}>72%</span></div>
+              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-blue)' }}>{reducedPct(72)}%</span></div>
               <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '72%', background: 'var(--accent-blue)' }}></div></div>
-              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-orange)' }}>55%</span></div>
+              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-orange)' }}>{reducedPct(55)}%</span></div>
               <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '55%', background: 'var(--accent-orange)' }}></div></div>
             </div>
             <div className="dbosp-metric-card">
               <div className="dbosp-metric-label">Abandon Rate</div>
-              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-green)' }}>5.2%</span></div>
+              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-green)' }}>{reducedPct(5.2)}%</span></div>
               <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '17%', background: 'var(--accent-green)' }}></div></div>
-              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-red)' }}>12.4%</span></div>
+              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-red)' }}>{reducedPct(12.4)}%</span></div>
               <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '41%', background: 'var(--accent-red)' }}></div></div>
             </div>
           </div>
@@ -294,13 +298,17 @@ export default function ForecastOverview() {
             <tbody>
               {QUEUE_ROWS.map((q) => {
                 const accRaw = (q.actual / q.forecast) * 100;
-                const tier = accRaw >= 95 ? 'g' : accRaw >= 80 ? 'o' : 'r';
-                const priority = accRaw >= 95 ? 'Low' : accRaw >= 80 ? 'Medium' : 'High';
+                // Classify off the reduced percentage, not the raw one, so
+                // the status dot/priority always match what's shown.
+                const accText = scaleDisplayValue(accRaw.toFixed(1) + '%');
+                const accReduced = parseFloat(accText);
+                const tier = accReduced >= 95 ? 'g' : accReduced >= 80 ? 'o' : 'r';
+                const priority = accReduced >= 95 ? 'Low' : accReduced >= 80 ? 'Medium' : 'High';
                 const actioned = actionLog[q.id];
                 return (
                   <tr key={q.id}>
                     <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
-                    <td>{scaleDisplayValue(q.forecast.toLocaleString())}</td><td>{scaleDisplayValue(q.actual.toLocaleString())}</td><td>{accRaw.toFixed(1)}%</td>
+                    <td>{scaleDisplayValue(q.forecast.toLocaleString())}</td><td>{scaleDisplayValue(q.actual.toLocaleString())}</td><td>{accText}</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                     <td>
                       <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>

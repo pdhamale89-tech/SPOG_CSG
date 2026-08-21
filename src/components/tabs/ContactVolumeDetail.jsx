@@ -4,6 +4,7 @@ import {
 } from '../../data/contactVolumeDetail';
 import InfoBtn from '../common/InfoBtn';
 import DownloadBtn from '../common/DownloadBtn';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 const ALL = 'All';
 
@@ -96,13 +97,13 @@ export default function ContactVolumeDetail() {
                 <tr>
                   <td className="cv-cat-label yoy">Vol YoY%</td>
                   {CV_FY_KEYS.map((fy) => (
-                    <td key={fy} className={'cv-yoy-data cv-shade-' + fy}>{row.volYoY[fy]}</td>
+                    <td key={fy} className={'cv-yoy-data cv-shade-' + fy}>{scaleDisplayValue(row.volYoY[fy])}</td>
                   ))}
                 </tr>
                 <tr>
                   <td className="cv-cat-label dark">Partner Mix</td>
                   {CV_FY_KEYS.map((fy) => (
-                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy}>{row.partnerMix[fy]}</td>
+                    <td key={fy} className={'cv-data-cell bold cv-shade-' + fy}>{scaleDisplayValue(row.partnerMix[fy])}</td>
                   ))}
                 </tr>
                 {idx < filteredRows.length - 1 && <tr className="cv-spacer"><td colSpan={5}></td></tr>}

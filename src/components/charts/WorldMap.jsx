@@ -4,6 +4,7 @@ import 'jsvectormap/dist/maps/world.js';
 import 'jsvectormap/dist/jsvectormap.min.css';
 import { COUNTRY_REGION, REGION_ACC, COUNTRY_SUBREGION, SUBREGION_ACC, accTier } from '../../data/regions';
 import { getColors } from '../../theme/colors';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 // Hand-picked on-land coordinates so region/sub-region labels land in a
 // recognizable spot instead of at an arbitrary country's bounding-box center.
@@ -69,7 +70,9 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
       labels: {
         markers: {
           render(markerConfig) {
-            return `${markerConfig.name} ${groupAcc[markerConfig.name]}%`;
+            // Label text only -- the region fill/tier color scale above is
+            // left keyed off the real value, same as chart geometry elsewhere.
+            return `${markerConfig.name} ${scaleDisplayValue(`${groupAcc[markerConfig.name]}%`)}`;
           },
         },
       },
@@ -99,7 +102,7 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
         {hover && (
           <div className="geo-hover-card">
             <div className="geo-hover-name">{hover.label}</div>
-            <div className="geo-hover-val" style={{ color: tierColor(hover.value, c) }}>{hover.value}%</div>
+            <div className="geo-hover-val" style={{ color: tierColor(hover.value, c) }}>{scaleDisplayValue(`${hover.value}%`)}</div>
             <div className="geo-hover-sub">accuracy</div>
           </div>
         )}

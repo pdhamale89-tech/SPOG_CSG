@@ -55,6 +55,11 @@ export default function PartnerMinimum() {
   const totalLock = sum(data, 'lock');
   const totalActual = sum(data, 'actual');
   const overallPct = totalLock > 0 ? Math.round((totalActual / totalLock) * 100) : 0;
+  // "vs Prev" below is a difference between two overallPct-style values, so
+  // the flat -5pp reduction cancels out of it and needs no extra handling --
+  // only the standalone Lock% summary tile itself needs reducing/reclassifying.
+  const overallPctText = scaleDisplayValue(`${overallPct}%`);
+  const reducedOverallPct = parseFloat(overallPctText);
   const gap = totalLock - totalActual;
   const meetTarget = data.filter((d) => d.pct >= TARGET_PCT).length;
 
@@ -95,7 +100,7 @@ export default function PartnerMinimum() {
         {isPartnerView && <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-blue)' }}>{scaleDisplayValue(String(data.length))}</div><div className="pm-summary-lbl">Partners</div></div>}
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-orange)' }}>{scaleDisplayValue(totalLock.toLocaleString())}</div><div className="pm-summary-lbl">Lock Offered</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-purple)' }}>{scaleDisplayValue(totalActual.toLocaleString())}</div><div className="pm-summary-lbl">Actual Offered</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: overallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPct}%</div><div className="pm-summary-lbl">Lock%</div></div>
+        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: reducedOverallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPctText}</div><div className="pm-summary-lbl">Lock%</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: change ? change.color : 'var(--text-muted)' }}>{change ? `${change.symbol}${change.diff >= 0 ? '+' : ''}${change.diff}%` : '—'}</div><div className="pm-summary-lbl">vs Prev</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{scaleDisplayValue(gap.toLocaleString())}</div><div className="pm-summary-lbl">Gap</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: meetTarget >= data.length / 2 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{meetTarget}/{data.length}</div><div className="pm-summary-lbl">On Target</div></div>

@@ -2,6 +2,7 @@ import { uppData } from '../../data/forecastData';
 import { CAP_OVERALL } from '../../data/capacityData';
 import { getColors } from '../../theme/colors';
 import { buildPeriodLabels } from '../../utils/periodLabels';
+import { scaleDisplayValue } from '../../utils/displayScale';
 
 // Overall's series is an average, not a specific plan's actual data -- tag
 // its legend labels with (Avg) so it doesn't read as if Jul or Aug measured
@@ -47,7 +48,7 @@ function dataLabelsDefault(theme) {
     offset: 4,
     textStrokeColor: bg,
     textStrokeWidth: 3,
-    formatter: (v) => (v >= 1000 ? fK(v) : v),
+    formatter: (v) => scaleDisplayValue(String(v >= 1000 ? fK(v) : v)),
   };
 }
 function dataLabelsPercent(theme) {
@@ -61,7 +62,7 @@ function dataLabelsPercent(theme) {
     offset: 4,
     textStrokeColor: bg,
     textStrokeWidth: 3,
-    formatter: (v) => (v == null ? '' : v + '%'),
+    formatter: (v) => (v == null ? '' : scaleDisplayValue(`${v}%`)),
   };
 }
 const TOP_LABEL_LAYOUT = { padding: { top: 16 } };
@@ -177,7 +178,7 @@ export function buildChannelMixConfig(d, theme) {
           anchor: 'center',
           textStrokeColor: bg,
           textStrokeWidth: 2,
-          formatter: (v) => (v > 150 ? fK(v) : ''),
+          formatter: (v) => (v > 150 ? scaleDisplayValue(String(fK(v))) : ''),
         },
       },
     },
@@ -260,7 +261,9 @@ export function buildPartnerLockConfig(data, theme, isPartnerView, targetPct) {
       barPercentage: 0.55,
       categoryPercentage: 0.75,
       order: 2,
-      datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => v + '%' },
+      // Label text only -- bar length/color threshold below still keys off
+      // the real Lock% value, same as every other chart's geometry.
+      datalabels: { display: true, color: tp, font: { size: 10, weight: 'bold' }, anchor: 'end', align: 'right', offset: 4, formatter: (v) => scaleDisplayValue(`${v}%`) },
     },
     {
       label: 'Target',
@@ -373,7 +376,7 @@ export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
 export function buildTagRouted2Config(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const valueLabels = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v.toLocaleString() };
+  const valueLabels = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(v.toLocaleString()) };
   const tagCount = d.labels.map((_, i) => d.tagWeb[i] + d.tagPhone[i] + d.tagChat[i] + d.tagEmail[i]);
   const tagsPct = tagCount.map((c, i) => (d.offered[i] ? Math.round((c / d.offered[i]) * 1000) / 10 : 0));
   const minPct = Math.floor(Math.min(...tagsPct));
@@ -388,7 +391,7 @@ export function buildTagRouted2Config(d, theme) {
         {
           label: 'Tags %', data: tagsPct, type: 'line', borderColor: '#1a1f36', backgroundColor: '#1a1f36', pointBackgroundColor: '#1a1f36',
           borderWidth: 2.5, pointRadius: 4, tension: 0.2, fill: false, yAxisID: 'y1', order: 1,
-          datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' },
+          datalabels: { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(`${v}%`) },
         },
       ],
     },
@@ -724,7 +727,7 @@ function trendDatalabels(color, bg, n, align = 'top') {
     offset: 4,
     textStrokeColor: bg,
     textStrokeWidth: 3,
-    formatter: (v) => (v == null ? '' : v.toLocaleString()),
+    formatter: (v) => (v == null ? '' : scaleDisplayValue(v.toLocaleString())),
   };
 }
 
@@ -1112,7 +1115,7 @@ export function buildWpdVolumeConfig(d, theme) {
   // never gets clipped by the chart's top edge.
   const rawMax = Math.max(...d.aTotal, ...d.bTotal);
   const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
-  const totalFmt = (v) => (v == null ? '' : (v / 1e6).toFixed(2) + 'M');
+  const totalFmt = (v) => (v == null ? '' : scaleDisplayValue((v / 1e6).toFixed(2) + 'M'));
   const segDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
   return {
     type: 'bar',
@@ -1188,8 +1191,8 @@ export function buildWpdCapHireConfig(d, theme) {
       datasets: [
         { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
         { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
-        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
-        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => v + '%' } },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(`${v}%`) } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(`${v}%`) } },
         { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', order: 1, borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
       ],
     },

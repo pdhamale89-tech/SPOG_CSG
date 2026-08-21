@@ -16,10 +16,15 @@ function pctClass(pct) {
 }
 
 function tierCells(tierData) {
+  // Reduce the percent once, then classify off that same reduced value so
+  // the color tier always matches what's actually shown, not the stale
+  // pre-reduction number.
+  const pctText = scaleDisplayValue(`${tierData.pct}%`);
+  const reducedPct = parseFloat(pctText);
   return (
     <>
       <td className="arm-vol">{scaleDisplayValue(tierData.vol)}</td>
-      <td className={'arm-pct ' + pctClass(tierData.pct)}>{tierData.pct}%</td>
+      <td className={'arm-pct ' + pctClass(reducedPct)}>{pctText}</td>
     </>
   );
 }

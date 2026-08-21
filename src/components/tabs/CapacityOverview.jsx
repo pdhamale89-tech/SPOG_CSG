@@ -21,6 +21,7 @@ import { scaleDisplayValue } from '../../utils/displayScale';
 const fmt = (n) => scaleDisplayValue(n != null && n !== 0 ? n.toLocaleString() : '—');
 const fmtM = (n) => scaleDisplayValue(n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
 const fmtK = (n) => scaleDisplayValue(n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
+const fmtPct = (n) => scaleDisplayValue(`${n}%`);
 const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
 const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');
@@ -236,13 +237,13 @@ function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
   const rows = labels.map((l, i) => {
     const ca = hA.Excess_Cap[i], cb = hB.Excess_Cap[i], dc = ca - cb;
     const ea = hA.Excess_HC[i], eb = hB.Excess_HC[i], de = ea - eb;
-    return { cells: [{ val: l }, { val: ca + '%' }, { val: cb + '%' }, deltaCell(dc, 'pp'), { val: fmt(ea) }, { val: fmt(eb) }, deltaCell(de)] };
+    return { cells: [{ val: l }, { val: fmtPct(ca) }, { val: fmtPct(cb) }, deltaCell(dc, 'pp'), { val: fmt(ea) }, { val: fmt(eb) }, deltaCell(de)] };
   });
   const avgCA = Math.round(sum(hA.Excess_Cap) / 4), avgCB = Math.round(sum(hB.Excess_Cap) / 4);
   const avgEA = Math.round(sum(hA.Excess_HC) / 4), avgEB = Math.round(sum(hB.Excess_HC) / 4);
   rows.push({
     isTotal: true,
-    cells: [{ val: 'Average' }, { val: avgCA + '%' }, { val: avgCB + '%' }, deltaCell(avgCA - avgCB, 'pp'), { val: fmt(avgEA) }, { val: fmt(avgEB) }, deltaCell(avgEA - avgEB)],
+    cells: [{ val: 'Average' }, { val: fmtPct(avgCA) }, { val: fmtPct(avgCB) }, deltaCell(avgCA - avgCB, 'pp'), { val: fmt(avgEA) }, { val: fmt(avgEB) }, deltaCell(avgEA - avgEB)],
   });
   return (
     <>
@@ -256,9 +257,9 @@ function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
                 <span className={`cmp-badge ${badgeCls(d)}`}>{d > 0 ? '+' : ''}{d}pp</span>
               </div>
               <div className="cmp-vals">
-                <div className="cmp-val-block"><div className="cmp-val-label">{pA}</div><div className="cmp-val-num">{capA}%</div></div>
+                <div className="cmp-val-block"><div className="cmp-val-label">{pA}</div><div className="cmp-val-num">{fmtPct(capA)}</div></div>
                 <span className="cmp-arrow">→</span>
-                <div className="cmp-val-block"><div className="cmp-val-label">{pB}</div><div className="cmp-val-num">{capB}%</div></div>
+                <div className="cmp-val-block"><div className="cmp-val-label">{pB}</div><div className="cmp-val-num">{fmtPct(capB)}</div></div>
               </div>
             </div>
           );
@@ -348,7 +349,7 @@ export default function CapacityOverview() {
       <div className="kpi-grid cols-5 wpd-kpi-grid">
         <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={`${cA}%`} valueB={`${cB}%`} delta={cA - cB} suffix="pp" planA={planA} planB={planB} />
+        <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={fmtPct(cA)} valueB={fmtPct(cB)} delta={cA - cB} suffix="pp" planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirA - hirB} suffix="" planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exA - exB} suffix="" planA={planA} planB={planB} />
       </div>
