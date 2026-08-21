@@ -43,6 +43,8 @@
 .home-hero-card::before{content:'';position:absolute;bottom:-46px;left:-46px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);}
 .home-hero-card.csg{background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));}
 .home-hero-card.isg{background:linear-gradient(135deg,var(--accent-orange),var(--accent-red));}
+.home-hero-card.locked{cursor:not-allowed;filter:grayscale(.55);opacity:.72;}
+.home-hero-card.locked:hover{transform:none;box-shadow:var(--shadow-md);}
 .home-hero-top{display:flex;align-items:center;justify-content:space-between;}
 .home-hero-ic{font-size:26px;}
 .home-hero-badge{font-size:9px;font-weight:700;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);border-radius:20px;padding:3px 9px;letter-spacing:.3px;white-space:nowrap;}
