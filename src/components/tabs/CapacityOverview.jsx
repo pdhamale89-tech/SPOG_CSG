@@ -7,7 +7,7 @@ import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpd
 import { YRS, VOL, HC } from '../../data/capacityOverviewNewData';
 import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight } from '../../utils/insights';
 import { buildPeriodLabels } from '../../utils/periodLabels';
-import { scaleDisplayValue } from '../../utils/displayScale';
+import { scaleByRelativePercent } from '../../utils/displayScale';
 
 // Workforce Planning Dashboard-style Capacity Overview: Plan A/Plan B by
 // month x Fiscal Year comparison, 4 charts, a tabbed detail explorer with
@@ -15,13 +15,15 @@ import { scaleDisplayValue } from '../../utils/displayScale';
 // components/theme (.card/.card-header/.card-title, InfoBtn, InsightBox,
 // .cap-plan-filters).
 
-// Wrapped through scaleDisplayValue for the CSG display-only 10% whole-number
-// reduction -- it no-ops on anything with a decimal point (fmtM's output) or
-// a %, so only plain/K-suffixed whole numbers are actually affected.
-const fmt = (n) => scaleDisplayValue(n != null && n !== 0 ? n.toLocaleString() : '—');
-const fmtM = (n) => scaleDisplayValue(n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
-const fmtK = (n) => scaleDisplayValue(n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
-const fmtPct = (n) => scaleDisplayValue(`${n}%`);
+// Capacity Overview uses its own flat 15% cut (on whole numbers, K/M
+// decimals, and percentages alike) instead of the rest of CSG's "10% floor
+// for whole numbers / 5 flat points for percentages" split.
+const CAP_CUT_PCT = 15;
+const scaleCap = (v) => scaleByRelativePercent(v, CAP_CUT_PCT);
+const fmt = (n) => scaleCap(n != null && n !== 0 ? n.toLocaleString() : '—');
+const fmtM = (n) => scaleCap(n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
+const fmtK = (n) => scaleCap(n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
+const fmtPct = (n) => scaleCap(`${n}%`);
 const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
 const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');

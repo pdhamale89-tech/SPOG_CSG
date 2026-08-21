@@ -2,7 +2,7 @@ import { uppData } from '../../data/forecastData';
 import { CAP_OVERALL } from '../../data/capacityData';
 import { getColors } from '../../theme/colors';
 import { buildPeriodLabels } from '../../utils/periodLabels';
-import { scaleDisplayValue } from '../../utils/displayScale';
+import { scaleDisplayValue, scaleByRelativePercent } from '../../utils/displayScale';
 
 // Overall's series is an average, not a specific plan's actual data -- tag
 // its legend labels with (Avg) so it doesn't read as if Jul or Aug measured
@@ -66,6 +66,25 @@ function dataLabelsPercent(theme) {
   };
 }
 const TOP_LABEL_LAYOUT = { padding: { top: 16 } };
+
+// Capacity Overview's charts (build Wpd*Config below) use a flat 15% cut
+// instead of the rest of CSG's 10%/5pp split -- this mirrors dataLabelsDefault
+// but through scaleByRelativePercent so this page's bars stay consistent
+// with its own KPI tiles and tables.
+function capDataLabelsDefault(theme) {
+  const { textPrimary: tp, bgCard: bg } = getColors(theme);
+  return {
+    display: true,
+    color: tp,
+    font: { size: 9, weight: 'bold' },
+    anchor: 'end',
+    align: 'top',
+    offset: 4,
+    textStrokeColor: bg,
+    textStrokeWidth: 3,
+    formatter: (v) => scaleByRelativePercent(String(v >= 1000 ? fK(v) : v), 15),
+  };
+}
 
 export function buildPlanOfferedConfig(d, theme) {
   const S = baseScales(theme);
@@ -1115,7 +1134,7 @@ export function buildWpdVolumeConfig(d, theme) {
   // never gets clipped by the chart's top edge.
   const rawMax = Math.max(...d.aTotal, ...d.bTotal);
   const yMax = Math.ceil((rawMax * 1.15) / 1e5) * 1e5;
-  const totalFmt = (v) => (v == null ? '' : scaleDisplayValue((v / 1e6).toFixed(2) + 'M'));
+  const totalFmt = (v) => (v == null ? '' : scaleByRelativePercent((v / 1e6).toFixed(2) + 'M', 15));
   const segDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
   return {
     type: 'bar',
@@ -1152,7 +1171,7 @@ export function buildWpdVolumeConfig(d, theme) {
 export function buildWpdHcConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const barDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3 };
+  const barDL = { display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 2, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(v.toLocaleString(), 15) };
   return {
     type: 'bar',
     data: {
@@ -1183,7 +1202,7 @@ export function buildWpdHcConfig(d, theme) {
 export function buildWpdCapHireConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const DL = capDataLabelsDefault(theme);
   return {
     type: 'bar',
     data: {
@@ -1191,8 +1210,8 @@ export function buildWpdCapHireConfig(d, theme) {
       datasets: [
         { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
         { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
-        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(`${v}%`) } },
-        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleDisplayValue(`${v}%`) } },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
         { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', order: 1, borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
       ],
     },
@@ -1211,7 +1230,8 @@ export function buildWpdCapHireConfig(d, theme) {
 export function buildWpdHireExitConfig(d, theme) {
   const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  const DL = capDataLabelsDefault(theme);
+  const capNumFmt = (v) => scaleByRelativePercent(v.toLocaleString(), 15);
   return {
     type: 'bar',
     data: {
@@ -1223,11 +1243,11 @@ export function buildWpdHireExitConfig(d, theme) {
         { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3, order: 2 },
         {
           label: 'LOA Exit', data: d.bLoa, type: 'line', order: 1, borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
-          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
+          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
         },
         {
           label: 'Training Exit', data: d.bTraining, type: 'line', order: 1, borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
-          datalabels: { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3 },
+          datalabels: { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
         },
       ],
     },

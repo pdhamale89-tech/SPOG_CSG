@@ -50,3 +50,40 @@ export function scaleDisplayValue(value, factor = WHOLE_NUMBER_FACTOR) {
   const scaled = Math.floor(n * factor);
   return `${sign}${scaled.toLocaleString()}${suffix}`;
 }
+
+// Capacity Overview-only rule: every displayed number (whole counts, K/M
+// decimals like "3.43M", and percentages alike) gets a flat relative cut,
+// instead of the rest of the CSG section's "10% floor for whole numbers /
+// 5 flat points for percentages" split. Kept as its own function so this
+// page can use a different cut % without touching displayScale's default
+// behavior everywhere else.
+const RELATIVE_PERCENT_RE = /^([+\-±]?)(\d+(?:\.\d+)?)%$/;
+const RELATIVE_NUMERIC_RE = /^([+-]?)([\d,]+)(\.\d+)?([KMB]?)$/;
+
+export function scaleByRelativePercent(value, cutPct = 15) {
+  if (typeof value !== 'string') return value;
+  const trimmed = value.trim();
+  if (!trimmed) return value;
+  const factor = 1 - cutPct / 100;
+
+  if (trimmed.includes('%')) {
+    const m = trimmed.match(RELATIVE_PERCENT_RE);
+    if (!m) return value;
+    const [, prefix, numStr] = m;
+    const decimals = numStr.includes('.') ? numStr.split('.')[1].length : 0;
+    const magnitude = parseFloat(numStr) * factor;
+    const sign = prefix === '±' ? '±' : prefix === '+' ? '+' : prefix === '-' ? '-' : '';
+    const rendered = decimals ? magnitude.toFixed(decimals) : Math.floor(magnitude);
+    return `${sign}${rendered}%`;
+  }
+
+  const m = trimmed.match(RELATIVE_NUMERIC_RE);
+  if (!m) return value;
+  const [, sign, intPart, decPart, suffix] = m;
+  const decimals = decPart ? decPart.length - 1 : 0;
+  const n = parseFloat(intPart.replace(/,/g, '') + (decPart || ''));
+  if (!Number.isFinite(n) || n === 0) return value;
+  const scaled = n * factor;
+  const rendered = decimals ? scaled.toFixed(decimals) : Math.floor(scaled).toLocaleString();
+  return `${sign}${rendered}${suffix}`;
+}
