@@ -75,7 +75,7 @@ function cloneRegion(overrides) {
 const monthly = {
   Global: JSON.parse(JSON.stringify(globalMonthly)),
   AMER: cloneRegion({ acc: '80%', accSub: 'At target' }),
-  EMEA: cloneRegion({ acc: '65%' }),
+  EMEA: cloneRegion({ acc: '85%', accSub: '▲ 15%' }),
   APJ: cloneRegion({ acc: '46%', accSub: '▼ 34%' }),
 };
 
