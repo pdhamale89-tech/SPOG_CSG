@@ -61,7 +61,6 @@ export default function PartnerMinimum() {
   const overallPctText = scaleDisplayValue(`${overallPct}%`);
   const reducedOverallPct = parseFloat(overallPctText);
   const gap = totalLock - totalActual;
-  const meetTarget = data.filter((d) => d.pct >= TARGET_PCT).length;
 
   let change = null;
   if (prevKey) {
@@ -103,7 +102,6 @@ export default function PartnerMinimum() {
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: reducedOverallPct >= 70 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{overallPctText}</div><div className="pm-summary-lbl">Lock%</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: change ? change.color : 'var(--text-muted)' }}>{change ? `${change.symbol}${change.diff >= 0 ? '+' : ''}${change.diff}%` : '—'}</div><div className="pm-summary-lbl">vs Prev</div></div>
         <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: 'var(--accent-red)' }}>{scaleDisplayValue(gap.toLocaleString())}</div><div className="pm-summary-lbl">Gap</div></div>
-        <div className="pm-summary-item"><div className="pm-summary-val" style={{ color: meetTarget >= data.length / 2 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{meetTarget}/{data.length}</div><div className="pm-summary-lbl">On Target</div></div>
       </div>
 
       <div className="drill-bc">
