@@ -33,10 +33,11 @@ const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue 
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 
 // Shipment Overview and ASU Overview drop Forecast Queue Name, Combined Queue
-// Name, Business Lead, Sub-Service Offering, and Forecaster/Capacity Planner
-// -- those filters stay on Forecast Overview (and Capacity Planner elsewhere).
+// Name, Business Lead, Sub-Service Offering, Reporting Classification, and
+// Forecaster/Capacity Planner -- those filters stay on Forecast Overview
+// (and Capacity Planner elsewhere).
 const HIDE_EXTRA_FIELDS_TABS = ['shipment-overview', 'asu-overview'];
-const HIDDEN_ON_SHIPMENT_ASU = ['businessLead', 'queueName', 'subServiceOffering', 'capacityPlanner'];
+const HIDDEN_ON_SHIPMENT_ASU = ['businessLead', 'queueName', 'subServiceOffering', 'capacityPlanner', 'reportingClassification'];
 
 // Rendered in two groups so Region (the one real, wired filter) can sit
 // between Fiscal Week and Sub Region, matching the requested sequence.
