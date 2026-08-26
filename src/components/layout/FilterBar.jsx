@@ -32,6 +32,12 @@ const YEARLY_TABS = ['capacity-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 
+// Shipment Overview and ASU Overview drop Forecast Queue Name, Combined Queue
+// Name, Business Lead, Sub-Service Offering, and Forecaster/Capacity Planner
+// -- those filters stay on Forecast Overview (and Capacity Planner elsewhere).
+const HIDE_EXTRA_FIELDS_TABS = ['shipment-overview', 'asu-overview'];
+const HIDDEN_ON_SHIPMENT_ASU = ['businessLead', 'queueName', 'subServiceOffering', 'capacityPlanner'];
+
 // Rendered in two groups so Region (the one real, wired filter) can sit
 // between Fiscal Week and Sub Region, matching the requested sequence.
 const FIELDS_BEFORE_REGION = [
@@ -128,10 +134,13 @@ export default function FilterBar() {
                 <option value="APJ">APJ</option>
               </select>
             </div>
-            {FIELDS_AFTER_REGION.filter((f) => !(f.key === 'offering' && currentTab === 'asu-overview')).map((f) => renderField(
+            {FIELDS_AFTER_REGION.filter((f) =>
+              !(f.key === 'offering' && currentTab === 'asu-overview')
+              && !(HIDDEN_ON_SHIPMENT_ASU.includes(f.key) && HIDE_EXTRA_FIELDS_TABS.includes(currentTab))
+            ).map((f) => renderField(
               f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
             ))}
-            {FORECAST_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
+            {FORECAST_TABS.includes(currentTab) && !HIDE_EXTRA_FIELDS_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
             {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
           </div>
           {isCapacityOverview ? (
