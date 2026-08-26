@@ -139,9 +139,13 @@ export default function FilterBar() {
             </div>
             {FIELDS_AFTER_REGION.filter((f) =>
               !(HIDDEN_ON_SHIPMENT_ASU.includes(f.key) && HIDE_EXTRA_FIELDS_TABS.includes(currentTab))
-            ).map((f) => renderField(
-              f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab) ? { ...f, label: 'Forecaster' } : f
-            ))}
+            ).map((f) => {
+              if (f.key === 'capacityPlanner' && FORECAST_TABS.includes(currentTab)) return renderField({ ...f, label: 'Forecaster' });
+              // Business Org reads as Segment on Shipment Overview only -- the
+              // underlying key/options/state are unchanged, just the label.
+              if (f.key === 'businessOrg' && currentTab === 'shipment-overview') return renderField({ ...f, label: 'Segment' });
+              return renderField(f);
+            })}
             {FORECAST_TABS.includes(currentTab) && !HIDE_EXTRA_FIELDS_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
             {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
             {currentTab === 'asu-overview' && renderField(GLOBAL_LOB_FIELD)}
