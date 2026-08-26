@@ -200,10 +200,10 @@ export const GLOSSARY = [
   },
   {
     page: 'Shipment Overview',
-    metric: 'Shipment Trend (Actual vs AOP)',
+    metric: 'Shipment Trend (Actual vs Projection)',
     usedIn: 'Shipment Trend chart',
-    description: `Actual shipments tracked against the Annual Operating Plan over the period.`,
-    logic: `Actual, AOP = fixed static arrays (no formula). Insight text only: Avg Gap = average(AOP[period] − Actual[period]).`,
+    description: `Actual shipments tracked against the Projection over the period.`,
+    logic: `Actual, Projection = fixed static arrays (no formula). Insight text only: Avg Gap = average(Projection[period] − Actual[period]).`,
   },
   {
     page: 'Shipment Overview',

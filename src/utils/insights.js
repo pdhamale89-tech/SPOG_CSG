@@ -172,9 +172,9 @@ export function shipUppInsight(region, labels) {
 
 export function shipmentTrendInsight() {
   const actual = [55, 58, 52, 60, 62, 65, 59, 64];
-  const aop = [58, 60, 58, 63, 65, 68, 64, 68];
-  const avgGap = round(avg(aop.map((v, i) => v - actual[i])));
-  return `Actual shipments ran below AOP in every period, trailing by an average of ${avgGap}K units per month.`;
+  const projection = [58, 60, 58, 63, 65, 68, 64, 68];
+  const avgGap = round(avg(projection.map((v, i) => v - actual[i])));
+  return `Actual shipments ran below Projection in every period, trailing by an average of ${avgGap}K units per month.`;
 }
 
 export function segmentSoldInsight(view = 'segment') {

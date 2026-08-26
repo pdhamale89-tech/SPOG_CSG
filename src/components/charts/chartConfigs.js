@@ -373,8 +373,8 @@ export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
   const S = baseScales(theme);
   const LP = legendPos(theme);
   const { bgCard: bg } = getColors(theme);
-  // Actual and AOP track within a few points of each other throughout, so
-  // one is labeled above its line and the other below to keep them legible.
+  // Actual and Projection track within a few points of each other throughout,
+  // so one is labeled above its line and the other below to keep them legible.
   const lineDL = (color, align) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset: 4, textStrokeColor: bg, textStrokeWidth: 3 });
   return {
     type: 'line',
@@ -382,7 +382,7 @@ export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
         { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#3b82f6', tension: 0.4, fill: false, datalabels: lineDL('#3b82f6', 'top') },
-        { label: 'AOP', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
+        { label: 'Projection', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
