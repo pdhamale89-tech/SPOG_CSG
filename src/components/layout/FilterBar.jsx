@@ -22,6 +22,7 @@ const DEFAULTS = {
   subServiceOffering: 'All Offerings',
   segment: 'All Segments',
   globalLobName: 'All LOBs',
+  productGroup: 'All Product Groups',
 };
 
 // Forecast Overview, Shipment Overview, and ASU Overview get their own
@@ -33,6 +34,8 @@ const YEARLY_TABS = ['capacity-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 const GLOBAL_LOB_FIELD = { key: 'globalLobName', label: 'Global LOB Name', options: ['All LOBs', 'APEX', 'Azure', 'Alienware Desktop', 'Alienware Notebook'] };
+// Options mirror the product lines already shown in the Product Trend chart.
+const PRODUCT_GROUP_FIELD = { key: 'productGroup', label: 'Product Group', options: ['All Product Groups', 'Latitude', 'Precision', 'OptiPlex'] };
 
 // Shipment Overview and ASU Overview drop Forecast Queue Name, Combined Queue
 // Name, Business Lead, Sub-Service Offering, Reporting Classification, and
@@ -149,6 +152,7 @@ export default function FilterBar() {
             {FORECAST_TABS.includes(currentTab) && !HIDE_EXTRA_FIELDS_TABS.includes(currentTab) && renderField(FORECAST_QUEUE_FIELD)}
             {currentTab === 'asu-overview' && renderField(SEGMENT_FIELD)}
             {currentTab === 'asu-overview' && renderField(GLOBAL_LOB_FIELD)}
+            {currentTab === 'shipment-overview' && renderField(PRODUCT_GROUP_FIELD)}
           </div>
           {isCapacityOverview ? (
             <div className="cap-plan-filters">
