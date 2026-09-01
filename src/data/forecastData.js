@@ -86,7 +86,10 @@ const qtr = JSON.parse(JSON.stringify(monthly));
 qtr.Global.labels = ['Q1','Q2','Q3','Q4','Q1 FY25','Q2 FY25'];
 ['AMER', 'EMEA', 'APJ'].forEach((r) => { qtr[r].labels = ['Q1','Q2','Q3','Q4','Q1','Q2']; });
 
-export const D = { monthly, weekly, qtr };
+const yearly = JSON.parse(JSON.stringify(monthly));
+['Global', 'AMER', 'EMEA', 'APJ'].forEach((r) => { yearly[r].labels = ['Y1','Y2','Y3','Y4','Y5','Y6','Y7','Y8']; });
+
+export const D = { monthly, weekly, qtr, yearly };
 
 // Each period has one group per DP/OSP channel type, DB and OSP, each with
 // its own bold total row plus expandable period-by-period detail rows --
@@ -143,6 +146,23 @@ export const hvData = {
         total: ['DB','Chat','Total','18,430','19,120','21,845','20,560','106%','-19%'],
         rows: [
           ['','Chat','Q1','4,480','4,690','5,320','5,090','105%','-17%'],
+        ],
+      },
+    ],
+  },
+  yearly: {
+    cols: ['DP/OSP','Channel','Year','FY2024','FY2025','Actual FY2026','Forecast FY2026','Off%','YoY'],
+    groups: [
+      {
+        total: ['OSP','Chat','Total','29,752','30,901','26,367','29,741','89%','-77%'],
+        rows: [
+          ['','Chat','FY26','29,752','30,901','26,367','29,741','89%','-77%'],
+        ],
+      },
+      {
+        total: ['DB','Chat','Total','18,430','19,120','21,845','20,560','106%','-19%'],
+        rows: [
+          ['','Chat','FY26','18,430','19,120','21,845','20,560','106%','-19%'],
         ],
       },
     ],

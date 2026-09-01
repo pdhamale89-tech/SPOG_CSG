@@ -6,9 +6,10 @@ import ChartCanvas from '../charts/ChartCanvas';
 import InfoBtn from '../common/InfoBtn';
 import { scaleDisplayValue } from '../../utils/displayScale';
 
-// The chart follows the global Weekly/Monthly/QTR filter instead of owning
-// its own granularity tabs; PARTNER_PERIODS just uses "quarterly" as the key.
-const GRAN_MAP = { weekly: 'weekly', monthly: 'monthly', qtr: 'quarterly' };
+// The chart follows the global Weekly/Monthly/QTR/Yearly filter instead of
+// owning its own granularity tabs; PARTNER_PERIODS just uses "quarterly" as
+// the key for qtr.
+const GRAN_MAP = { weekly: 'weekly', monthly: 'monthly', qtr: 'quarterly', yearly: 'yearly' };
 const TARGET_PCT = 80;
 
 function sum(arr, key) {

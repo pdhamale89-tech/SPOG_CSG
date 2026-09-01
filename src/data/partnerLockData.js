@@ -48,6 +48,7 @@ export const PARTNER_PERIODS = {
   weekly: { labels: ['Jul W1', 'Jul W2', 'Jul W3', 'Jul W4'], keys: ['jul_w1', 'jul_w2', 'jul_w3', 'jul_w4'], default: 3 },
   monthly: { labels: ['Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024', 'May 2024', 'Jun 2024', 'Jul 2024'], keys: ['jan24', 'feb24', 'mar24', 'apr24', 'may24', 'jun24', 'jul24'], default: 6 },
   quarterly: { labels: ['Q1 FY24', 'Q2 FY24', 'Q3 FY24 (MTD)'], keys: ['q1_24', 'q2_24', 'q3_24'], default: 2 },
+  yearly: { labels: ['FY22', 'FY23', 'FY24'], keys: ['fy22', 'fy23', 'fy24'], default: 2 },
 };
 
 const allData = {};

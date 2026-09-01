@@ -44,16 +44,19 @@ function buildRows(subPeriodsPerQuarter) {
   return rows;
 }
 
-export const VOL_ROWS_BY_PERIOD = {
-  qtr: QUARTER_DATA,
-  monthly: buildRows(3),
-  weekly: buildRows(13),
-};
-
 export const VOL_GRAND_TOTAL = VOL_OFFERINGS.reduce((acc, o) => {
   acc[o] = QUARTER_DATA.reduce((s, q) => s + q[o], 0);
   return acc;
 }, {});
+
+export const VOL_ROWS_BY_PERIOD = {
+  qtr: QUARTER_DATA,
+  monthly: buildRows(3),
+  weekly: buildRows(13),
+  // The whole fiscal year is just the one grand-total row -- it already
+  // foots to itself by construction, same as every other granularity.
+  yearly: [VOL_GRAND_TOTAL],
+};
 
 export function volRowTotal(row) {
   return VOL_OFFERINGS.reduce((s, o) => s + row[o], 0);

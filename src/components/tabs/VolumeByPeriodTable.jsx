@@ -5,7 +5,7 @@ import InfoBtn from '../common/InfoBtn';
 import DownloadBtn from '../common/DownloadBtn';
 import { scaleDisplayValue } from '../../utils/displayScale';
 
-const PERIOD_HEADER = { weekly: 'Fiscal Week', monthly: 'Fiscal Month', qtr: 'Fiscal Quarter' };
+const PERIOD_HEADER = { weekly: 'Fiscal Week', monthly: 'Fiscal Month', qtr: 'Fiscal Quarter', yearly: 'Fiscal Year' };
 
 export default function VolumeByPeriodTable() {
   const { curPeriod, fiscalYear } = useApp();

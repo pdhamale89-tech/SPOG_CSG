@@ -30,7 +30,10 @@ const DEFAULTS = {
 // Planner reads as Forecaster here (it stays Capacity Planner everywhere
 // else, e.g. Capacity Overview, where that label was requested).
 const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
-const YEARLY_TABS = ['capacity-overview'];
+// Yearly now has real (if reused-from-monthly, same as how Weekly/QTR already
+// reuse monthly's numbers under different labels) data on every tab that
+// shows the period toggle, so the button isn't Capacity-only anymore.
+const YEARLY_TABS = [...FORECAST_TABS, 'capacity-overview'];
 const FORECAST_QUEUE_FIELD = { key: 'forecastQueueName', label: 'Forecast Queue Name', options: ['All Queues', 'Enterprise Voice T1', 'Commercial Voice T2'] };
 const SEGMENT_FIELD = { key: 'segment', label: 'Segment', options: ['All Segments', 'Consumer', 'Commercial', 'Enterprise'] };
 const GLOBAL_LOB_FIELD = { key: 'globalLobName', label: 'Global LOB Name', options: ['All LOBs', 'APEX', 'Azure', 'Alienware Desktop', 'Alienware Notebook'] };
@@ -75,10 +78,9 @@ export default function FilterBar() {
   const [decor, setDecor] = useState(DEFAULTS);
   const [expanded, setExpanded] = useState(true);
 
-  // Yearly only has real data on the two Capacity tabs (see capacityData.js)
-  // -- every other tab indexes its own period-keyed dataset (forecastData.js's
-  // D, etc.) with no 'yearly' entry and would throw. So the button only
-  // shows up while one of those is active, and if the user switches away
+  // Yearly is only wired up on YEARLY_TABS (every period-keyed dataset there
+  // -- forecastData.js's D, capacityData.js, etc. -- has a 'yearly' entry).
+  // If the user switches to an unlisted tab (e.g. a NO_FILTER_TABS page)
   // while Yearly is selected, fall back to Monthly rather than carry an
   // unsupported period into a tab that can't render it.
   useEffect(() => {

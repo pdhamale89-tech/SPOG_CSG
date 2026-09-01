@@ -753,7 +753,7 @@ function trendDatalabels(color, bg, n, align = 'top') {
 export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMonths) {
   const { textSecondary: tc, gridColor: gc, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const perYear = curPeriod === 'weekly' ? 52 : curPeriod === 'monthly' ? 12 : 4;
+  const perYear = curPeriod === 'weekly' ? 52 : curPeriod === 'monthly' ? 12 : curPeriod === 'yearly' ? 1 : 4;
   const n = perYear * 3;
   const cutover = perYear * 2;
   const labels = buildPeriodLabels(fiscalYear, curPeriod, n);
