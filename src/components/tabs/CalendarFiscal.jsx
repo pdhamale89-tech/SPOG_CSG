@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FISCAL_QUARTERS } from '../../data/fiscalCalendar';
-import { getHolidaysForWeek } from '../../data/holidays';
+import { getHolidaysForWeek, getHolidayDaysForWeek } from '../../data/holidays';
 import HolidayCalendar from './HolidayCalendar';
 
 export default function CalendarFiscal() {
@@ -46,19 +46,22 @@ export default function CalendarFiscal() {
                           <tr><th className="fc-qw">QWKS</th><th className="fc-wk">WKS</th><th>S</th><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th></tr>
                         </thead>
                         <tbody>
-                          {month.rows.map((row) => (
-                            <tr key={row.w} className="fc-wk-row" onMouseEnter={(e) => handleEnter(e, row.w)} onMouseLeave={handleLeave}>
-                              <td className="fc-qwc">{row.q}</td>
-                              <td className="fc-wkc">{row.w}</td>
-                              {row.d.map((day, di) => {
-                                let cls = '';
-                                if (row.sco && row.sco.includes(day)) cls = 'fc-sco';
-                                else if (row.hol && row.hol.includes(day)) cls = 'fc-hol';
-                                else if (row.pay && row.pay.includes(day)) cls = 'fc-pay';
-                                return <td key={di} className={cls}>{day}</td>;
-                              })}
-                            </tr>
-                          ))}
+                          {month.rows.map((row) => {
+                            const holDays = getHolidayDaysForWeek(row.w);
+                            return (
+                              <tr key={row.w} className="fc-wk-row" onMouseEnter={(e) => handleEnter(e, row.w)} onMouseLeave={handleLeave}>
+                                <td className="fc-qwc">{row.q}</td>
+                                <td className="fc-wkc">{row.w}</td>
+                                {row.d.map((day, di) => {
+                                  let cls = '';
+                                  if (row.sco && row.sco.includes(day)) cls = 'fc-sco';
+                                  else if (holDays.includes(day)) cls = 'fc-hol';
+                                  else if (row.pay && row.pay.includes(day)) cls = 'fc-pay';
+                                  return <td key={di} className={cls}>{day}</td>;
+                                })}
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>

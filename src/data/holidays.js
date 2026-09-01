@@ -90,3 +90,11 @@ export const HOLIDAYS = [
 export function getHolidaysForWeek(wks) {
   return HOLIDAYS.filter((h) => h.wks === wks);
 }
+
+// Day-of-month for every holiday in a fiscal week, deduped -- used to drive
+// the Fiscal Calendar grid's highlighting so it can never drift out of sync
+// with the holiday list itself (each fiscal week spans 7 real calendar days,
+// so a day-of-month value can't repeat within one week).
+export function getHolidayDaysForWeek(wks) {
+  return [...new Set(getHolidaysForWeek(wks).map((h) => Number(h.date.slice(-2))))];
+}
