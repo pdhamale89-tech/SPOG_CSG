@@ -32,7 +32,7 @@ const QUEUE_DETAIL_ROWS = [
 
 // Same underlying queue detail, rolled up by segment (region/offering shown
 // as the distinct set contributing to that segment) instead of per queue.
-const SEGMENT_ORDER = ['Enterprise', 'Commercial', 'Consumer'];
+const SEGMENT_ORDER = ['Commercial', 'Consumer'];
 const SEGMENT_DETAIL_ROWS = SEGMENT_ORDER.map((segment) => {
   const rows = QUEUE_DETAIL_ROWS.filter((q) => q.segment === segment);
   return {
