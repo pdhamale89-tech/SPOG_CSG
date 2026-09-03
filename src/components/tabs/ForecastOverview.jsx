@@ -16,11 +16,11 @@ import VolumeByPeriodTable from './VolumeByPeriodTable';
 import InsightBox from '../common/InsightBox';
 import { scaleDisplayValue } from '../../utils/displayScale';
 import {
-  buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig, buildDbOspVolumeConfig,
+  buildPlanOfferedConfig, buildCallVolumeConfig, buildChannelMixConfig,
   buildDmsConfig, buildHistTrendConfig,
 } from '../charts/chartConfigs';
 import {
-  geoMapInsight, planOfferedInsight, callVolumeInsight, channelMixInsight, dbOspInsight, dmsInsight,
+  geoMapInsight, planOfferedInsight, callVolumeInsight, channelMixInsight, dmsInsight,
   histTrendInsight,
 } from '../../utils/insights';
 
@@ -32,10 +32,6 @@ const QUEUE_ROWS = [
 const DMS_COUNTRIES = Object.keys(dmsDrillData.country);
 const DMS_OFFERINGS = Object.keys(dmsDrillData.offering);
 const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
-// Reduces a standalone percentage number by the CSG 5-point rule and hands
-// back the numeric result (not just text) so it can also drive tier
-// classification, staying consistent with what's actually displayed.
-const reducedPct = (n) => parseFloat(scaleDisplayValue(`${n}%`));
 
 export default function ForecastOverview() {
   const {
@@ -52,21 +48,18 @@ export default function ForecastOverview() {
   const regionC0 = chartRegionFor('c0');
   const regionC1 = chartRegionFor('c1');
   const regionH1 = chartRegionFor('h1');
-  const regionC5 = chartRegionFor('c5');
   const regionNDms = chartRegionFor('nDms');
   const regionNHist = chartRegionFor('nHist');
 
   const dC0 = useMemo(() => ({ ...D[curPeriod][regionC0], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC0].labels.length) }), [curPeriod, regionC0, fiscalYear]);
   const dC1 = useMemo(() => ({ ...D[curPeriod][regionC1], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC1].labels.length) }), [curPeriod, regionC1, fiscalYear]);
   const dH1 = useMemo(() => ({ ...D[curPeriod][regionH1], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionH1].labels.length) }), [curPeriod, regionH1, fiscalYear]);
-  const dC5 = useMemo(() => ({ ...D[curPeriod][regionC5], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionC5].labels.length) }), [curPeriod, regionC5, fiscalYear]);
   const dNDms = useMemo(() => ({ ...D[curPeriod][regionNDms], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNDms].labels.length) }), [curPeriod, regionNDms, fiscalYear]);
   const dNHist = useMemo(() => ({ ...D[curPeriod][regionNHist], labels: buildPeriodLabels(fiscalYear, curPeriod, D[curPeriod][regionNHist].labels.length) }), [curPeriod, regionNHist, fiscalYear]);
 
   const c0Config = useMemo(() => buildPlanOfferedConfig(dC0, theme), [dC0, theme]);
   const c1Config = useMemo(() => buildCallVolumeConfig(dC1, theme), [dC1, theme]);
   const h1Config = useMemo(() => buildChannelMixConfig(dH1, theme), [dH1, theme]);
-  const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
   const nDmsData = useMemo(() => {
     const dmsLabels = buildPeriodLabels(fiscalYear, curPeriod, 8);
     if (dmsDrill.level === 'country') return { labels: dmsLabels, ...dmsDrillData.country[dmsDrill.country] };
@@ -167,7 +160,7 @@ export default function ForecastOverview() {
         <HistVolTable period={curPeriod} />
       </div>
 
-      <div className="s-grid">
+      <div className="s-grid full">
         <div className="card">
           <div className="card-header">
             <div className="card-title">Channel Mix <InfoBtn tip="<strong>Purpose</strong>Channel volume split." /></div>
@@ -189,34 +182,6 @@ export default function ForecastOverview() {
           </div>
           <ChartCanvas config={h1Config} height="290px" />
           <InsightBox text={channelMixInsight(dH1)} />
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <div className="card-title">🏢 DB vs OSP <InfoBtn tip="<strong>Purpose</strong>DB vs OSP performance." /></div>
-            <div className="card-dd">
-              <select className="f-sel" defaultValue="All">
-                <option value="All">All</option><option value="CNX">CNX</option><option value="Brightway">Brightway</option><option value="CGS">CGS</option>
-              </select>
-            </div>
-          </div>
-          <ChartCanvas config={c5Config} height="190px" />
-          <InsightBox text={dbOspInsight(dC5)} />
-          <div className="dbosp-metrics">
-            <div className="dbosp-metric-card">
-              <div className="dbosp-metric-label">Accuracy</div>
-              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-blue)' }}>{reducedPct(72)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '72%', background: 'var(--accent-blue)' }}></div></div>
-              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-orange)' }}>{reducedPct(55)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '55%', background: 'var(--accent-orange)' }}></div></div>
-            </div>
-            <div className="dbosp-metric-card">
-              <div className="dbosp-metric-label">Abandon Rate</div>
-              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-green)' }}>{reducedPct(5.2)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '17%', background: 'var(--accent-green)' }}></div></div>
-              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-red)' }}>{reducedPct(12.4)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '41%', background: 'var(--accent-red)' }}></div></div>
-            </div>
-          </div>
         </div>
       </div>
 

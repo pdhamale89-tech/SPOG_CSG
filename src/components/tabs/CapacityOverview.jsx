@@ -3,11 +3,12 @@ import { useApp } from '../../context/AppContext';
 import InfoBtn from '../common/InfoBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import InsightBox from '../common/InsightBox';
-import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpdHireExitConfig } from '../charts/chartConfigs';
+import { buildWpdVolumeConfig, buildWpdHcConfig, buildWpdCapHireConfig, buildWpdHireExitConfig, buildDbOspVolumeConfig } from '../charts/chartConfigs';
 import { YRS, VOL, HC } from '../../data/capacityOverviewNewData';
-import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight } from '../../utils/insights';
+import { D } from '../../data/forecastData';
+import { wpdVolumeInsight, wpdHcInsight, wpdCapHireInsight, wpdHireExitInsight, dbOspInsight } from '../../utils/insights';
 import { buildPeriodLabels } from '../../utils/periodLabels';
-import { scaleByRelativePercent } from '../../utils/displayScale';
+import { scaleByRelativePercent, scaleDisplayValue } from '../../utils/displayScale';
 
 // Workforce Planning Dashboard-style Capacity Overview: Plan A/Plan B by
 // month x Fiscal Year comparison, 4 charts, a tabbed detail explorer with
@@ -24,6 +25,10 @@ const fmt = (n) => scaleCap(n != null && n !== 0 ? n.toLocaleString() : '—');
 const fmtM = (n) => scaleCap(n != null ? (n / 1e6).toFixed(2) + 'M' : '—');
 const fmtK = (n) => scaleCap(n != null ? (n / 1e3).toFixed(0) + 'K' : '—');
 const fmtPct = (n) => scaleCap(`${n}%`);
+// The DB vs OSP widget (moved here from Forecast Overview) keeps the CSG-wide
+// flat 5-point reduction it already displayed there, rather than switching to
+// this page's 15% cut -- relocating it shouldn't also change its numbers.
+const reducedPct = (n) => parseFloat(scaleDisplayValue(`${n}%`));
 const sum = (a) => a.reduce((s, v) => s + (v || 0), 0);
 const pct = (a, b) => (a && b ? Number(((b - a) / Math.abs(a) * 100).toFixed(1)) : 0);
 const dirArrow = (d) => (d >= 0 ? '▲' : '▼');
@@ -280,7 +285,7 @@ const TABS = [
 ];
 
 export default function CapacityOverview() {
-  const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB } = useApp();
+  const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB, chartRegionFor } = useApp();
   const [activeTab, setActiveTab] = useState('volume');
   const [openDetail, setOpenDetail] = useState({});
 
@@ -322,6 +327,13 @@ export default function CapacityOverview() {
   const dHireExit = useMemo(() => ({
     labels, pA: planA, pB: planB, aHiring: hA.Hiring, bHiring: hB.Hiring, aUrHire: hA.UR_Hire, bUrHire: hB.UR_Hire, bLoa: hB.LOA, bTraining: hB.Training,
   }), [labels, hA, hB, planA, planB]);
+
+  // DB vs OSP (moved here from Forecast Overview) draws from the same D
+  // dataset/region filter it always used there -- untouched by this page's
+  // own Plan A/Plan B comparison model above.
+  const regionC5 = chartRegionFor('c5');
+  const dC5 = useMemo(() => ({ ...D[curPeriod][regionC5], labels: buildPeriodLabels(fy, curPeriod, D[curPeriod][regionC5].labels.length) }), [curPeriod, regionC5, fy]);
+  const c5Config = useMemo(() => buildDbOspVolumeConfig(dC5, theme), [dC5, theme]);
 
   const volConfig = useMemo(() => buildWpdVolumeConfig(dVol, theme), [dVol, theme]);
   const hcConfig = useMemo(() => buildWpdHcConfig(dHc, theme), [dHc, theme]);
@@ -406,6 +418,30 @@ export default function CapacityOverview() {
           </div>
           <ChartCanvas config={hireExitConfig} height="300px" />
           <InsightBox text={wpdHireExitInsight(dHireExit)} />
+        </div>
+      </div>
+
+      <div className="s-grid full">
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">🏢 DB vs OSP <InfoBtn tip="<strong>Purpose</strong>DB vs OSP performance." /></div>
+            <div className="card-dd">
+              <select className="f-sel" defaultValue="All">
+                <option value="All">All</option><option value="CNX">CNX</option><option value="Brightway">Brightway</option><option value="CGS">CGS</option>
+              </select>
+            </div>
+          </div>
+          <ChartCanvas config={c5Config} height="190px" />
+          <InsightBox text={dbOspInsight(dC5)} />
+          <div className="dbosp-metrics">
+            <div className="dbosp-metric-card">
+              <div className="dbosp-metric-label">Overall Service Level%</div>
+              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-blue)' }}>{reducedPct(72)}%</span></div>
+              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '72%', background: 'var(--accent-blue)' }}></div></div>
+              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-orange)' }}>{reducedPct(55)}%</span></div>
+              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '55%', background: 'var(--accent-orange)' }}></div></div>
+            </div>
+          </div>
         </div>
       </div>
 
