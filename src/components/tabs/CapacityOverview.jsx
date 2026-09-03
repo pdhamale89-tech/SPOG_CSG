@@ -79,10 +79,14 @@ function yearlyHc(plan) {
   return out;
 }
 
-function ComparisonKpi({ label, valueA, valueB, delta, suffix = '%', planA, planB }) {
+function ComparisonKpi({ label, valueA, valueB, delta, suffix = '%', planA, planB, onClick }) {
   const signed = delta > 0 ? `+${delta}` : `${delta}`;
   return (
-    <div className="wpd-kpi-tile">
+    <div
+      className={'wpd-kpi-tile' + (onClick ? ' wpd-kpi-tile-clickable' : '')}
+      onClick={onClick}
+      title={onClick ? 'Click for more information' : undefined}
+    >
       <div className="wpd-kpi-tile-label">{label}</div>
       <div className="wpd-kpi-tile-main">
         <span className="wpd-kpi-tile-a">{valueA}</span>
@@ -280,7 +284,7 @@ const TABS = [
 ];
 
 export default function CapacityOverview() {
-  const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB, chartRegionFor } = useApp();
+  const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB, chartRegionFor, openKpiDrill } = useApp();
   const [activeTab, setActiveTab] = useState('volume');
 
   // Fiscal Year comes from the top Filters bar -- but that bar's fiscal
@@ -352,10 +356,16 @@ export default function CapacityOverview() {
     <div className="tab-panel active">
       <div className="kpi-grid cols-5 wpd-kpi-grid">
         <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB} />
+        <ComparisonKpi
+          label={`${fyLabel} HC Avg`} valueA={fmt(hcA)} valueB={fmt(hcB)} delta={hcD} planA={planA} planB={planB}
+          onClick={() => openKpiDrill('hcAvg', { aTotal: hcA, bTotal: hcB, pA: planA, pB: planB })}
+        />
         <ComparisonKpi label={`${fyLabel} Excess Capacity`} valueA={fmtPct(cA)} valueB={fmtPct(cB)} delta={cA - cB} suffix="pp" planA={planA} planB={planB} />
         <ComparisonKpi label={`${fyLabel} Total Hiring`} valueA={fmt(hirA)} valueB={fmt(hirB)} delta={hirA - hirB} suffix="" planA={planA} planB={planB} />
-        <ComparisonKpi label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exA - exB} suffix="" planA={planA} planB={planB} />
+        <ComparisonKpi
+          label={`${fyLabel} Excess HC (Avg/Qtr)`} valueA={fmt(exA)} valueB={fmt(exB)} delta={exA - exB} suffix="" planA={planA} planB={planB}
+          onClick={() => openKpiDrill('excessHc', { aTotal: exA, bTotal: exB, pA: planA, pB: planB })}
+        />
       </div>
 
       <div className="s-grid full">
