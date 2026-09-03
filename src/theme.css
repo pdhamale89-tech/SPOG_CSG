@@ -21,9 +21,11 @@
 .filter-group select{width:100%;padding:5px 8px;border-radius:6px;font-size:10px;font-weight:500;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);cursor:pointer;transition:border-color .15s,box-shadow .15s;}
 .filter-group select:hover{border-color:var(--accent-blue);}
 .filter-group select:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 2px rgba(59,130,246,.2);}
-.cap-plan-filters{display:flex;align-items:flex-end;gap:14px;padding:8px 14px;margin-top:8px;border:1px solid var(--accent-blue);border-radius:8px;background:var(--bg-card);flex-wrap:wrap;}
+/* Dell Design System global palette trial (Capacity Overview only for now):
+   $--dds-color-blue-60 #0672CB. */
+.cap-plan-filters{display:flex;align-items:flex-end;gap:14px;padding:8px 14px;margin-top:8px;border:1px solid #0672CB;border-radius:8px;background:var(--bg-card);flex-wrap:wrap;}
 .cap-plan-filters .filter-group{min-width:150px;}
-.cap-plan-filters-title{font-size:11px;font-weight:700;color:var(--accent-blue);align-self:center;margin-right:4px;white-space:nowrap;}
+.cap-plan-filters-title{font-size:11px;font-weight:700;color:#0672CB;align-self:center;margin-right:4px;white-space:nowrap;}
 .cap-plan-filters-clear{margin-left:auto;}
 .f-sel{padding:3px 5px;border-radius:4px;font-size:10px;font-weight:500;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);cursor:pointer;min-width:68px;}
 .main-wrap{flex:1;display:flex;overflow:hidden;}.main-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px 30px;}
@@ -104,19 +106,21 @@
 .cmp-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .cmp-card-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-secondary);}
 .cmp-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;}
-.cmp-badge.up{background:rgba(16,185,129,.15);color:var(--accent-green);}
-.cmp-badge.down{background:rgba(239,68,68,.15);color:var(--accent-red);}
+.cmp-badge.up{background:rgba(93,140,0,.15);color:#5D8C00;}
+.cmp-badge.down{background:rgba(208,53,63,.15);color:#D0353F;}
 .cmp-vals{display:flex;align-items:center;gap:6px;}
 .cmp-val-block{flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--bg-card);}
 .cmp-val-label{font-size:8px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.3px;}
 .cmp-val-num{font-size:13px;font-weight:800;color:var(--text-primary);margin-top:2px;}
-/* Same gradient-card treatment as Forecast Overview's .kpi-card (1st tile
-   default --bg-kpi, then blue/green/orange-red by position) -- layout below
-   (label, A -> B, delta line) is unchanged, only the card coloring matches. */
-.wpd-kpi-tile{background:var(--bg-kpi);color:var(--kpi-text);border-radius:10px;padding:12px 10px;text-align:center;box-shadow:var(--shadow-sm);}
-.wpd-kpi-tile:nth-child(2){background:linear-gradient(135deg,#0ea5e9,#2563eb);}
-.wpd-kpi-tile:nth-child(3){background:linear-gradient(135deg,#10b981,#059669);}
-.wpd-kpi-tile:nth-child(4){background:linear-gradient(135deg,#f59e0b,#ef4444);}
+/* Dell Design System global palette trial (Capacity Overview only for now):
+   Purple/Blue/Green/Orange/Teal by tile position, each a 40->60 gradient
+   from the Dell Global palette. Layout below (label, A -> B, delta line) is
+   unchanged, only the card coloring changes. */
+.wpd-kpi-tile{background:linear-gradient(135deg,#C47AF4,#994CCC);color:#fff;border-radius:10px;padding:12px 10px;text-align:center;box-shadow:var(--shadow-sm);}
+.wpd-kpi-tile:nth-child(2){background:linear-gradient(135deg,#31A2E3,#0672CB);}
+.wpd-kpi-tile:nth-child(3){background:linear-gradient(135deg,#9BC438,#5D8C00);}
+.wpd-kpi-tile:nth-child(4){background:linear-gradient(135deg,#F8A433,#C96100);}
+.wpd-kpi-tile:nth-child(5){background:linear-gradient(135deg,#45D9E3,#0EA0A9);}
 .wpd-kpi-tile-clickable{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;}
 .wpd-kpi-tile-clickable:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
 .wpd-kpi-tile-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:inherit;opacity:.85;margin-bottom:8px;}
@@ -126,8 +130,14 @@
 .wpd-kpi-tile-b{font-size:13px;font-weight:700;color:inherit;opacity:.85;}
 .wpd-kpi-tile-sub{font-size:10px;color:inherit;opacity:.8;margin-top:6px;}
 .wpd-kpi-tile-delta{font-weight:700;}
-.wpd-kpi-tile-delta.up{color:var(--accent-green);}
-.wpd-kpi-tile-delta.down{color:var(--accent-red);}
+.wpd-kpi-tile-delta.up{color:#C0DD78;}
+.wpd-kpi-tile-delta.down{color:#FF99A1;}
+/* Scoped overrides so the Dell palette trial only touches Capacity Overview
+   -- these two base classes are shared with Glossary/other tabs' tables and
+   drilldown toggles, so they're re-pointed only inside .cap-overview-page. */
+.cap-overview-page .drilldown-toggle-btn.active{background:#0672CB;color:#fff;border-color:#0672CB;}
+.cap-overview-page .tbl-pos{color:#5D8C00;}
+.cap-overview-page .tbl-neg{color:#D0353F;}
 .cmp-arrow{color:var(--text-muted);font-size:12px;}
 .cv-tbl-wrap{max-height:340px;overflow-y:auto;overflow-x:auto;border:1px solid var(--border);border-radius:6px;margin-top:10px;}
 .cv-tbl{width:100%;border-collapse:collapse;font-size:10px;min-width:640px;}

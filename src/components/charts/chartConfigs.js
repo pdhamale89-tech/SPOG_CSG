@@ -228,9 +228,10 @@ export function buildDbOspVolumeConfig(d, theme) {
     type: 'bar',
     data: {
       labels: d.labels,
+      // Dell palette trial: Blue 60 / Orange 50.
       datasets: [
-        { label: 'DB', data: d.dbVol, backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3 },
-        { label: 'OSP', data: d.ospVol, backgroundColor: 'rgba(245,158,11,.75)', borderRadius: 3 },
+        { label: 'DB', data: d.dbVol, backgroundColor: 'rgba(6,114,203,.75)', borderRadius: 3 },
+        { label: 'OSP', data: d.ospVol, backgroundColor: 'rgba(201,97,0,.75)', borderRadius: 3 },
       ],
     },
     options: {
@@ -1156,18 +1157,21 @@ export function buildWpdVolumeConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(59,130,246,.45)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
-        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
+        // Dell Design System global palette trial (Capacity Overview only):
+        // Plan A in Blue 60, Plan B in Purple 60, Total bars in Green/Orange
+        // 50, the PoP line in Teal 50.
+        { label: `${d.pA} DB`, data: d.aDb, backgroundColor: 'rgba(6,114,203,.45)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
+        { label: `${d.pA} OSP`, data: d.aOsp, backgroundColor: 'rgba(6,114,203,.85)', borderRadius: 3, stack: 'a', order: 2, datalabels: segDL },
         // Total gets its own stack group -- not summed into the DB+OSP bar --
         // so it renders as its own full-height bar right next to it.
-        { label: `${d.pA} Total`, data: d.aTotal, backgroundColor: '#10b981', borderRadius: 3, stack: 'a-total', order: 2, datalabels: { ...segDL, color: '#10b981', formatter: totalFmt } },
-        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(139,92,246,.45)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
-        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(139,92,246,.85)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
-        { label: `${d.pB} Total`, data: d.bTotal, backgroundColor: '#f59e0b', borderRadius: 3, stack: 'b-total', order: 2, datalabels: { ...segDL, color: '#f59e0b', formatter: totalFmt } },
+        { label: `${d.pA} Total`, data: d.aTotal, backgroundColor: '#5D8C00', borderRadius: 3, stack: 'a-total', order: 2, datalabels: { ...segDL, color: '#5D8C00', formatter: totalFmt } },
+        { label: `${d.pB} DB`, data: d.bDb, backgroundColor: 'rgba(153,76,204,.45)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
+        { label: `${d.pB} OSP`, data: d.bOsp, backgroundColor: 'rgba(153,76,204,.85)', borderRadius: 3, stack: 'b', order: 2, datalabels: segDL },
+        { label: `${d.pB} Total`, data: d.bTotal, backgroundColor: '#C96100', borderRadius: 3, stack: 'b-total', order: 2, datalabels: { ...segDL, color: '#C96100', formatter: totalFmt } },
         {
           // Lower order than every bar so the PoP% line always draws on top.
-          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#8b5cf6', pointBackgroundColor: '#8b5cf6', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
-          datalabels: { display: true, color: '#8b5cf6', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
+          label: 'PoP Δ%', data: delta, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#0EA0A9', pointBackgroundColor: '#0EA0A9', borderDash: [3, 3], pointRadius: 4, tension: 0.3, borderWidth: 2, fill: false,
+          datalabels: { display: true, color: '#0EA0A9', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
     },
@@ -1192,13 +1196,14 @@ export function buildWpdHcConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} HC`, data: d.aHcAvg, backgroundColor: '#38bdf8', borderRadius: 3, order: 2, datalabels: barDL },
-        { label: `${d.pB} HC`, data: d.bHcAvg, backgroundColor: '#1e3a8a', borderRadius: 3, order: 2, datalabels: barDL },
+        // Dell palette trial: Plan A in Light Blue 40, Plan B in Blue 90, exit line in Orange 50.
+        { label: `${d.pA} HC`, data: d.aHcAvg, backgroundColor: '#36A2E0', borderRadius: 3, order: 2, datalabels: barDL },
+        { label: `${d.pB} HC`, data: d.bHcAvg, backgroundColor: '#002A58', borderRadius: 3, order: 2, datalabels: barDL },
         {
           // Lower order than the bars so the line (and its points/labels)
           // always draws on top of them instead of getting buried behind.
-          label: 'L1 HC Exit', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointBackgroundColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
-          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
+          label: 'L1 HC Exit', data: d.bHcExitPop, type: 'line', yAxisID: 'y1', order: 1, borderColor: '#C96100', backgroundColor: '#C96100', pointBackgroundColor: '#C96100', pointRadius: 3, tension: 0.3, borderWidth: 2.5,
+          datalabels: { display: true, color: '#C96100', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => (v == null ? '' : v + '%') },
         },
       ],
     },
@@ -1223,11 +1228,12 @@ export function buildWpdCapHireConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
-        { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(239,68,68,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
-        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#3b82f6', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#3b82f6', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
-        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#f59e0b', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#f59e0b', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
-        { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', order: 1, borderColor: 'rgba(239,68,68,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
+        // Dell palette trial: Hiring bars in Green/Red, Cap% lines in Blue/Orange.
+        { label: `${d.pA} Hiring`, data: d.aHiring, backgroundColor: 'rgba(93,140,0,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
+        { label: `${d.pB} Hiring`, data: d.bHiring, backgroundColor: 'rgba(208,53,63,.6)', borderRadius: 3, yAxisID: 'y1', order: 2 },
+        { label: `${d.pA} Cap%`, data: d.aCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#0672CB', pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#0672CB', anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
+        { label: `${d.pB} Cap%`, data: d.bCap, type: 'line', yAxisID: 'y', order: 1, borderColor: '#C96100', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2.5, datalabels: { color: '#C96100', anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: (v) => scaleByRelativePercent(`${v}%`, 15) } },
+        { label: '100% baseline', data: d.aCap.map(() => 100), type: 'line', yAxisID: 'y', order: 1, borderColor: 'rgba(208,53,63,.3)', borderWidth: 2, borderDash: [10, 5], pointRadius: 0, datalabels: { display: false } },
       ],
     },
     options: {
@@ -1252,17 +1258,18 @@ export function buildWpdHireExitConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: `${d.pA} Overall`, data: d.aHiring, backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 3, order: 2 },
-        { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(6,182,212,.7)', borderRadius: 3, order: 2 },
-        { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(59,130,246,.5)', borderRadius: 3, order: 2 },
-        { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(139,92,246,.5)', borderRadius: 3, order: 2 },
+        // Dell palette trial: Overall in Green/Teal, UR in Blue/Purple, exit lines in Orange/Red.
+        { label: `${d.pA} Overall`, data: d.aHiring, backgroundColor: 'rgba(93,140,0,.7)', borderRadius: 3, order: 2 },
+        { label: `${d.pB} Overall`, data: d.bHiring, backgroundColor: 'rgba(14,160,169,.7)', borderRadius: 3, order: 2 },
+        { label: `${d.pA} UR`, data: d.aUrHire, backgroundColor: 'rgba(6,114,203,.5)', borderRadius: 3, order: 2 },
+        { label: `${d.pB} UR`, data: d.bUrHire, backgroundColor: 'rgba(153,76,204,.5)', borderRadius: 3, order: 2 },
         {
-          label: 'LOA Exit', data: d.bLoa, type: 'line', order: 1, borderColor: '#f59e0b', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
-          datalabels: { display: true, color: '#f59e0b', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
+          label: 'LOA Exit', data: d.bLoa, type: 'line', order: 1, borderColor: '#C96100', pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          datalabels: { display: true, color: '#C96100', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
         },
         {
-          label: 'Training Exit', data: d.bTraining, type: 'line', order: 1, borderColor: '#ef4444', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
-          datalabels: { display: true, color: '#ef4444', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
+          label: 'Training Exit', data: d.bTraining, type: 'line', order: 1, borderColor: '#D0353F', borderDash: [6, 3], pointRadius: 3, tension: 0.3, borderWidth: 2, yAxisID: 'y1',
+          datalabels: { display: true, color: '#D0353F', font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'bottom', offset: 6, textStrokeColor: bg, textStrokeWidth: 3, formatter: capNumFmt },
         },
       ],
     },
