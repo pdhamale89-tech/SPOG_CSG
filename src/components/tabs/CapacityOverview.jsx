@@ -124,29 +124,24 @@ function CompCard({ title, arrA, arrB, pA, pB, formatFn = fmt, suffix = '' }) {
   );
 }
 
-function DetailTable({ headers, rows, isOpen, onToggle }) {
+function DetailTable({ headers, rows }) {
   return (
     <div style={{ marginTop: '12px' }}>
-      <div className="filter-panel-title" onClick={onToggle}>
-        View Details
-        <span className={'filter-panel-caret' + (isOpen ? '' : ' collapsed')}>▾</span>
+      <div className="filter-panel-title" style={{ cursor: 'default' }}>View Details</div>
+      <div className="tw" style={{ marginTop: '8px' }}>
+        <table>
+          <thead>
+            <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row, ri) => (
+              <tr key={ri} className={row.isTotal ? 'tbl-total' : undefined}>
+                {row.cells.map((cell, ci) => <td key={ci} className={cell.cls}>{cell.val}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      {isOpen && (
-        <div className="tw" style={{ marginTop: '8px' }}>
-          <table>
-            <thead>
-              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
-            </thead>
-            <tbody>
-              {rows.map((row, ri) => (
-                <tr key={ri} className={row.isTotal ? 'tbl-total' : undefined}>
-                  {row.cells.map((cell, ci) => <td key={ci} className={cell.cls}>{cell.val}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
 }
@@ -155,7 +150,7 @@ function deltaCell(d, suffix = '') {
   return { val: (d > 0 ? '+' : '') + d + suffix, cls: d > 0 ? 'tbl-pos' : d < 0 ? 'tbl-neg' : undefined };
 }
 
-function VolumeTab({ vA, vB, pA, pB, labels, openDetail, toggle }) {
+function VolumeTab({ vA, vB, pA, pB, labels }) {
   const headers = ['Partner', ...labels.map((l) => `${pA} ${l}`), `${pA} Total`, ...labels.map((l) => `${pB} ${l}`), `${pB} Total`, 'Δ Total'];
   const rows = ['DB', 'OSP', 'Total'].map((p) => {
     const a = vA[p], b = vB[p];
@@ -175,12 +170,12 @@ function VolumeTab({ vA, vB, pA, pB, labels, openDetail, toggle }) {
         <CompCard title="OSP Volume" arrA={vA.OSP} arrB={vB.OSP} pA={pA} pB={pB} formatFn={fmtK} />
         <CompCard title="Total Volume" arrA={vA.Total} arrB={vB.Total} pA={pA} pB={pB} formatFn={fmtK} />
       </div>
-      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.volume} onToggle={() => toggle('volume')} />
+      <DetailTable headers={headers} rows={rows} />
     </>
   );
 }
 
-function HeadcountTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+function HeadcountTab({ hA, hB, pA, pB, labels }) {
   const metrics = [
     { k: 'HC_Avg', l: 'L1 HC Avg' }, { k: 'HC_Exit', l: 'L1 HC Exit' }, { k: 'Total_HC', l: 'Total HC' },
     { k: 'Excess_HC', l: 'Excess HC' }, { k: 'LOA', l: 'LOA Exit' }, { k: 'Training', l: 'Training Exit' },
@@ -204,12 +199,12 @@ function HeadcountTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
         <CompCard title="Total HC" arrA={hA.Total_HC} arrB={hB.Total_HC} pA={pA} pB={pB} />
         <CompCard title="Excess HC" arrA={hA.Excess_HC} arrB={hB.Excess_HC} pA={pA} pB={pB} />
       </div>
-      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.headcount} onToggle={() => toggle('headcount')} />
+      <DetailTable headers={headers} rows={rows} />
     </>
   );
 }
 
-function HiringTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+function HiringTab({ hA, hB, pA, pB, labels }) {
   const metrics = [
     { k: 'Hiring', l: 'Overall Hiring' }, { k: 'UR_Hire', l: 'UR Hiring' }, { k: 'Appr_Hire', l: 'Approved Hiring' },
     { k: 'LOA', l: 'LOA Exit' }, { k: 'Training', l: 'Training Exit' },
@@ -234,12 +229,12 @@ function HiringTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
         <CompCard title="LOA Exit" arrA={hA.LOA} arrB={hB.LOA} pA={pA} pB={pB} />
         <CompCard title="Training Exit" arrA={hA.Training} arrB={hB.Training} pA={pA} pB={pB} />
       </div>
-      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.hiring} onToggle={() => toggle('hiring')} />
+      <DetailTable headers={headers} rows={rows} />
     </>
   );
 }
 
-function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
+function CapacityTab({ hA, hB, pA, pB, labels }) {
   const headers = ['Period', `${pA} Cap%`, `${pB} Cap%`, 'Δ pp', `${pA} ExHC`, `${pB} ExHC`, 'Δ ExHC'];
   const rows = labels.map((l, i) => {
     const ca = hA.Excess_Cap[i], cb = hB.Excess_Cap[i], dc = ca - cb;
@@ -272,7 +267,7 @@ function CapacityTab({ hA, hB, pA, pB, labels, openDetail, toggle }) {
           );
         })}
       </div>
-      <DetailTable headers={headers} rows={rows} isOpen={!!openDetail.capacity} onToggle={() => toggle('capacity')} />
+      <DetailTable headers={headers} rows={rows} />
     </>
   );
 }
@@ -287,7 +282,6 @@ const TABS = [
 export default function CapacityOverview() {
   const { theme, fiscalYear, curPeriod, compPlanA: planA, compPlanB: planB, chartRegionFor } = useApp();
   const [activeTab, setActiveTab] = useState('volume');
-  const [openDetail, setOpenDetail] = useState({});
 
   // Fiscal Year comes from the top Filters bar -- but that bar's fiscal
   // years (FY24-FY27) and this page's dataset (FY25-FY28) only partly
@@ -351,11 +345,7 @@ export default function CapacityOverview() {
   const hirA = sum(hA.Hiring), hirB = sum(hB.Hiring);
   const exA = Math.round(sum(hA.Excess_HC) / 4), exB = Math.round(sum(hB.Excess_HC) / 4);
 
-  function toggleDetail(id) {
-    setOpenDetail((prev) => ({ ...prev, [id]: !prev[id] }));
-  }
-
-  const tabProps = { hA, hB, vA, vB, pA: planA, pB: planB, labels, openDetail, toggle: toggleDetail };
+  const tabProps = { hA, hB, vA, vB, pA: planA, pB: planB, labels };
   const fyLabel = isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy;
 
   return (
