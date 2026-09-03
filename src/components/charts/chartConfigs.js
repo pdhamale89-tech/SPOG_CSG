@@ -206,9 +206,24 @@ export function buildChannelMixConfig(d, theme) {
 
 export function buildDbOspVolumeConfig(d, theme) {
   const S = baseScales(theme);
-  const { textSecondary: tc, gridColor: gc } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
   const LP = legendPos(theme);
-  const DL = dataLabelsDefault(theme);
+  // Bars are labeled with DB/OSP's share of that period's total instead of
+  // the raw volume number -- the axis/tooltip still carry the real counts.
+  const DL = {
+    display: true,
+    color: tp,
+    font: { size: 9, weight: 'bold' },
+    anchor: 'end',
+    align: 'top',
+    offset: 4,
+    textStrokeColor: bg,
+    textStrokeWidth: 3,
+    formatter: (v, ctx) => {
+      const total = ctx.chart.data.datasets.reduce((s, ds) => s + (ds.data[ctx.dataIndex] || 0), 0);
+      return total ? `${Math.round((v / total) * 100)}%` : '';
+    },
+  };
   return {
     type: 'bar',
     data: {

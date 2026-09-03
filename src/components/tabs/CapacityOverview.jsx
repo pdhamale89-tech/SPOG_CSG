@@ -425,11 +425,6 @@ export default function CapacityOverview() {
         <div className="card">
           <div className="card-header">
             <div className="card-title">🏢 DB vs OSP <InfoBtn tip="<strong>Purpose</strong>DB vs OSP performance." /></div>
-            <div className="card-dd">
-              <select className="f-sel" defaultValue="All">
-                <option value="All">All</option><option value="CNX">CNX</option><option value="Brightway">Brightway</option><option value="CGS">CGS</option>
-              </select>
-            </div>
           </div>
           <ChartCanvas config={c5Config} height="190px" />
           <InsightBox text={dbOspInsight(dC5)} />
