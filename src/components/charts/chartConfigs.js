@@ -98,9 +98,9 @@ export function buildPlanOfferedConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Plan', data: d.forecast, backgroundColor: 'rgba(139,92,246,.55)', borderRadius: 3, order: 2 },
-        { label: 'Actual Offered', data: d.offered, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3, order: 3 },
-        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#10b981', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1, datalabels: PDL },
+        { label: 'Plan', data: d.forecast, backgroundColor: 'rgba(153,76,204,.55)', borderRadius: 3, order: 2 },
+        { label: 'Actual Offered', data: d.offered, backgroundColor: 'rgba(6,114,203,.8)', borderRadius: 3, order: 3 },
+        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#5D8C00', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1, datalabels: PDL },
       ],
     },
     options: {
@@ -111,7 +111,7 @@ export function buildPlanOfferedConfig(d, theme) {
       scales: {
         x: S.x,
         y: { ticks: { color: tc, font: { size: 9 }, callback: fK }, grid: { color: gc } },
-        y1: { position: 'right', ticks: { color: '#10b981', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
+        y1: { position: 'right', ticks: { color: '#5D8C00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
       },
       plugins: { legend: LP, datalabels: DL },
     },
@@ -129,17 +129,17 @@ export function buildCallVolumeConfig(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Offered', data: d.offered, borderColor: '#3b82f6', fill: true, backgroundColor: 'rgba(59,130,246,.08)', tension: 0.4 },
-        { label: 'Handled', data: d.handled, borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,.08)', tension: 0.4 },
-        { label: 'Abandonment%', data: d.abandon, borderColor: '#ef4444', borderDash: [5, 3], tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 4, borderWidth: 2.5, datalabels: PDL },
-        { label: 'Offered%', data: att, borderColor: '#f59e0b', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, borderWidth: 2, datalabels: PDL },
+        { label: 'Offered', data: d.offered, borderColor: '#0672CB', fill: true, backgroundColor: 'rgba(6,114,203,.08)', tension: 0.4 },
+        { label: 'Handled', data: d.handled, borderColor: '#5D8C00', fill: true, backgroundColor: 'rgba(93,140,0,.08)', tension: 0.4 },
+        { label: 'Abandonment%', data: d.abandon, borderColor: '#D0353F', borderDash: [5, 3], tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 4, borderWidth: 2.5, datalabels: PDL },
+        { label: 'Offered%', data: att, borderColor: '#C96100', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, borderWidth: 2, datalabels: PDL },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
-      scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#ef4444', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
+      scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#D0353F', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
       plugins: { legend: LP, datalabels: DL },
     },
   };
@@ -165,7 +165,7 @@ export function buildChannelMixConfig(d, theme) {
         { label: 'Cases', data: casesN, backgroundColor: '#2f8fd1', borderRadius: 2 },
         { label: 'Email', data: emailN, backgroundColor: '#d4a94a', borderRadius: 2 },
         { label: 'Chat', data: chatN, backgroundColor: '#2ea89b', borderRadius: 2 },
-        { label: 'Social', data: socialN, backgroundColor: '#8b5cf6', borderRadius: 2 },
+        { label: 'Social', data: socialN, backgroundColor: '#994CCC', borderRadius: 2 },
       ],
     },
     options: {
@@ -375,10 +375,10 @@ export function buildHistTrendConfig(d, theme, curHistPlan) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'FY2026', data: d.fy26, borderColor: '#166534', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#166534', 'top', 4) },
-        { label: 'FY2027', data: d.fy27act, borderColor: '#7c3aed', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#7c3aed', 'top', 16) },
-        { label: planLabel, data: pd, borderColor: '#06b6d4', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#06b6d4', 'bottom', 4) },
-        { label: 'ML Forecast', data: d.mlfc, borderColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#f59e0b', 'bottom', 16) },
+        { label: 'FY2026', data: d.fy26, borderColor: '#436F00', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#436F00', 'top', 4) },
+        { label: 'FY2027', data: d.fy27act, borderColor: '#8A3FBA', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#8A3FBA', 'top', 16) },
+        { label: planLabel, data: pd, borderColor: '#0EA0A9', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#0EA0A9', 'bottom', 4) },
+        { label: 'ML Forecast', data: d.mlfc, borderColor: '#C96100', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#C96100', 'bottom', 16) },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
@@ -397,8 +397,8 @@ export function buildShipmentTrendStaticConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#3b82f6', tension: 0.4, fill: false, datalabels: lineDL('#3b82f6', 'top') },
-        { label: 'Projection', data: [58,60,58,63,65,68,64,68], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
+        { label: 'Actual', data: [55,58,52,60,62,65,59,64], borderColor: '#0672CB', tension: 0.4, fill: false, datalabels: lineDL('#0672CB', 'top') },
+        { label: 'Projection', data: [58,60,58,63,65,68,64,68], borderColor: '#C96100', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#C96100', 'bottom') },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
@@ -421,8 +421,8 @@ export function buildTagRouted2Config(d, theme) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Offered', data: d.offered, backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 3, order: 3, datalabels: valueLabels },
-        { label: 'Tag Count', data: tagCount, backgroundColor: 'rgba(16,185,129,.75)', borderRadius: 3, order: 2, datalabels: valueLabels },
+        { label: 'Offered', data: d.offered, backgroundColor: 'rgba(6,114,203,.8)', borderRadius: 3, order: 3, datalabels: valueLabels },
+        { label: 'Tag Count', data: tagCount, backgroundColor: 'rgba(93,140,0,.75)', borderRadius: 3, order: 2, datalabels: valueLabels },
         {
           label: 'Tags %', data: tagsPct, type: 'line', borderColor: '#1a1f36', backgroundColor: '#1a1f36', pointBackgroundColor: '#1a1f36',
           borderWidth: 2.5, pointRadius: 4, tension: 0.2, fill: false, yAxisID: 'y1', order: 1,
@@ -470,11 +470,11 @@ export function buildExitTrendConfig(theme, fiscalYear) {
     data: {
       labels,
       datasets: [
-        { label: 'Total Expiring Assets', data: expiringAssets, backgroundColor: '#1e3a5f', borderRadius: 2, order: 3 },
+        { label: 'Total Expiring Assets', data: expiringAssets, backgroundColor: '#002A58', borderRadius: 2, order: 3 },
         {
           label: 'Total Shipment', data: shipment, order: 2,
-          backgroundColor: shipment.map((_, i) => (i === lastIdx ? 'rgba(96,165,250,.4)' : 'rgba(96,165,250,.85)')),
-          borderColor: '#60a5fa',
+          backgroundColor: shipment.map((_, i) => (i === lastIdx ? 'rgba(49,162,227,.4)' : 'rgba(49,162,227,.85)')),
+          borderColor: '#31A2E3',
           borderWidth: shipment.map((_, i) => (i === lastIdx ? 2 : 0)),
           borderDash: [4, 3],
           borderRadius: 2,
@@ -483,8 +483,8 @@ export function buildExitTrendConfig(theme, fiscalYear) {
             formatter: (v, ctx) => { const p = shipmentPct[ctx.dataIndex]; return p == null ? '' : `${p >= 0 ? '+' : ''}${p}%`; },
           },
         },
-        { label: 'ASU Exit Actual', data: exitActual, type: 'line', borderColor: '#dc2626', borderWidth: 2.5, pointRadius: 0, tension: 0.35, fill: false, yAxisID: 'y1', order: 1, spanGaps: false },
-        { label: 'ASU Exit FCST', data: exitFcst, type: 'line', borderColor: '#f59e0b', borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false, yAxisID: 'y1', order: 0, spanGaps: false },
+        { label: 'ASU Exit Actual', data: exitActual, type: 'line', borderColor: '#BB2A33', borderWidth: 2.5, pointRadius: 0, tension: 0.35, fill: false, yAxisID: 'y1', order: 1, spanGaps: false },
+        { label: 'ASU Exit FCST', data: exitFcst, type: 'line', borderColor: '#C96100', borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false, yAxisID: 'y1', order: 0, spanGaps: false },
       ],
     },
     options: {
@@ -511,10 +511,10 @@ export function buildShipUppConfig(region, theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, ud.shipAct.length),
       datasets: [
-        { label: 'Ship_Actual', data: ud.shipAct, backgroundColor: 'rgba(59,130,246,.85)', borderRadius: 2, order: 3 },
-        { label: 'Projection', data: ud.projection, backgroundColor: 'rgba(245,158,11,.85)', borderRadius: 2, order: 2 },
+        { label: 'Ship_Actual', data: ud.shipAct, backgroundColor: 'rgba(6,114,203,.85)', borderRadius: 2, order: 3 },
+        { label: 'Projection', data: ud.projection, backgroundColor: 'rgba(201,97,0,.85)', borderRadius: 2, order: 2 },
         { label: 'UPP1', data: ud.upp1, borderColor: '#9ca3af', borderWidth: 2, type: 'line', tension: 0.3, fill: false, pointRadius: 2, spanGaps: false, order: 1 },
-        { label: 'UPP2', data: ud.upp2, borderColor: '#eab308', borderWidth: 2, type: 'line', tension: 0.3, fill: false, pointRadius: 2, spanGaps: false, order: 0 },
+        { label: 'UPP2', data: ud.upp2, borderColor: '#E6AC28', borderWidth: 2, type: 'line', tension: 0.3, fill: false, pointRadius: 2, spanGaps: false, order: 0 },
       ],
     },
     options: {
@@ -547,8 +547,8 @@ export const OFFERING_SOLD_DATA = {
 };
 
 const SOLD_VIEW_DATA = {
-  segment: { data: SEGMENT_SOLD_DATA, colors: ['rgba(59,130,246,.6)', 'rgba(16,185,129,.6)', 'rgba(139,92,246,.6)'] },
-  offering: { data: OFFERING_SOLD_DATA, colors: ['rgba(59,130,246,.6)', 'rgba(139,92,246,.6)', 'rgba(16,185,129,.6)', 'rgba(245,158,11,.6)'] },
+  segment: { data: SEGMENT_SOLD_DATA, colors: ['rgba(6,114,203,.6)', 'rgba(93,140,0,.6)', 'rgba(153,76,204,.6)'] },
+  offering: { data: OFFERING_SOLD_DATA, colors: ['rgba(6,114,203,.6)', 'rgba(153,76,204,.6)', 'rgba(93,140,0,.6)', 'rgba(201,97,0,.6)'] },
 };
 
 // Total sold volume growth from the first to the last period (same for
@@ -611,9 +611,9 @@ export function buildProductTrendConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'Latitude', data: [22,24,21,25,26,28,24,27], backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 2 },
-        { label: 'Precision', data: [12,13,11,14,14,15,13,15], backgroundColor: 'rgba(245,158,11,.7)', borderRadius: 2 },
-        { label: 'OptiPlex', data: [18,18,17,18,19,20,19,20], backgroundColor: 'rgba(16,185,129,.7)', borderRadius: 2 },
+        { label: 'Latitude', data: [22,24,21,25,26,28,24,27], backgroundColor: 'rgba(6,114,203,.7)', borderRadius: 2 },
+        { label: 'Precision', data: [12,13,11,14,14,15,13,15], backgroundColor: 'rgba(201,97,0,.7)', borderRadius: 2 },
+        { label: 'OptiPlex', data: [18,18,17,18,19,20,19,20], backgroundColor: 'rgba(93,140,0,.7)', borderRadius: 2 },
       ],
     },
     options: {
@@ -633,7 +633,7 @@ export function buildShipmentGrowthConfig(theme) {
   const { textPrimary: tp } = getColors(theme);
   return {
     type: 'bar',
-    data: { labels: ['AMER', 'EMEA', 'APJ'], datasets: [{ data: [42, 28, 30], backgroundColor: ['rgba(59,130,246,.7)', 'rgba(245,158,11,.7)', 'rgba(16,185,129,.7)'], borderRadius: 4 }] },
+    data: { labels: ['AMER', 'EMEA', 'APJ'], datasets: [{ data: [42, 28, 30], backgroundColor: ['rgba(6,114,203,.7)', 'rgba(201,97,0,.7)', 'rgba(93,140,0,.7)'], borderRadius: 4 }] },
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -657,8 +657,8 @@ export function buildAsuTrendConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#10b981', tension: 0.4, fill: false, datalabels: lineDL('#10b981', 'top') },
-        { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#f59e0b', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#f59e0b', 'bottom') },
+        { label: 'ASU', data: [1120,1135,1140,1150,1160,1175,1185,1200], borderColor: '#5D8C00', tension: 0.4, fill: false, datalabels: lineDL('#5D8C00', 'top') },
+        { label: 'Plan', data: [1130,1145,1160,1175,1190,1200,1215,1230], borderColor: '#C96100', borderDash: [5, 3], tension: 0.4, fill: false, datalabels: lineDL('#C96100', 'bottom') },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
@@ -675,9 +675,9 @@ export function buildAsuCpasuConfig(theme, curPeriod, fiscalYear) {
     data: {
       labels: buildPeriodLabels(fiscalYear, curPeriod, 8),
       datasets: [
-        { label: 'ASU', type: 'bar', data: [1120,1135,1140,1150,1160,1175,1185,1200], backgroundColor: 'rgba(59,130,246,.75)', borderRadius: 3, order: 2 },
-        { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#8b5cf6', tension: 0.4, fill: false, order: 1 },
-        { label: 'Contacts', data: [98000,95500,99000,93500,90500,88000,85500,87000], borderColor: '#f59e0b', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, order: 0, datalabels: { display: false } },
+        { label: 'ASU', type: 'bar', data: [1120,1135,1140,1150,1160,1175,1185,1200], backgroundColor: 'rgba(6,114,203,.75)', borderRadius: 3, order: 2 },
+        { label: 'CPASU', data: [980,990,995,1005,1015,1030,1040,1055], borderColor: '#994CCC', tension: 0.4, fill: false, order: 1 },
+        { label: 'Contacts', data: [98000,95500,99000,93500,90500,88000,85500,87000], borderColor: '#C96100', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, order: 0, datalabels: { display: false } },
       ],
     },
     options: {
@@ -711,7 +711,7 @@ function genTrend(n, start, end, amp, freq, spikes = []) {
 // than one can be shown at once so vintages can be compared directly.
 export const PROJECTION_MONTHS = ['Oct', 'Nov', 'Dec', 'Jan'];
 const PROJECTION_FACTORS = { Oct: 1.03, Nov: 1.0, Dec: 0.985, Jan: 0.97 };
-const PROJECTION_COLORS = { Oct: '#f59e0b', Nov: '#8b5cf6', Dec: '#9ca3af', Jan: '#22c55e' };
+const PROJECTION_COLORS = { Oct: '#C96100', Nov: '#994CCC', Dec: '#9ca3af', Jan: '#7AA809' };
 
 // Draws a dashed vertical divider where Actual hands off to the projection
 // lines, so the historical/forecast boundary reads at a glance instead of
@@ -787,7 +787,7 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
   const asuProj = asuFull.map((v, i) => (i >= cutover ? v : null));
   const projectionDatasets = months.map((m, idx) => {
     const factor = PROJECTION_FACTORS[m] ?? 1;
-    const color = PROJECTION_COLORS[m] || '#22c55e';
+    const color = PROJECTION_COLORS[m] || '#7AA809';
     const data = contactFull.map((v, i) => (i >= overlapStart ? Math.round(v * factor * 10) / 10 : null));
     return {
       label: `${m} Projection`, type: 'line', data, borderColor: color, backgroundColor: color, fill: false,
@@ -803,8 +803,8 @@ export function buildAsuVolumeTrendConfig(theme, curPeriod, fiscalYear, projMont
     data: {
       labels,
       datasets: [
-        { label: 'ASU', type: 'bar', data: asu, backgroundColor: 'rgba(59,130,246,.32)', borderWidth: 0, yAxisID: 'y1', order: 5, barPercentage: 1, categoryPercentage: 1 },
-        { label: 'ASU Proj', type: 'bar', data: asuProj, backgroundColor: 'rgba(245,158,11,.28)', borderWidth: 0, yAxisID: 'y1', order: 4, barPercentage: 1, categoryPercentage: 1 },
+        { label: 'ASU', type: 'bar', data: asu, backgroundColor: 'rgba(6,114,203,.32)', borderWidth: 0, yAxisID: 'y1', order: 5, barPercentage: 1, categoryPercentage: 1 },
+        { label: 'ASU Proj', type: 'bar', data: asuProj, backgroundColor: 'rgba(201,97,0,.28)', borderWidth: 0, yAxisID: 'y1', order: 4, barPercentage: 1, categoryPercentage: 1 },
         {
           label: 'Actual', type: 'line', data: actual, borderColor: '#1a1f36', backgroundColor: '#1a1f36', fill: false,
           pointRadius: 0, borderWidth: 2.5, tension: 0.2, yAxisID: 'y', order: 1, spanGaps: false,

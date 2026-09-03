@@ -353,7 +353,7 @@ export default function CapacityOverview() {
   const fyLabel = isYearly ? `${YRS[0]}-${YRS[YRS.length - 1]}` : fy;
 
   return (
-    <div className="tab-panel active cap-overview-page">
+    <div className="tab-panel active">
       <div className="kpi-grid cols-5 wpd-kpi-grid">
         <ComparisonKpi label={`${fyLabel} Total Volume`} valueA={fmtM(tA)} valueB={fmtM(tB)} delta={vD} planA={planA} planB={planB} />
         <ComparisonKpi
@@ -431,10 +431,10 @@ export default function CapacityOverview() {
           <div className="dbosp-metrics">
             <div className="dbosp-metric-card">
               <div className="dbosp-metric-label">Overall Service Level%</div>
-              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: '#0672CB' }}>{reducedPct(72)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '72%', background: '#0672CB' }}></div></div>
-              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: '#C96100' }}>{reducedPct(55)}%</span></div>
-              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '55%', background: '#C96100' }}></div></div>
+              <div className="dbosp-metric-row"><span className="dbosp-metric-name">DB</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-blue)' }}>{reducedPct(72)}%</span></div>
+              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '72%', background: 'var(--accent-blue)' }}></div></div>
+              <div className="dbosp-metric-row" style={{ marginTop: '6px' }}><span className="dbosp-metric-name">OSP</span><span className="dbosp-metric-val" style={{ color: 'var(--accent-orange)' }}>{reducedPct(55)}%</span></div>
+              <div className="dbosp-bar-wrap"><div className="dbosp-bar" style={{ width: '55%', background: 'var(--accent-orange)' }}></div></div>
             </div>
           </div>
         </div>

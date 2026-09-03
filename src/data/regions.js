@@ -75,8 +75,8 @@ export function accTier(val) {
 }
 
 export const TIER_STYLE = {
-  excellent: { border: 'var(--accent-green)', label: 'var(--accent-green)', bg: 'rgba(16,185,129,.1)' },
-  good: { border: 'var(--accent-blue)', label: 'var(--accent-blue)', bg: 'rgba(59,130,246,.1)' },
-  fair: { border: 'var(--accent-orange)', label: 'var(--accent-orange)', bg: 'rgba(245,158,11,.1)' },
-  critical: { border: 'var(--accent-red)', label: 'var(--accent-red)', bg: 'rgba(239,68,68,.1)' },
+  excellent: { border: 'var(--accent-green)', label: 'var(--accent-green)', bg: 'rgba(93,140,0,.1)' },
+  good: { border: 'var(--accent-blue)', label: 'var(--accent-blue)', bg: 'rgba(6,114,203,.1)' },
+  fair: { border: 'var(--accent-orange)', label: 'var(--accent-orange)', bg: 'rgba(201,97,0,.1)' },
+  critical: { border: 'var(--accent-red)', label: 'var(--accent-red)', bg: 'rgba(208,53,63,.1)' },
 };

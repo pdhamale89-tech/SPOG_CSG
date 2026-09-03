@@ -72,8 +72,8 @@ export default function CalendarFiscal() {
             <div className="fc-legend">
               <span><span className="fc-leg" style={{ background: '#1a1f36' }}></span>QWKS</span>
               <span><span className="fc-leg" style={{ background: '#374151' }}></span>WKS</span>
-              <span><span className="fc-leg" style={{ background: '#fef3c7', border: '1px solid #92400e' }}></span><u>SCO</u></span>
-              <span><span className="fc-leg" style={{ background: '#d1fae5', border: '1px solid #065f46' }}></span>Holiday</span>
+              <span><span className="fc-leg" style={{ background: '#FEEFCB', border: '1px solid #6D3A00' }}></span><u>SCO</u></span>
+              <span><span className="fc-leg" style={{ background: '#E9F5CE', border: '1px solid #2C5000' }}></span>Holiday</span>
               <span><span className="fc-leg" style={{ border: '2px solid var(--accent-blue)', background: 'transparent' }}></span>⭕ Pay Date</span>
             </div>
           </div>
