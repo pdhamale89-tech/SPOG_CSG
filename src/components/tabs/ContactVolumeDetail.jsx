@@ -160,6 +160,7 @@ export default function ContactVolumeDetail() {
             <option value={ALL}>All Offerings</option>
             {CV_OFFERINGS.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
+          {isDetail && <button className="btn-a" onClick={() => setView('global')}>← Back to Global</button>}
           <DownloadBtn filename="contact-volume-detail" title="Download contact volume detail" rows={csvRows} />
         </div>
       </div>
