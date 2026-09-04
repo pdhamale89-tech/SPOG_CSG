@@ -12,7 +12,6 @@ import WorldMap from '../charts/WorldMap';
 import HistVolTable from './HistVolTable';
 import PartnerMinimum from './PartnerMinimum';
 import ContactVolumeDetail from './ContactVolumeDetail';
-import ContactVolumeDetailNew from './ContactVolumeDetailNew';
 import VolumeByPeriodTable from './VolumeByPeriodTable';
 import InsightBox from '../common/InsightBox';
 import { scaleDisplayValue } from '../../utils/displayScale';
@@ -245,8 +244,6 @@ export default function ForecastOverview() {
       <VolumeByPeriodTable />
 
       <ContactVolumeDetail />
-
-      <ContactVolumeDetailNew />
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">

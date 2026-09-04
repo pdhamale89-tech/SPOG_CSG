@@ -143,9 +143,9 @@ export const GLOSSARY = [
   {
     page: 'Forecast Overview',
     metric: 'Contact Volume, Vol YoY%, Partner Mix %',
-    usedIn: 'Contact Volume Detail table, filterable by Region/Sub Region/Offering',
+    usedIn: 'Contact Volume Detail table -- Global rollup by default, click through for Region/Sub Region/Offering detail',
     description: `FY24-FY27 contact volume per Region/Sub Region/Offering, its year-over-year growth, and what share is handled by outsourced partners.`,
-    logic: `Contact Volume = hash(row key)-seeded base value x compounded per-row growth/decline rate. Vol YoY% = (This Year − Last Year) / Last Year x 100. Partner Mix% = hash-derived base (55-74) + hash-derived step (6-10) per year, clamped to 0-99.`,
+    logic: `Contact Volume = hash(row key)-seeded base value x compounded per-row growth/decline rate. Vol YoY% = (This Year − Last Year) / Last Year x 100. Partner Mix% = hash-derived base (55-74) + hash-derived step (6-10) per year, clamped to 0-99. Global row = Contact Volume summed across rows, Vol YoY% recomputed from those summed totals, Channel/Partner Mix volume-weighted by each row's Contact Volume.`,
   },
   {
     page: 'Forecast Overview',
