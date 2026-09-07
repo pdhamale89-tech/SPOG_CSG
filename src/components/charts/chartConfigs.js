@@ -454,13 +454,12 @@ function fyYearLabels(fiscalYear, count) {
 }
 
 export function buildExitTrendConfig(theme, fiscalYear) {
-  const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);
+  const { textSecondary: tc, gridColor: gc } = getColors(theme);
   const LP = legendPos(theme);
   const labels = fyYearLabels(fiscalYear, 6);
 
   const expiringAssets = [11200, 13600, 14200, 11300, 11000, 9900];
   const shipment = [14500, 14790, 11090, 9090, 8910, 8820];
-  const shipmentPct = shipment.map((v, i) => (i === 0 ? null : Math.round(((v - shipment[i - 1]) / shipment[i - 1]) * 100)));
   const lastIdx = shipment.length - 1;
   const exitActual = [29, 30, 27, 25.5, 23, null];
   const exitFcst = [null, null, null, null, 23, 22];
@@ -478,10 +477,7 @@ export function buildExitTrendConfig(theme, fiscalYear) {
           borderWidth: shipment.map((_, i) => (i === lastIdx ? 2 : 0)),
           borderDash: [4, 3],
           borderRadius: 2,
-          datalabels: {
-            display: true, color: tp, font: { size: 9, weight: 'bold' }, anchor: 'start', align: 'end', offset: 6, textStrokeColor: bg, textStrokeWidth: 3,
-            formatter: (v, ctx) => { const p = shipmentPct[ctx.dataIndex]; return p == null ? '' : `${p >= 0 ? '+' : ''}${p}%`; },
-          },
+          datalabels: { display: false },
         },
         { label: 'ASU Exit Actual', data: exitActual, type: 'line', borderColor: '#BB2A33', borderWidth: 2.5, pointRadius: 0, tension: 0.35, fill: false, yAxisID: 'y1', order: 1, spanGaps: false },
         { label: 'ASU Exit FCST', data: exitFcst, type: 'line', borderColor: '#C96100', borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false, yAxisID: 'y1', order: 0, spanGaps: false },
