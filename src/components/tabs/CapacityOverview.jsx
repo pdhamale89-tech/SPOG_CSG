@@ -424,7 +424,7 @@ export default function CapacityOverview() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🏢 DB vs OSP <InfoBtn tip="<strong>Purpose</strong>DB vs OSP performance." /></div>
+            <div className="card-title"><span className="ic3d">🏢</span> DB vs OSP <InfoBtn tip="<strong>Purpose</strong>DB vs OSP performance." /></div>
           </div>
           <ChartCanvas config={c5Config} height="190px" />
           <InsightBox text={dbOspInsight(dC5)} />

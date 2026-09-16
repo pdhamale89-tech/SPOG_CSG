@@ -21,7 +21,7 @@ export default function CapacityKpiDrillModal() {
     <div className={'modal-overlay' + (open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeKpiDrill(); }}>
       <div className="modal" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{isChannel ? '🎧' : '📍'} {title}</h2>
+          <h2><span className="ic3d">{isChannel ? '🎧' : '📍'}</span> {title}</h2>
           <button className="modal-close" onClick={closeKpiDrill}>&times;</button>
         </div>
         <div className="modal-body">

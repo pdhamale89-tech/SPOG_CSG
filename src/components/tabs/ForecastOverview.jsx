@@ -84,7 +84,7 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">🌍 Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
+          <div className="card-title"><span className="ic3d">🌍</span> Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
           <div className="card-dd">
             <div className="plan-sel">
               <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} onClick={() => setGeoView('region')}>Region</button>
@@ -126,7 +126,7 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📈 Historical Trend <InfoBtn tip="<strong>Purpose</strong>Multi-line historical comparison with plan toggle." /></div>
+          <div className="card-title"><span className="ic3d">📈</span> Historical Trend <InfoBtn tip="<strong>Purpose</strong>Multi-line historical comparison with plan toggle." /></div>
           <div className="card-dd">
             <div className="plan-sel">
               <button className={'plan-btn' + (curHistPlan === 'plan1' ? ' active' : '')} onClick={() => setCurHistPlan('plan1')}>FY27 Jul Pro</button>
@@ -143,7 +143,7 @@ export default function ForecastOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📊 Historical Volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period.<strong>Tip</strong>💡 Click for more information." /></div>
+          <div className="card-title"><span className="ic3d">📊</span> Historical Volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period.<strong>Tip</strong>💡 Click for more information." /></div>
           <div className="card-dd">
             <select className="hv-queue-sel" defaultValue="all">
               <option value="all">All Queues</option>
@@ -194,7 +194,7 @@ export default function ForecastOverview() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">🎯 DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories.<strong>Tip</strong>💡 Click for more information on a country or offering." /></div>
+            <div className="card-title"><span className="ic3d">🎯</span> DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories.<strong>Tip</strong>💡 Click for more information on a country or offering." /></div>
             <div className="card-dd">
               <RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDms', v)} />
               <select

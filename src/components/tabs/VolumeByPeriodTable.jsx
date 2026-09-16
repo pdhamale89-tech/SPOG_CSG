@@ -17,7 +17,7 @@ export default function VolumeByPeriodTable() {
     <div className="card" style={{ marginBottom: '14px' }}>
       <div className="card-header">
         <div className="card-title">
-          📦 Actual Volume by {PERIOD_HEADER[curPeriod] || 'Fiscal Quarter'}
+          <span className="ic3d">📦</span> Actual Volume by {PERIOD_HEADER[curPeriod] || 'Fiscal Quarter'}
           <InfoBtn tip="<strong>Purpose</strong>Actual volume by offering, broken out per period. Follows the top Weekly/Monthly/QTR toggle." />
         </div>
         <DownloadBtn

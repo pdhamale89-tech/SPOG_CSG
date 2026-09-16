@@ -24,7 +24,7 @@ export default function SegmentGrowthModal() {
     <div className={'modal-overlay' + (segmentGrowthModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeSegmentGrowth(); }}>
       <div className="modal" style={{ maxWidth: '640px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>📈 Segment Sold Growth Detail</h2>
+          <h2><span className="ic3d">📈</span> Segment Sold Growth Detail</h2>
           <button className="modal-close" onClick={closeSegmentGrowth}>&times;</button>
         </div>
         <div className="modal-body">

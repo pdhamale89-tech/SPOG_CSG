@@ -140,7 +140,7 @@ export default function ContactVolumeDetail() {
     <div className="card" style={{ marginBottom: '14px' }}>
       <div className="card-header">
         <div className="card-title">
-          📞 Contact Volume Detail
+          <span className="ic3d">📞</span> Contact Volume Detail
           <InfoBtn tip="<strong>Purpose</strong>Global rollup by default -- click the Global row (or Offering) for the Region/Sub Region/Offering breakdown." />
         </div>
         <div className="card-dd">

@@ -92,7 +92,7 @@ export default function PartnerMinimum() {
   return (
     <div>
       <div className="card-header">
-        <div className="card-title">📊 Partner Minimum <InfoBtn tip={tip} /></div>
+        <div className="card-title"><span className="ic3d">📊</span> Partner Minimum <InfoBtn tip={tip} /></div>
       </div>
 
       <div className="pm-summary">

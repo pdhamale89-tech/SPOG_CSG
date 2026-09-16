@@ -38,7 +38,7 @@ export default function ApprovalModal() {
     <div className={'approval-overlay' + (approvalModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeApproval(); }}>
       <div className="approval-modal" onClick={(e) => e.stopPropagation()}>
         <div className="approval-header">
-          <h2>📋 RCA/CLCA</h2>
+          <h2><span className="ic3d">📋</span> RCA/CLCA</h2>
           <button className="approval-close" onClick={closeApproval}>&times;</button>
         </div>
         <ComingSoonOverlay>

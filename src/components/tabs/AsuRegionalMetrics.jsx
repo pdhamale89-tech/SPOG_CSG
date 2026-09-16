@@ -71,7 +71,7 @@ export default function AsuRegionalMetrics() {
     <div className="card" style={{ marginBottom: '14px' }}>
       <div className="card-header">
         <div className="card-title">
-          🌐 Regional Performance Metrics
+          <span className="ic3d">🌐</span> Regional Performance Metrics
           <InfoBtn tip="<strong>Purpose</strong>Basic/Pro/Premium volume and Achievement Target% by Region and Sub-Region.<strong>Tip</strong>💡 ≥100% is on/above target, &lt;90% is at risk." />
         </div>
         <div className="card-dd">

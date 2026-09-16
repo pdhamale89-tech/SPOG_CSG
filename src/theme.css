@@ -339,3 +339,24 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
 /* Focus ring (Keyboard & Accessibility Notes: "2 px focus ring ... colour
    #0D76B2"), scoped to this page only. */
 .wfo-page *:focus-visible{outline:2px solid #0D76B2;outline-offset:2px;}
+
+/* ===== 3D icon/logo treatment (app-wide) =====
+   .ic3d is a reusable "pop" filter for any bare glyph/emoji icon -- a light
+   drop-shadow above (simulated highlight) plus a darker one below (cast
+   shadow) reads as raised/embossed on both light and dark surfaces without
+   any new image assets. Applied via a wrapping span wherever an emoji is
+   used as a standalone icon (sidebar nav, card-title icons, modal header
+   icons). Icon-box elements that already carry a solid/gradient background
+   (sidebar logo, report/AI icon boxes) get a matching glossy-bevel
+   treatment instead (inset highlight + inset shadow + outer drop shadow),
+   the box equivalent of the same raised look. */
+.ic3d{display:inline-block;filter:drop-shadow(0 -1px 0 rgba(255,255,255,.5)) drop-shadow(0 2px 2px rgba(0,0,0,.35));}
+.sidebar-logo{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 4px rgba(0,0,0,.3),0 3px 6px rgba(0,0,0,.35);}
+.sidebar-logo svg{filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));}
+.sb-i .ic{display:inline-block;filter:drop-shadow(0 -1px 0 rgba(255,255,255,.35)) drop-shadow(0 1px 1.5px rgba(0,0,0,.45));}
+.info-btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 1px rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.2);}
+.dl-btn,.chart-dl-btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.18);}
+.home-hero-ic{display:inline-block;filter:drop-shadow(0 -1px 0 rgba(255,255,255,.5)) drop-shadow(0 3px 3px rgba(0,0,0,.3));}
+.report-card-icon{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.12),0 2px 3px rgba(0,0,0,.15);}
+.ai-icon-box{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 3px rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.3);}
+.tog-lbl{display:inline-block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));}

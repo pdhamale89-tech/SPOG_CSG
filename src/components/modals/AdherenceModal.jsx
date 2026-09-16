@@ -42,7 +42,7 @@ export default function AdherenceModal() {
     <div className={'modal-overlay' + (adherenceModal.open ? ' open' : '')} onClick={(e) => { if (e.target === e.currentTarget) closeAdherence(); }}>
       <div className="modal adherence-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>🌍 Forecast Adherence Detail</h2>
+          <h2><span className="ic3d">🌍</span> Forecast Adherence Detail</h2>
           <button className="modal-close" onClick={closeAdherence}>&times;</button>
         </div>
         <div className="modal-body">

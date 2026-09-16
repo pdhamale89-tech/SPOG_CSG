@@ -84,7 +84,7 @@ export default function ShipmentOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📦 Ship vs Projections/UPP <InfoBtn tip="<strong>Purpose</strong>Actual vs projections with UPP lines." /></div>
+          <div className="card-title"><span className="ic3d">📦</span> Ship vs Projections/UPP <InfoBtn tip="<strong>Purpose</strong>Actual vs projections with UPP lines." /></div>
           <div className="card-dd">
             <RegionSelect value={regionShipUpp} onChange={(v) => setChartRegion('shipUpp', v)} />
             <SubRegionSelect value={chartSubRegionFor('shipUpp')} onChange={(v) => setChartSubRegion('shipUpp', v)} />
@@ -146,7 +146,7 @@ export default function ShipmentOverview() {
 
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="card-header">
-          <div className="card-title">📋 Segment-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments rolled up by segment, with the regions and offerings contributing to each." /></div>
+          <div className="card-title"><span className="ic3d">📋</span> Segment-wise Shipment Detail <InfoBtn tip="<strong>Purpose</strong>Forecast vs actual shipments rolled up by segment, with the regions and offerings contributing to each." /></div>
           <DownloadBtn
             filename="segment-wise-shipment-detail"
             title="Download segment-wise shipment detail"

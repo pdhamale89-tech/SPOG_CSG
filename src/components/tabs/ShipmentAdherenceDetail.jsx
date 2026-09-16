@@ -41,7 +41,7 @@ export default function ShipmentAdherenceDetail() {
     <div className="card" style={{ marginBottom: '14px' }}>
       <div className="card-header">
         <div className="card-title">
-          🚚 Shipment Adherence Detail
+          <span className="ic3d">🚚</span> Shipment Adherence Detail
           <InfoBtn tip="<strong>Purpose</strong>Shipment adherence by Region/Sub Region, broken down by Offering and Segment.<strong>Tip</strong>💡 Click an offering to expand its Enterprise/Commercial/Consumer split." />
         </div>
         <DownloadBtn filename="shipment-adherence-matrix" title="Download shipment adherence matrix" rows={buildCsvRows()} />

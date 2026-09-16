@@ -52,7 +52,7 @@ export default function HolidayCalendar() {
   return (
     <div className="card" style={{ marginBottom: '14px' }}>
       <div className="card-header">
-        <div className="card-title">🎉 Holiday Calendar <InfoBtn tip="<strong>Purpose</strong>Region, sub region, country and fiscal year holiday detail." /></div>
+        <div className="card-title"><span className="ic3d">🎉</span> Holiday Calendar <InfoBtn tip="<strong>Purpose</strong>Region, sub region, country and fiscal year holiday detail." /></div>
         <DownloadBtn
           filename="holiday-calendar"
           title="Download holiday calendar"
