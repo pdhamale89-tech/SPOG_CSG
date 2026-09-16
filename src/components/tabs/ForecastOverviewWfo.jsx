@@ -5,7 +5,6 @@ import { buildPeriodLabels } from '../../utils/periodLabels';
 import InfoBtn from '../common/InfoBtn';
 import RegionSelect from '../common/RegionSelect';
 import CountrySelect from '../common/CountrySelect';
-import KpiCard from '../common/KpiCard';
 import DownloadBtn from '../common/DownloadBtn';
 import ChartCanvas from '../charts/ChartCanvas';
 import WorldMap from '../charts/WorldMap';
@@ -46,6 +45,87 @@ const QUEUE_ROWS = [
 const DMS_COUNTRIES = Object.keys(dmsDrillData.country);
 const DMS_OFFERINGS = Object.keys(dmsDrillData.offering);
 const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
+
+// Spec's World Map legend tiers, passed as WorldMap's optional tierColors
+// override -- every other WorldMap caller leaves this unset and keeps the
+// app's own theme-driven palette.
+const WFO_TIER_COLORS = { excellent: '#4F7D00', good: '#0D76B2', fair: '#F5CB6F', critical: '#AF0000' };
+
+// Spec Accessibility Rules: 'Provide aria-label on the chart SVG/canvas
+// element: "{ChartTitle} - {dateRange} - {seriesCount} data series"'.
+function chartAriaLabel(title, config) {
+  const labels = config?.data?.labels || [];
+  const dateRange = labels.length ? `${labels[0]} to ${labels[labels.length - 1]}` : 'no data';
+  const seriesCount = config?.data?.datasets?.length || 0;
+  return `${title} - ${dateRange} - ${seriesCount} data series`;
+}
+
+// Spec Accessibility Rules: 'Expose a visually-hidden data table equivalent
+// for each chart (toggle via "View table" button, 14 px fill #0D76B2)'.
+// Built directly from the same Chart.js config already passed to
+// ChartCanvas, so the table can never drift out of sync with what the chart
+// itself is showing.
+function ChartTableToggle({ config }) {
+  const [open, setOpen] = useState(false);
+  const labels = config?.data?.labels || [];
+  const datasets = config?.data?.datasets || [];
+  return (
+    <div className="wfo-chart-table">
+      <button type="button" className="wfo-view-table-btn" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {open ? 'Hide table' : 'View table'}
+      </button>
+      {open && (
+        <div className="tw">
+          <table>
+            <thead>
+              <tr><th>Period</th>{datasets.map((ds) => <th key={ds.label}>{ds.label}</th>)}</tr>
+            </thead>
+            <tbody>
+              {labels.map((lbl, i) => (
+                <tr key={lbl}>
+                  <td>{lbl}</td>
+                  {datasets.map((ds) => <td key={ds.label}>{ds.data[i] == null ? '—' : ds.data[i]}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Spec's KPI trend row: "a 12px arrow-up-right icon with positive delta
+// text". The app's existing delta/sub strings already carry a leading
+// unicode arrow (e.g. "▲ 22%"); this splits that glyph out and renders it as
+// its own coloured icon span (Positive #4F7D00 for ▲, the spec's only other
+// directional token, #AF0000/error, for ▼) instead of leaving it as plain
+// inline text, without touching the shared KpiCard used by every other tab.
+function WfoTrend({ text }) {
+  const m = /^([▲▼])\s*(.*)$/.exec(text || '');
+  if (!m) return <div className="kpi-sub">{text}</div>;
+  const [, arrow, rest] = m;
+  const color = arrow === '▲' ? '#4F7D00' : '#AF0000';
+  return (
+    <div className="kpi-sub">
+      <span className="wfo-trend-icon" style={{ color }}>{arrow}</span> {rest}
+    </div>
+  );
+}
+
+// Same markup as the shared KpiCard, but routes delta/sub through WfoTrend
+// above instead of KpiCard's own plain-text .kpi-sub, so this page's KPI row
+// gets the spec's coloured trend icon without touching KpiCard itself.
+function WfoKpiCard({ label, value, delta, sub }) {
+  return (
+    <div className="kpi-card">
+      <div className="kpi-label">{label}</div>
+      <div className="kpi-value">{scaleDisplayValue(value)}</div>
+      {delta && <WfoTrend text={delta} />}
+      {sub && <WfoTrend text={sub} />}
+    </div>
+  );
+}
 
 export default function ForecastOverviewWfo() {
   const {
@@ -91,10 +171,10 @@ export default function ForecastOverviewWfo() {
   return (
     <div className="tab-panel active wfo-page">
       <div className="kpi-grid">
-        <KpiCard label="FORECAST ACCURACY" value={kpi.acc} delta={kpi.accSub} />
-        <KpiCard label="CALL VOLUME" value={kpi.vol} delta={kpi.volSub} />
-        <KpiCard label="SHIPMENT VARIANCE" value={kpi.shvar} sub="Plan vs Actual" />
-        <KpiCard label="ASU VARIANCE" value={kpi.asuvar} sub="vs Plan" />
+        <WfoKpiCard label="FORECAST ACCURACY" value={kpi.acc} delta={kpi.accSub} />
+        <WfoKpiCard label="CALL VOLUME" value={kpi.vol} delta={kpi.volSub} />
+        <WfoKpiCard label="SHIPMENT VARIANCE" value={kpi.shvar} sub="Plan vs Actual" />
+        <WfoKpiCard label="ASU VARIANCE" value={kpi.asuvar} sub="vs Plan" />
       </div>
 
       <div className="card" style={{ marginBottom: '14px' }}>
@@ -102,12 +182,12 @@ export default function ForecastOverviewWfo() {
           <div className="card-title">🌍 Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
           <div className="card-dd">
             <div className="plan-sel">
-              <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} onClick={() => setGeoView('region')}>Region</button>
-              <button className={'plan-btn' + (geoView === 'subregion' ? ' active' : '')} onClick={() => setGeoView('subregion')}>Sub Region</button>
+              <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} aria-pressed={geoView === 'region'} onClick={() => setGeoView('region')}>Region</button>
+              <button className={'plan-btn' + (geoView === 'subregion' ? ' active' : '')} aria-pressed={geoView === 'subregion'} onClick={() => setGeoView('subregion')}>Sub Region</button>
             </div>
           </div>
         </div>
-        <WorldMap theme="light" mode={geoView} onOpenDetail={openAdherence} />
+        <WorldMap theme="light" mode={geoView} onOpenDetail={openAdherence} tierColors={WFO_TIER_COLORS} />
         <InsightBox text={geoMapInsight()} />
       </div>
 
@@ -120,7 +200,8 @@ export default function ForecastOverviewWfo() {
               <CountrySelect value={chartCountryFor('c0Wfo')} onChange={(v) => setChartCountry('c0Wfo', v)} />
             </div>
           </div>
-          <ChartCanvas config={c0Config} height="220px" />
+          <ChartCanvas config={c0Config} height="220px" ariaLabel={chartAriaLabel('Plan vs Actual Offered', c0Config)} />
+          <ChartTableToggle config={c0Config} />
           <InsightBox text={planOfferedInsight(dC0)} />
         </div>
       </div>
@@ -134,7 +215,8 @@ export default function ForecastOverviewWfo() {
               <CountrySelect value={chartCountryFor('c1Wfo')} onChange={(v) => setChartCountry('c1Wfo', v)} />
             </div>
           </div>
-          <ChartCanvas config={c1Config} height="220px" />
+          <ChartCanvas config={c1Config} height="220px" ariaLabel={chartAriaLabel('Call Volume Trend', c1Config)} />
+          <ChartTableToggle config={c1Config} />
           <InsightBox text={callVolumeInsight(dC1)} />
         </div>
       </div>
@@ -144,15 +226,16 @@ export default function ForecastOverviewWfo() {
           <div className="card-title">📈 Historical Trend <InfoBtn tip="<strong>Purpose</strong>Multi-line historical comparison with plan toggle." /></div>
           <div className="card-dd">
             <div className="plan-sel">
-              <button className={'plan-btn' + (curHistPlan === 'plan1' ? ' active' : '')} onClick={() => setCurHistPlan('plan1')}>FY27 Jul Pro</button>
-              <button className={'plan-btn' + (curHistPlan === 'plan2' ? ' active' : '')} onClick={() => setCurHistPlan('plan2')}>FY27 Jun Pro</button>
-              <button className={'plan-btn' + (curHistPlan === 'plan3' ? ' active' : '')} onClick={() => setCurHistPlan('plan3')}>FY27 Aug Pro</button>
+              <button className={'plan-btn' + (curHistPlan === 'plan1' ? ' active' : '')} aria-pressed={curHistPlan === 'plan1'} onClick={() => setCurHistPlan('plan1')}>FY27 Jul Pro</button>
+              <button className={'plan-btn' + (curHistPlan === 'plan2' ? ' active' : '')} aria-pressed={curHistPlan === 'plan2'} onClick={() => setCurHistPlan('plan2')}>FY27 Jun Pro</button>
+              <button className={'plan-btn' + (curHistPlan === 'plan3' ? ' active' : '')} aria-pressed={curHistPlan === 'plan3'} onClick={() => setCurHistPlan('plan3')}>FY27 Aug Pro</button>
             </div>
             <RegionSelect value={regionNHist} onChange={(v) => setChartRegion('nHistWfo', v)} style={{ marginLeft: '4px' }} />
             <CountrySelect value={chartCountryFor('nHistWfo')} onChange={(v) => setChartCountry('nHistWfo', v)} />
           </div>
         </div>
-        <ChartCanvas config={nHistConfig} height="240px" />
+        <ChartCanvas config={nHistConfig} height="240px" ariaLabel={chartAriaLabel('Historical Trend', nHistConfig)} />
+        <ChartTableToggle config={nHistConfig} />
         <InsightBox text={histTrendInsight(dNHist, curHistPlan)} />
       </div>
 
@@ -195,7 +278,8 @@ export default function ForecastOverviewWfo() {
               </select>
             </div>
           </div>
-          <ChartCanvas config={h1Config} height="290px" />
+          <ChartCanvas config={h1Config} height="290px" ariaLabel={chartAriaLabel('Channel Mix', h1Config)} />
+          <ChartTableToggle config={h1Config} />
           <InsightBox text={channelMixInsight(dH1)} />
         </div>
       </div>
@@ -251,7 +335,8 @@ export default function ForecastOverviewWfo() {
               </>
             )}
           </div>
-          <ChartCanvas config={nDmsConfig} height="210px" />
+          <ChartCanvas config={nDmsConfig} height="210px" ariaLabel={chartAriaLabel('DMS Scorecard', nDmsConfig)} />
+          <ChartTableToggle config={nDmsConfig} />
           <InsightBox text={dmsInsight(nDmsData)} />
         </div>
       </div>
@@ -274,7 +359,7 @@ export default function ForecastOverviewWfo() {
         </div>
         <div className="tw">
           <table>
-            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th>Forecast</th><th>Actual</th><th>Acc%</th><th>Status</th><th>RCA/CLCA</th></tr></thead>
+            <thead><tr><th>Queue</th><th>Name</th><th>Region</th><th className="wfo-num">Forecast</th><th className="wfo-num">Actual</th><th className="wfo-num">Acc%</th><th>Status</th><th>RCA/CLCA</th></tr></thead>
             <tbody>
               {QUEUE_ROWS.map((q) => {
                 const accRaw = (q.actual / q.forecast) * 100;
@@ -288,7 +373,7 @@ export default function ForecastOverviewWfo() {
                 return (
                   <tr key={q.id}>
                     <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
-                    <td>{scaleDisplayValue(q.forecast.toLocaleString())}</td><td>{scaleDisplayValue(q.actual.toLocaleString())}</td><td>{accText}</td>
+                    <td className="wfo-num">{scaleDisplayValue(q.forecast.toLocaleString())}</td><td className="wfo-num">{scaleDisplayValue(q.actual.toLocaleString())}</td><td className="wfo-num">{accText}</td>
                     <td><span className={'dot dot-' + tier}></span></td>
                     <td>
                       <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>

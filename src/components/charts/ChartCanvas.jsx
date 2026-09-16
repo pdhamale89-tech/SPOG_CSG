@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { computeChartTrendPanels } from '../../utils/drillDown';
 import { downloadCsv, chartToCsvRows } from '../../utils/csvExport';
 
-export default function ChartCanvas({ config, height, onClick }) {
+export default function ChartCanvas({ config, height, onClick, ariaLabel }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const onClickRef = useRef(onClick);
@@ -47,10 +47,11 @@ export default function ChartCanvas({ config, height, onClick }) {
         <button
           className="chart-dl-btn"
           title="Download chart data"
+          aria-label="Download chart data"
           onClick={(e) => { e.stopPropagation(); downloadCsv('chart-data', chartToCsvRows(config)); }}
         >⬇</button>
       )}
-      <canvas ref={canvasRef}></canvas>
+      <canvas ref={canvasRef} role={ariaLabel ? 'img' : undefined} aria-label={ariaLabel}></canvas>
     </div>
   );
 }

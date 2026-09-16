@@ -246,6 +246,27 @@ function wfoDataLabelsPercent() {
     formatter: (v) => (v == null ? '' : scaleDisplayValue(`${v}%`)),
   };
 }
+// Spec's Tooltip Specification: white surface, 1px #0000001A border, 4px
+// radius, 8px padding, 10px series label (600) / 10px value text, 8x8
+// colour swatch inline-left of each row (usePointStyle).
+function wfoTooltip() {
+  return {
+    enabled: true,
+    backgroundColor: WFO_BG,
+    borderColor: 'rgba(0,0,0,.1)',
+    borderWidth: 1,
+    cornerRadius: 4,
+    padding: 8,
+    titleColor: WFO_LABEL_COLOR,
+    titleFont: { size: 10, weight: '600' },
+    bodyColor: '#636363',
+    bodyFont: { size: 10 },
+    usePointStyle: true,
+    boxWidth: 8,
+    boxHeight: 8,
+    boxPadding: 4,
+  };
+}
 
 // Plan(bars) #C0DD78 / Availability(bars) #97DCF4 / AOP line #5D8C00 -- the
 // spec's own "Plan vs Availability" grouped-bar + AOP-line token trio.
@@ -275,7 +296,7 @@ export function buildPlanOfferedConfigWfo(d) {
         y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: fK }, grid: { color: WFO_GRID_COLOR } },
         y1: { position: 'right', ticks: { color: '#5D8C00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
       },
-      plugins: { legend: LP, datalabels: DL },
+      plugins: { legend: LP, datalabels: DL, tooltip: wfoTooltip() },
     },
   };
 }
@@ -305,7 +326,7 @@ export function buildCallVolumeConfigWfo(d) {
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
       scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#4F7D00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
-      plugins: { legend: LP, datalabels: DL },
+      plugins: { legend: LP, datalabels: DL, tooltip: wfoTooltip() },
     },
   };
 }
@@ -350,6 +371,7 @@ export function buildChannelMixConfigWfo(d) {
       plugins: {
         legend: LP,
         tooltip: {
+          ...wfoTooltip(),
           mode: 'index',
           intersect: false,
           callbacks: { afterBody: (items) => [`Total: ${totals[items[0].dataIndex].toLocaleString()}`] },
@@ -391,7 +413,7 @@ export function buildDmsConfigWfo(d) {
         x: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 } }, grid: { color: WFO_GRID_COLOR }, stacked: true },
         y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: WFO_GRID_COLOR }, stacked: true, max: 100 },
       },
-      plugins: { legend: LP },
+      plugins: { legend: LP, tooltip: wfoTooltip() },
     },
   };
 }
@@ -417,7 +439,7 @@ export function buildHistTrendConfigWfo(d, curHistPlan) {
         { label: 'ML Forecast', data: d.mlfc, borderColor: '#F5CB6F', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#F5CB6F', 'bottom', 16) },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, tooltip: wfoTooltip() } },
   };
 }
 

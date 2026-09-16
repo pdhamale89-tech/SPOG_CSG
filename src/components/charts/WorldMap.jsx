@@ -15,15 +15,19 @@ const SUBREGION_LABEL_COORDS = {
   JPN: [36, 138], KOR: [36, 128], IND: [22, 78], ANZ: [-25, 135], SubAsia: [28, 70], CCC: [25, 105],
 };
 
-function tierColor(val, c) {
-  const scale = { excellent: c.accentGreen, good: c.accentBlue, fair: c.accentOrange, critical: c.accentRed };
-  return scale[accTier(val)];
+function tierColor(val, tierScale) {
+  return tierScale[accTier(val)];
 }
 
-export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
+// tierColors lets a caller override the excellent/good/fair/critical fill
+// scale (e.g. the WFO Spec Preview page's exact documented hex values)
+// without touching every other caller, which all leave it undefined and
+// keep today's theme-driven accentGreen/Blue/Orange/Red behavior.
+export default function WorldMap({ theme, mode = 'region', onOpenDetail, tierColors }) {
   const mapRef = useRef(null);
   const [hover, setHover] = useState(null);
   const c = getColors(theme);
+  const tierScale = tierColors || { excellent: c.accentGreen, good: c.accentBlue, fair: c.accentOrange, critical: c.accentRed };
 
   useEffect(() => {
     if (mapRef.current) {
@@ -35,7 +39,6 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
     const groupAcc = isSubregion ? SUBREGION_ACC : REGION_ACC;
     const groupOf = isSubregion ? COUNTRY_SUBREGION : COUNTRY_REGION;
     const labelCoords = isSubregion ? SUBREGION_LABEL_COORDS : REGION_LABEL_COORDS;
-    const tierScale = { excellent: c.accentGreen, good: c.accentBlue, fair: c.accentOrange, critical: c.accentRed };
 
     const seriesConfig = {
       attribute: 'fill',
@@ -102,16 +105,16 @@ export default function WorldMap({ theme, mode = 'region', onOpenDetail }) {
         {hover && (
           <div className="geo-hover-card">
             <div className="geo-hover-name">{hover.label}</div>
-            <div className="geo-hover-val" style={{ color: tierColor(hover.value, c) }}>{scaleDisplayValue(`${hover.value}%`)}</div>
+            <div className="geo-hover-val" style={{ color: tierColor(hover.value, tierScale) }}>{scaleDisplayValue(`${hover.value}%`)}</div>
             <div className="geo-hover-sub">accuracy</div>
           </div>
         )}
       </div>
       <div className="geo-legend">
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentGreen }}></span>&#8805;90% Excellent</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentBlue }}></span>80&#8211;90% Good</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentOrange }}></span>70&#8211;80% Fair</span>
-        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: c.accentRed }}></span>{'<'}70% Critical</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: tierScale.excellent }}></span>&#8805;90% Excellent</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: tierScale.good }}></span>80&#8211;90% Good</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: tierScale.fair }}></span>70&#8211;80% Fair</span>
+        <span className="geo-legend-item"><span className="geo-legend-dot" style={{ background: tierScale.critical }}></span>{'<'}70% Critical</span>
       </div>
     </div>
   );

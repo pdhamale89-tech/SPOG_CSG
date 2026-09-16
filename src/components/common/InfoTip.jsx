@@ -20,11 +20,17 @@ export default function InfoTip() {
       if (!e.target.closest('.info-btn')) return;
       hideTimer = setTimeout(() => tip.classList.remove('show'), 100);
     }
+    // Keyboard users can't hover -- Tab focus/blur on the info-btn opens and
+    // closes the same tooltip, per the "reachable via Tab" accessibility note.
     document.addEventListener('mouseover', onOver);
     document.addEventListener('mouseout', onOut);
+    document.addEventListener('focusin', onOver);
+    document.addEventListener('focusout', onOut);
     return () => {
       document.removeEventListener('mouseover', onOver);
       document.removeEventListener('mouseout', onOut);
+      document.removeEventListener('focusin', onOver);
+      document.removeEventListener('focusout', onOut);
       clearTimeout(hideTimer);
     };
   }, []);
