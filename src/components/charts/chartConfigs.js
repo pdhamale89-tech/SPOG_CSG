@@ -204,6 +204,223 @@ export function buildChannelMixConfig(d, theme) {
   };
 }
 
+// ===== WFO UI Spec Preview chart variants (ForecastOverviewWfo.jsx only) =====
+// Mirror the 5 build*Config functions above but recoloured to the literal
+// tokens documented in workforce-ui-spec-controls-filters-combined.pdf's
+// Data Visualization page (Previous Plan #008FFB, Current Plan #5CC1EE,
+// Actual #0076CE, AOP #5D8C00, Projection #F5CB6F, Plan bars #C0DD78,
+// Availability bars #97DCF4, grid #F0F0F0, axis label #4F4F4F, legend label
+// #525462). Always rendered in this single light styling -- never
+// theme-driven -- since the spec documents only one 1440px light desktop
+// design with no dark-mode tokens. Used exclusively by the WFO Spec Preview
+// duplicate tab; every original build*Config function above is untouched.
+const WFO_AXIS_COLOR = '#4F4F4F';
+const WFO_GRID_COLOR = '#F0F0F0';
+const WFO_LEGEND_COLOR = '#525462';
+const WFO_LABEL_COLOR = '#293B4D';
+const WFO_BG = '#FFFFFF';
+
+function wfoScales() {
+  return {
+    x: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 } }, grid: { color: WFO_GRID_COLOR } },
+    y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 } }, grid: { color: WFO_GRID_COLOR } },
+  };
+}
+function wfoLegend() {
+  return {
+    position: 'bottom', align: 'center', maxHeight: 32,
+    labels: { color: WFO_LEGEND_COLOR, font: { size: 8, weight: 500 }, usePointStyle: true, pointStyle: 'circle', boxWidth: 10, boxHeight: 10, padding: 7 },
+  };
+}
+function wfoDataLabels() {
+  return {
+    display: true, color: WFO_LABEL_COLOR, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4,
+    textStrokeColor: WFO_BG, textStrokeWidth: 3,
+    formatter: (v) => scaleDisplayValue(String(v >= 1000 ? fK(v) : v)),
+  };
+}
+function wfoDataLabelsPercent() {
+  return {
+    display: true, color: WFO_LABEL_COLOR, font: { size: 9, weight: 'bold' }, anchor: 'end', align: 'top', offset: 4,
+    textStrokeColor: WFO_BG, textStrokeWidth: 3,
+    formatter: (v) => (v == null ? '' : scaleDisplayValue(`${v}%`)),
+  };
+}
+
+// Plan(bars) #C0DD78 / Availability(bars) #97DCF4 / AOP line #5D8C00 -- the
+// spec's own "Plan vs Availability" grouped-bar + AOP-line token trio.
+export function buildPlanOfferedConfigWfo(d) {
+  const S = wfoScales();
+  const LP = wfoLegend();
+  const DL = wfoDataLabels();
+  const PDL = wfoDataLabelsPercent();
+  const offeredPct = d.offered.map((o, i) => (d.forecast[i] ? Math.round((o / d.forecast[i]) * 100) : 0));
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Plan', data: d.forecast, backgroundColor: '#C0DD78', borderRadius: 3, order: 2 },
+        { label: 'Actual Offered', data: d.offered, backgroundColor: '#97DCF4', borderRadius: 3, order: 3 },
+        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#5D8C00', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1, datalabels: PDL },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: S.x,
+        y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: fK }, grid: { color: WFO_GRID_COLOR } },
+        y1: { position: 'right', ticks: { color: '#5D8C00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
+      },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+// Offered/Handled mapped to the spec's Previous Plan / Current Plan series
+// tokens; Abandonment% (a bad outcome) uses Warning; Offered% attainment (a
+// good outcome) uses Positive/Uptrend.
+export function buildCallVolumeConfigWfo(d) {
+  const S = wfoScales();
+  const LP = wfoLegend();
+  const DL = wfoDataLabels();
+  const PDL = wfoDataLabelsPercent();
+  const att = d.handled.map((h, i) => Math.round((h / d.offered[i]) * 100));
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Offered', data: d.offered, borderColor: '#008FFB', fill: true, backgroundColor: 'rgba(0,143,251,.08)', tension: 0.4 },
+        { label: 'Handled', data: d.handled, borderColor: '#5CC1EE', fill: true, backgroundColor: 'rgba(92,193,238,.08)', tension: 0.4 },
+        { label: 'Abandonment%', data: d.abandon, borderColor: '#F5CB6F', borderDash: [5, 3], tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 4, borderWidth: 2.5, datalabels: PDL },
+        { label: 'Offered%', data: att, borderColor: '#4F7D00', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, borderWidth: 2, datalabels: PDL },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: TOP_LABEL_LAYOUT,
+      scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#4F7D00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
+      plugins: { legend: LP, datalabels: DL },
+    },
+  };
+}
+
+// No direct spec analogue exists for a 5-category stacked mix -- built
+// entirely from the spec's own documented hexes (Interactive Primary,
+// Highlight/link accent, Warning, Positive, Availability bars) rather than
+// inventing new colour outside the palette.
+export function buildChannelMixConfigWfo(d) {
+  const voiceN = d.voice.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const casesN = d.cases;
+  const emailN = d.email.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const chatN = d.chat.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const socialN = d.social.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
+  const totals = d.labels.map((_, i) => voiceN[i] + casesN[i] + emailN[i] + chatN[i] + socialN[i]);
+  const LP = wfoLegend();
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Voice', data: voiceN, backgroundColor: '#0D76B2', borderRadius: 2 },
+        { label: 'Cases', data: casesN, backgroundColor: '#3CACFF', borderRadius: 2 },
+        { label: 'Email', data: emailN, backgroundColor: '#F5CB6F', borderRadius: 2 },
+        { label: 'Chat', data: chatN, backgroundColor: '#4F7D00', borderRadius: 2 },
+        { label: 'Social', data: socialN, backgroundColor: '#97DCF4', borderRadius: 2 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 } }, grid: { color: WFO_GRID_COLOR }, stacked: true },
+        y: {
+          ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: fK },
+          grid: { color: WFO_GRID_COLOR },
+          stacked: true,
+          title: { display: true, text: 'Number of Interactions', color: WFO_AXIS_COLOR, font: { size: 9 } },
+        },
+      },
+      plugins: {
+        legend: LP,
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: { afterBody: (items) => [`Total: ${totals[items[0].dataIndex].toLocaleString()}`] },
+        },
+        datalabels: {
+          display: true,
+          color: '#fff',
+          font: { size: 8, weight: 'bold' },
+          anchor: 'center',
+          textStrokeColor: 'rgba(0,0,0,.35)',
+          textStrokeWidth: 2,
+          formatter: (v) => (v > 150 ? scaleDisplayValue(String(fK(v))) : ''),
+        },
+      },
+    },
+  };
+}
+
+// Unassisted/Augmented/Assisted stacked % remapped to Plan bars / Availability
+// bars / Brand Deep -- the closest self-serve-to-human-handled progression
+// available in the spec's own documented palette.
+export function buildDmsConfigWfo(d) {
+  const LP = wfoLegend();
+  const segLabel = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', formatter: (v) => v + '%' });
+  return {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#C0DD78', datalabels: segLabel('#293B4D') },
+        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#97DCF4', datalabels: segLabel('#293B4D') },
+        { label: 'Assisted', data: d.dmsAs, backgroundColor: '#00468B', datalabels: segLabel('#fff') },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 } }, grid: { color: WFO_GRID_COLOR }, stacked: true },
+        y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: (v) => v + '%' }, grid: { color: WFO_GRID_COLOR }, stacked: true, max: 100 },
+      },
+      plugins: { legend: LP },
+    },
+  };
+}
+
+// FY2026 (actual-so-far) / FY2027 (in-progress) / Plan / ML Forecast mapped
+// onto the spec's Actual / Current Plan / Previous Plan / Projection
+// four-token legend -- Historical Trend is this page's closest structural
+// analogue to the spec's PoP + Plan-vs-Required-HC composite chart.
+export function buildHistTrendConfigWfo(d, curHistPlan) {
+  const S = wfoScales();
+  const LP = wfoLegend();
+  const pd = d[curHistPlan] || d.plan1;
+  const planLbl = curHistPlan === 'plan1' ? 'Jul Pro' : curHistPlan === 'plan2' ? 'Jun Pro' : 'Aug Pro';
+  const lineDL = (color, align, offset) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'end', align, offset, textStrokeColor: WFO_BG, textStrokeWidth: 3 });
+  return {
+    type: 'line',
+    data: {
+      labels: d.labels,
+      datasets: [
+        { label: 'FY2026', data: d.fy26, borderColor: '#0076CE', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#0076CE', 'top', 4) },
+        { label: 'FY2027', data: d.fy27act, borderColor: '#5CC1EE', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#5CC1EE', 'top', 16) },
+        { label: planLbl, data: pd, borderColor: '#008FFB', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#008FFB', 'bottom', 4) },
+        { label: 'ML Forecast', data: d.mlfc, borderColor: '#F5CB6F', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#F5CB6F', 'bottom', 16) },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP } },
+  };
+}
+
 export function buildDbOspVolumeConfig(d, theme) {
   const S = baseScales(theme);
   const { textSecondary: tc, gridColor: gc, textPrimary: tp, bgCard: bg } = getColors(theme);

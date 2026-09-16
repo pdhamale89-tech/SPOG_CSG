@@ -15,6 +15,7 @@ import CapacityKpiDrillModal from './components/modals/CapacityKpiDrillModal';
 
 import Home from './components/tabs/Home';
 import ForecastOverview from './components/tabs/ForecastOverview';
+import ForecastOverviewWfo from './components/tabs/ForecastOverviewWfo';
 import ShipmentOverview from './components/tabs/ShipmentOverview';
 import AsuOverview from './components/tabs/AsuOverview';
 import CapacityOverview from './components/tabs/CapacityOverview';
@@ -37,6 +38,7 @@ const TABS = {
   'reports': Reports,
   'notifications': Notifications,
   'settings': Settings,
+  'forecast-overview-wfo': ForecastOverviewWfo,
 };
 
 function TabRouter() {

@@ -269,3 +269,50 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
 @media(max-width:1024px){.cal-quarter-grid{grid-template-columns:1fr;}}
 @media(max-width:1024px){.kpi-grid,.kpi-grid.cols-5{grid-template-columns:repeat(2,1fr);}.s-grid{grid-template-columns:1fr;}.rca-panel{display:none !important;}.approval-grid{grid-template-columns:1fr;}.fc-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:640px){.kpi-grid,.kpi-grid.cols-5{grid-template-columns:1fr;}.sidebar{display:none;}.fc-grid{grid-template-columns:1fr;}}
+
+/* ===== WFO UI Specification Preview (ForecastOverviewWfo.jsx, "wfo-page")
+   Scoped re-skin per workforce-ui-spec-controls-filters-combined.pdf. Every
+   value below is a literal hex/px lifted from that spec (not a --token),
+   deliberately ignoring the app's dark/light toggle, since the spec itself
+   documents only one 1440px light-desktop design with no dark-mode tokens.
+   Structure, data and behaviour are unchanged from Forecast Overview -- this
+   block only recolours/retypesets/respaces the same markup. Tables that
+   already carry their own more-specific selectors (.hv-table/.vbp-tbl/
+   .cv-tbl) keep their existing density/colour and are intentionally left
+   alone here to avoid breaking their sticky-header/shading logic; only the
+   plain, unclassed Queue Performance table picks up the generic table rules
+   below. The World Map is rendered pinned to "light" (see
+   ForecastOverviewWfo.jsx) rather than re-implemented, since it is
+   Chart/SVG-driven, not CSS-driven. */
+.wfo-page{background:#F7F7FC;}
+.wfo-page .kpi-grid{gap:18px;}
+.wfo-page .kpi-card{background:#FFFFFF;border:1px solid #E1E1E1;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);color:#293B4D;}
+.wfo-page .kpi-card::after{display:none;}
+.wfo-page .kpi-label{font-size:14px;font-weight:600;color:#212B36;opacity:1;text-transform:none;letter-spacing:0;margin-bottom:12px;}
+.wfo-page .kpi-value{font-size:30px;font-weight:600;color:#293B4D;letter-spacing:0;}
+.wfo-page .kpi-sub{font-size:12px;font-weight:400;color:#636363;opacity:1;margin-top:12px;}
+.wfo-page .card{background:#FFFFFF;border:1px solid #C5D4E3;border-radius:8px;box-shadow:0 1px 10px rgba(0,0,0,.12);}
+.wfo-page .card:hover{box-shadow:0 4px 10px rgba(0,0,0,.25);}
+.wfo-page .card-header{height:52px;min-height:52px;padding:0 20px;margin:-12px -12px 12px;border-bottom:.5px solid #0D76B2;background:#FFFFFF;box-sizing:border-box;}
+.wfo-page .card-title{font-size:18px;font-weight:600;color:#222539;}
+.wfo-page .info-btn{border-color:#0D76B2;color:#0D76B2;}
+.wfo-page .info-btn:hover{background:#0D76B2;color:#fff;}
+.wfo-page .card-dd select,.wfo-page .f-sel{height:30px;padding:0 10px;border:1px solid #B6B6B6;border-radius:4px;font-size:14px;font-weight:400;color:#6E6E6E;background:#FFFFFF;min-width:120px;}
+.wfo-page .plan-btn{height:44px;padding:0 20px;border-radius:4px;font-size:14px;font-weight:500;border:1px solid #1C76BC;background:#FFFFFF;color:#335474;}
+.wfo-page .plan-btn.active{background:#1C76BC;border-color:#1C76BC;color:#FFFFFF;}
+.wfo-page .dl-btn{border-color:#0063B8;color:#0063B8;}
+.wfo-page .dl-btn:hover{background:#0063B8;border-color:#0063B8;color:#fff;}
+.wfo-page .btn-a{background:#0672CB;color:#fff;border-radius:2px;font-weight:500;padding:4px 12px;}
+.wfo-page .btn-a:hover{background:#0063B8;opacity:1;}
+.wfo-page .action-badge{color:#4F7D00;}
+.wfo-page .insight-box{background:#EBF1F6;border-left-color:#0D76B2;color:#293B4D;font-size:12px;}
+.wfo-page .drill-bc span{color:#0D76B2;}
+.wfo-page .drill-bc .current{color:#293B4D;}
+.wfo-page .dot-g{background:#4F7D00;}
+.wfo-page .dot-o{background:#F5CB6F;}
+.wfo-page .dot-r{background:#AF0000;}
+.wfo-page .tw{border:1px solid #E9E9E9;border-radius:4px;}
+.wfo-page table{font-size:14px;}
+.wfo-page thead th{background:#F9FBFD;color:#293B4D;font-size:14px;font-weight:500;text-transform:none;padding:0 12px;height:44px;border-bottom:1px solid #E9E9E9;white-space:nowrap;vertical-align:middle;}
+.wfo-page tbody td{padding:0 12px;height:46px;font-size:14px;font-weight:400;color:#40586D;border-bottom:1px solid #E9E9E9;vertical-align:middle;}
+.wfo-page tbody tr:nth-child(even){background:#F7F7FC;}

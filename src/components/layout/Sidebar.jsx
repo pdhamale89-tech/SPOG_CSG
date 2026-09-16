@@ -37,6 +37,9 @@ export default function Sidebar() {
           <div className={subItemClass('calendar-fiscal')} onClick={() => goSub('calendar-fiscal')}>Fiscal Calendar</div>
         </div>
         <div className={topItemClass('glossary')} onClick={() => navTo('glossary')}><span className="ic">📖</span>Glossary</div>
+
+        <div className="sidebar-section-label">Design Trial</div>
+        <div className={topItemClass('forecast-overview-wfo')} onClick={() => navTo('forecast-overview-wfo')}><span className="ic">🎨</span>Forecast Overview (WFO Spec)</div>
       </div>
       <div className="sidebar-bottom">
         <div className="sidebar-section-label">System</div>
