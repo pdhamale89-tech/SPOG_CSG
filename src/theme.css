@@ -143,10 +143,10 @@
 .cv-tbl tr.cv-section-header.cv-clickable{cursor:pointer;}
 .cv-tbl tr.cv-section-header.cv-clickable:hover td{filter:brightness(1.1);}
 .cv-header-hint{float:right;font-weight:600;font-size:10px;opacity:.85;}
-.cv-tbl td.cv-cat-label{background:var(--table-header);color:var(--text-primary);font-weight:600;font-size:10px;text-align:center;padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.cv-tbl td.cv-cat-label{background:var(--table-header);color:var(--text-primary);font-weight:600;font-size:10px;text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
 .cv-tbl td.cv-cat-label.dark{background:var(--accent-blue);color:#fff;font-weight:700;}
 .cv-tbl td.cv-cat-label.yoy{background:var(--accent-purple);color:#fff;font-weight:700;}
-.cv-tbl td.cv-data-cell,.cv-tbl td.cv-yoy-data{text-align:center;font-size:10px;font-weight:600;padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text-primary);white-space:nowrap;}
+.cv-tbl td.cv-data-cell,.cv-tbl td.cv-yoy-data{text-align:right;font-size:10px;font-weight:600;padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text-primary);white-space:nowrap;}
 .cv-tbl td.cv-data-cell.bold{font-weight:800;}
 .cv-tbl td.cv-yoy-data{font-weight:800;font-size:11px;}
 .cv-tbl td.cv-shade-fy24{background:color-mix(in srgb, var(--accent-blue) 32%, var(--bg-card));}
@@ -281,9 +281,11 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
    .cv-tbl) keep their existing density/colour and are intentionally left
    alone here to avoid breaking their sticky-header/shading logic; only the
    plain, unclassed Queue Performance table picks up the generic table rules
-   below. The World Map is rendered pinned to "light" (see
-   ForecastOverviewWfo.jsx) rather than re-implemented, since it is
-   Chart/SVG-driven, not CSS-driven. */
+   below (column alignment for the other three lives with their own classes
+   instead -- see the .cv-tbl rules near the top of the file and the
+   nth-last-child rules further down). The World Map is rendered pinned to
+   "light" (see ForecastOverviewWfo.jsx) rather than re-implemented, since it
+   is Chart/SVG-driven, not CSS-driven. */
 .wfo-page{background:#F7F7FC;}
 .wfo-page .kpi-grid{gap:18px;}
 .wfo-page .kpi-card{background:#FFFFFF;border:1px solid #E1E1E1;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);color:#293B4D;}
@@ -322,13 +324,13 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
    VolumeByPeriodTable are shared components this page reuses unmodified --
    their numeric block is always the last N columns regardless of which
    Weekly/Monthly/QTR/Yearly period is selected, so :nth-last-child targets
-   it without needing per-column classes. ContactVolumeDetail already has
-   its own cv-data-cell/cv-yoy-data/cv-cat-label classes to hook instead. */
+   it without needing per-column classes. ContactVolumeDetail's own
+   cv-data-cell/cv-yoy-data/cv-cat-label alignment now lives in the base
+   .cv-tbl rules above (line ~146) so every use of that table gets it, not
+   just this page. */
 .wfo-page .wfo-num{text-align:right;}
 .wfo-page .hv-table td:nth-last-child(-n+6),.wfo-page .hv-table th:nth-last-child(-n+6){text-align:right;}
 .wfo-page .vbp-tbl td:nth-last-child(-n+5),.wfo-page .vbp-tbl th:nth-last-child(-n+5){text-align:right;}
-.wfo-page .cv-tbl td.cv-data-cell,.wfo-page .cv-tbl td.cv-yoy-data{text-align:right;}
-.wfo-page .cv-tbl td.cv-cat-label{text-align:left;}
 /* "View table" chart-accessibility fallback (Accessibility Rules: toggle
    via "View table" button, 14px fill #0D76B2) and the KPI trend row's
    12px arrow-up-right icon. */
