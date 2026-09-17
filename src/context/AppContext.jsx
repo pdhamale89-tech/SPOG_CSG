@@ -41,6 +41,12 @@ export function AppProvider({ children }) {
   const [chartCountries, setChartCountries] = useState({});
   const [curHistPlan, setCurHistPlan] = useState('plan1');
   const [rcaCollapsed, setRcaCollapsed] = useState(false);
+  // Masthead/sidenav collapse (CSG Productivity Console artifact: sidenav
+  // collapses between a 76px icon-only rail and a 248px icon+label panel).
+  // Persisted per-browser since it's a pure display preference, not app state.
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('spog-sidebar-collapsed') === '1'; } catch { return false; }
+  });
 
   const [toast, setToast] = useState({ show: false, msg: '', cls: '' });
   const [detailModal, setDetailModal] = useState({ open: false, title: '', body: '' });
@@ -80,6 +86,13 @@ export function AppProvider({ children }) {
   const showFilters = !NO_FILTER_TABS.includes(currentTab);
   const showRCA = !NO_FILTER_TABS.includes(currentTab);
   const toggleRcaCollapsed = useCallback(() => setRcaCollapsed((c) => !c), []);
+  const toggleSidebarCollapsed = useCallback(() => {
+    setSidebarCollapsed((c) => {
+      const next = !c;
+      try { localStorage.setItem('spog-sidebar-collapsed', next ? '1' : '0'); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
 
   const setChartRegion = useCallback((id, region) => {
     setChartRegions((prev) => ({ ...prev, [id]: region }));
@@ -193,6 +206,7 @@ export function AppProvider({ children }) {
     chartCountries, setChartCountry, chartCountryFor,
     curHistPlan, setCurHistPlan,
     showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed,
+    sidebarCollapsed, toggleSidebarCollapsed,
     applyFilters, clearFilters,
     toast, showToast,
     detailModal, openDetail, closeDetail,
@@ -208,7 +222,8 @@ export function AppProvider({ children }) {
     curRegion, curPeriod, fiscalYear, compPlanA, compPlanB, chartRegions, setChartRegion, chartRegionFor,
     chartSubRegions, setChartSubRegion, chartSubRegionFor,
     chartCountries, setChartCountry, chartCountryFor, curHistPlan,
-    showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed, applyFilters, clearFilters, toast, showToast,
+    showFilters, showRCA, rcaCollapsed, toggleRcaCollapsed,
+    sidebarCollapsed, toggleSidebarCollapsed, applyFilters, clearFilters, toast, showToast,
     detailModal, openDetail, closeDetail, adherenceModal, openAdherence, closeAdherence,
     segmentGrowthModal, openSegmentGrowth, closeSegmentGrowth,
     kpiDrillModal, openKpiDrill, closeKpiDrill,
