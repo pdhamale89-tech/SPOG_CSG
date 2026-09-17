@@ -1,7 +1,7 @@
 // Re-derived from the "CSG Productivity Console" Dell Design System v3
 // reference artifact's --dds-color-*/--dv-cat-* tokens (same source as
-// theme.css's app-wide CSS variables), so every original (non-Wfo) chart,
-// map and shared component using getColors() picks up the identical palette.
+// theme.css's app-wide CSS variables), so every chart, map and shared
+// component using getColors() picks up the identical palette.
 const palettes = {
   light: {
     textPrimary: '#1D2C3B',

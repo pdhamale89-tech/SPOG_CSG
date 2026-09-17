@@ -13,7 +13,6 @@ const BREADCRUMBS = {
   'calendar-forecast': 'Calendar › Planning',
   'calendar-fiscal': 'Calendar › Fiscal',
   'glossary': 'Tools › Glossary',
-  'forecast-overview-wfo': 'Design Trial › Forecast Overview (WFO Spec)',
 };
 
 function defaultBreadcrumb(pid) {

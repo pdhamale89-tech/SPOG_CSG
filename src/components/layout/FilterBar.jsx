@@ -29,7 +29,7 @@ const DEFAULTS = {
 // vocabulary: Forecast Queue Name only shows on these tabs, and Capacity
 // Planner reads as Forecaster here (it stays Capacity Planner everywhere
 // else, e.g. Capacity Overview, where that label was requested).
-const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview', 'forecast-overview-wfo'];
+const FORECAST_TABS = ['forecast-overview', 'shipment-overview', 'asu-overview'];
 // Yearly now has real (if reused-from-monthly, same as how Weekly/QTR already
 // reuse monthly's numbers under different labels) data on every tab that
 // shows the period toggle, so the button isn't Capacity-only anymore.
