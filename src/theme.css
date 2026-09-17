@@ -275,6 +275,10 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
    value below is a literal hex/px lifted from that spec (not a --token),
    deliberately ignoring the app's dark/light toggle, since the spec itself
    documents only one 1440px light-desktop design with no dark-mode tokens.
+   Also audited against Dell_Design_System_v3_Dashboard_Guide.docx: spacing
+   values here now snap to that guide's documented scale (4/8/12/16/24/32...)
+   instead of arbitrary px, and card outer padding follows its 24px/16px
+   outer-padding/internal-gap card spec.
    Structure, data and behaviour are unchanged from Forecast Overview -- this
    block only recolours/retypesets/respaces the same markup. Tables that
    already carry their own more-specific selectors (.hv-table/.vbp-tbl/
@@ -287,7 +291,7 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
    "light" (see ForecastOverviewWfo.jsx) rather than re-implemented, since it
    is Chart/SVG-driven, not CSS-driven. */
 .wfo-page{background:#F7F7FC;}
-.wfo-page .kpi-grid{gap:18px;}
+.wfo-page .kpi-grid{gap:16px;}
 .wfo-page .kpi-card{background:#FFFFFF;border:1px solid #E1E1E1;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);color:#293B4D;}
 .wfo-page .kpi-card::after{display:none;}
 .wfo-page .kpi-label{font-size:14px;font-weight:600;color:#212B36;opacity:1;text-transform:none;letter-spacing:0;margin-bottom:12px;}
@@ -295,7 +299,7 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
 .wfo-page .kpi-sub{font-size:12px;font-weight:400;color:#636363;opacity:1;margin-top:12px;}
 .wfo-page .card{background:#FFFFFF;border:1px solid #C5D4E3;border-radius:8px;box-shadow:0 1px 10px rgba(0,0,0,.12);}
 .wfo-page .card:hover{box-shadow:0 4px 10px rgba(0,0,0,.25);}
-.wfo-page .card-header{height:52px;min-height:52px;padding:0 20px;margin:-12px -12px 12px;border-bottom:.5px solid #0D76B2;background:#FFFFFF;box-sizing:border-box;}
+.wfo-page .card-header{height:52px;min-height:52px;padding:0 24px;margin:-12px -12px 12px;border-bottom:.5px solid #0D76B2;background:#FFFFFF;box-sizing:border-box;}
 .wfo-page .card-title{font-size:18px;font-weight:600;color:#222539;}
 .wfo-page .info-btn{border-color:#0D76B2;color:#0D76B2;}
 .wfo-page .info-btn:hover{background:#0D76B2;color:#fff;}
@@ -313,6 +317,10 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
 .wfo-page .dot-g{background:#4F7D00;}
 .wfo-page .dot-o{background:#F5CB6F;}
 .wfo-page .dot-r{background:#AF0000;}
+/* Dell_Design_System_v3_Dashboard_Guide.docx: "never communicate meaning
+   using color alone" -- the status dot always renders next to its priority
+   text (Low/Medium/High) instead of standing alone. */
+.wfo-page .wfo-status-text{margin-left:4px;font-size:12px;color:#40586D;}
 .wfo-page .tw{border:1px solid #E9E9E9;border-radius:4px;}
 .wfo-page table{font-size:14px;}
 .wfo-page thead th{background:#F9FBFD;color:#293B4D;font-size:14px;font-weight:500;text-transform:none;padding:0 12px;height:44px;border-bottom:1px solid #E9E9E9;white-space:nowrap;vertical-align:middle;text-align:left;}

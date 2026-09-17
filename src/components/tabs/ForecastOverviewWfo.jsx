@@ -36,6 +36,11 @@ import {
 // which key off the same AppContext store by id. The Historical Trend plan
 // toggle is kept as page-local state (not AppContext's shared curHistPlan)
 // for the same reason.
+//
+// Additionally audited against Dell_Design_System_v3_Dashboard_Guide.docx:
+// card/KPI titles use sentence case per its content rules (Sec. 13) and the
+// Queue Performance status dot now carries a visible text label so status is
+// never conveyed by color alone (Sec. 3.1 / Sec. 11 accessibility checklist).
 
 const QUEUE_ROWS = [
   { id: 'Q-001', name: 'Enterprise Voice T1', region: 'AMER', forecast: 12400, actual: 12100 },
@@ -171,15 +176,15 @@ export default function ForecastOverviewWfo() {
   return (
     <div className="tab-panel active wfo-page">
       <div className="kpi-grid">
-        <WfoKpiCard label="FORECAST ACCURACY" value={kpi.acc} delta={kpi.accSub} />
-        <WfoKpiCard label="CALL VOLUME" value={kpi.vol} delta={kpi.volSub} />
-        <WfoKpiCard label="SHIPMENT VARIANCE" value={kpi.shvar} sub="Plan vs Actual" />
-        <WfoKpiCard label="ASU VARIANCE" value={kpi.asuvar} sub="vs Plan" />
+        <WfoKpiCard label="Forecast accuracy" value={kpi.acc} delta={kpi.accSub} />
+        <WfoKpiCard label="Call volume" value={kpi.vol} delta={kpi.volSub} />
+        <WfoKpiCard label="Shipment variance" value={kpi.shvar} sub="Plan vs Actual" />
+        <WfoKpiCard label="ASU variance" value={kpi.asuvar} sub="vs Plan" />
       </div>
 
-      <div className="card" style={{ marginBottom: '14px' }}>
+      <div className="card" style={{ marginBottom: '16px' }}>
         <div className="card-header">
-          <div className="card-title"><span className="ic3d">🌍</span> Forecast Adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
+          <div className="card-title"><span className="ic3d">🌍</span> Forecast adherence <InfoBtn tip="<strong>Purpose</strong>Forecast accuracy by geography. Toggle Region/Sub Region to change map granularity; % labels shown directly on the map.<strong>Tip</strong>💡 Click the map for a Region/Sub Region/Country/Offering adherence table." /></div>
           <div className="card-dd">
             <div className="plan-sel">
               <button className={'plan-btn' + (geoView === 'region' ? ' active' : '')} aria-pressed={geoView === 'region'} onClick={() => setGeoView('region')}>Region</button>
@@ -194,7 +199,7 @@ export default function ForecastOverviewWfo() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">Plan vs Actual Offered <InfoBtn tip="<strong>Purpose</strong>Planned volume vs actual offered volume, with Offered% (actual/plan) on the right axis." /></div>
+            <div className="card-title">Plan vs actual offered <InfoBtn tip="<strong>Purpose</strong>Planned volume vs actual offered volume, with Offered% (actual/plan) on the right axis." /></div>
             <div className="card-dd">
               <RegionSelect value={regionC0} onChange={(v) => setChartRegion('c0Wfo', v)} />
               <CountrySelect value={chartCountryFor('c0Wfo')} onChange={(v) => setChartCountry('c0Wfo', v)} />
@@ -209,7 +214,7 @@ export default function ForecastOverviewWfo() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">Call Volume Trend <InfoBtn tip="<strong>Purpose</strong>Workload vs handle rate with Abandonment% and Attainment%." /></div>
+            <div className="card-title">Call volume trend <InfoBtn tip="<strong>Purpose</strong>Workload vs handle rate with Abandonment% and Attainment%." /></div>
             <div className="card-dd">
               <RegionSelect value={regionC1} onChange={(v) => setChartRegion('c1Wfo', v)} />
               <CountrySelect value={chartCountryFor('c1Wfo')} onChange={(v) => setChartCountry('c1Wfo', v)} />
@@ -221,9 +226,9 @@ export default function ForecastOverviewWfo() {
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: '14px' }}>
+      <div className="card" style={{ marginBottom: '16px' }}>
         <div className="card-header">
-          <div className="card-title"><span className="ic3d">📈</span> Historical Trend <InfoBtn tip="<strong>Purpose</strong>Multi-line historical comparison with plan toggle." /></div>
+          <div className="card-title"><span className="ic3d">📈</span> Historical trend <InfoBtn tip="<strong>Purpose</strong>Multi-line historical comparison with plan toggle." /></div>
           <div className="card-dd">
             <div className="plan-sel">
               <button className={'plan-btn' + (curHistPlan === 'plan1' ? ' active' : '')} aria-pressed={curHistPlan === 'plan1'} onClick={() => setCurHistPlan('plan1')}>FY27 Jul Pro</button>
@@ -239,9 +244,9 @@ export default function ForecastOverviewWfo() {
         <InsightBox text={histTrendInsight(dNHist, curHistPlan)} />
       </div>
 
-      <div className="card" style={{ marginBottom: '14px' }}>
+      <div className="card" style={{ marginBottom: '16px' }}>
         <div className="card-header">
-          <div className="card-title"><span className="ic3d">📊</span> Historical Volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period.<strong>Tip</strong>💡 Click for more information." /></div>
+          <div className="card-title"><span className="ic3d">📊</span> Historical volume <InfoBtn tip="<strong>Purpose</strong>Volume data by period.<strong>Tip</strong>💡 Click for more information." /></div>
           <div className="card-dd">
             <select className="hv-queue-sel" defaultValue="all">
               <option value="all">All Queues</option>
@@ -261,7 +266,7 @@ export default function ForecastOverviewWfo() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title">Channel Mix <InfoBtn tip="<strong>Purpose</strong>Channel volume split." /></div>
+            <div className="card-title">Channel mix <InfoBtn tip="<strong>Purpose</strong>Channel volume split." /></div>
             <div className="card-dd">
               <select className="f-sel" defaultValue="All">
                 <option value="All">All</option><option value="Pro">Pro</option><option value="Premium">Premium</option><option value="Basic">Basic</option><option value="PON">PON</option>
@@ -293,7 +298,7 @@ export default function ForecastOverviewWfo() {
       <div className="s-grid full">
         <div className="card">
           <div className="card-header">
-            <div className="card-title"><span className="ic3d">🎯</span> DMS Scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories.<strong>Tip</strong>💡 Click for more information on a country or offering." /></div>
+            <div className="card-title"><span className="ic3d">🎯</span> DMS scorecard <InfoBtn tip="<strong>Purpose</strong>Contact disposition categories.<strong>Tip</strong>💡 Click for more information on a country or offering." /></div>
             <div className="card-dd">
               <RegionSelect value={regionNDms} onChange={(v) => setChartRegion('nDmsWfo', v)} />
               <select
@@ -345,9 +350,9 @@ export default function ForecastOverviewWfo() {
 
       <ContactVolumeDetail />
 
-      <div className="card" style={{ marginBottom: '14px' }}>
+      <div className="card" style={{ marginBottom: '16px' }}>
         <div className="card-header">
-          <div className="card-title">Queue Performance <InfoBtn tip="<strong>Purpose</strong>Queue-level data." /></div>
+          <div className="card-title">Queue performance <InfoBtn tip="<strong>Purpose</strong>Queue-level data." /></div>
           <DownloadBtn
             filename="queue-performance-wfo"
             title="Download queue performance"
@@ -374,7 +379,7 @@ export default function ForecastOverviewWfo() {
                   <tr key={q.id}>
                     <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
                     <td className="wfo-num">{scaleDisplayValue(q.forecast.toLocaleString())}</td><td className="wfo-num">{scaleDisplayValue(q.actual.toLocaleString())}</td><td className="wfo-num">{accText}</td>
-                    <td><span className={'dot dot-' + tier}></span></td>
+                    <td><span className={'dot dot-' + tier}></span> <span className="wfo-status-text">{priority}</span></td>
                     <td>
                       <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>
                       {actioned && <span className="action-badge" title={`Actioned ${actioned.timestamp}`}>✓</span>}
