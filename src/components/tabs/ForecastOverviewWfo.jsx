@@ -41,6 +41,13 @@ import {
 // card/KPI titles use sentence case per its content rules (Sec. 13) and the
 // Queue Performance status dot now carries a visible text label so status is
 // never conveyed by color alone (Sec. 3.1 / Sec. 11 accessibility checklist).
+//
+// Re-audited a second time against the "CSG Productivity Console" Dell
+// Design System v3 reference artifact (a full working HTML mockup, more
+// precise/complete than the docx above): tier/trend colors below now use
+// that artifact's literal --dds-* hex values, and the Queue Performance
+// status column renders as that artifact's pill-shaped Healthy/At risk/
+// Critical badge component instead of a plain dot.
 
 const QUEUE_ROWS = [
   { id: 'Q-001', name: 'Enterprise Voice T1', region: 'AMER', forecast: 12400, actual: 12100 },
@@ -51,10 +58,11 @@ const DMS_COUNTRIES = Object.keys(dmsDrillData.country);
 const DMS_OFFERINGS = Object.keys(dmsDrillData.offering);
 const cap = (s) => (s === 'oop' ? 'OOP' : s.charAt(0).toUpperCase() + s.slice(1));
 
-// Spec's World Map legend tiers, passed as WorldMap's optional tierColors
-// override -- every other WorldMap caller leaves this unset and keeps the
-// app's own theme-driven palette.
-const WFO_TIER_COLORS = { excellent: '#4F7D00', good: '#0D76B2', fair: '#F5CB6F', critical: '#AF0000' };
+// World Map legend tiers, passed as WorldMap's optional tierColors override
+// -- every other WorldMap caller leaves this unset and keeps the app's own
+// theme-driven palette. Colors are the CSG Productivity Console artifact's
+// Green 60 / Blue 60 / Yellow 60 / Red 60 semantic base tokens.
+const WFO_TIER_COLORS = { excellent: '#5C8F00', good: '#0672CB', fair: '#D99500', critical: '#CC2D2D' };
 
 // Spec Accessibility Rules: 'Provide aria-label on the chart SVG/canvas
 // element: "{ChartTitle} - {dateRange} - {seriesCount} data series"'.
@@ -110,7 +118,7 @@ function WfoTrend({ text }) {
   const m = /^([▲▼])\s*(.*)$/.exec(text || '');
   if (!m) return <div className="kpi-sub">{text}</div>;
   const [, arrow, rest] = m;
-  const color = arrow === '▲' ? '#4F7D00' : '#AF0000';
+  const color = arrow === '▲' ? '#4A7600' : '#B32020';
   return (
     <div className="kpi-sub">
       <span className="wfo-trend-icon" style={{ color }}>{arrow}</span> {rest}
@@ -374,12 +382,13 @@ export default function ForecastOverviewWfo() {
                 const accReduced = parseFloat(accText);
                 const tier = accReduced >= 95 ? 'g' : accReduced >= 80 ? 'o' : 'r';
                 const priority = accReduced >= 95 ? 'Low' : accReduced >= 80 ? 'Medium' : 'High';
+                const statusLabel = tier === 'g' ? 'Healthy' : tier === 'o' ? 'At risk' : 'Critical';
                 const actioned = actionLog[q.id];
                 return (
                   <tr key={q.id}>
                     <td>{q.id}</td><td>{q.name}</td><td>{q.region}</td>
                     <td className="wfo-num">{scaleDisplayValue(q.forecast.toLocaleString())}</td><td className="wfo-num">{scaleDisplayValue(q.actual.toLocaleString())}</td><td className="wfo-num">{accText}</td>
-                    <td><span className={'dot dot-' + tier}></span> <span className="wfo-status-text">{priority}</span></td>
+                    <td><span className={'wfo-badge wfo-badge-' + tier}>{statusLabel}</span></td>
                     <td>
                       <button className="btn-a" onClick={() => openApproval({ id: q.id, area: q.name, priority })}>RCA/CLCA</button>
                       {actioned && <span className="action-badge" title={`Actioned ${actioned.timestamp}`}>✓</span>}

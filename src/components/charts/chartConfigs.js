@@ -207,17 +207,21 @@ export function buildChannelMixConfig(d, theme) {
 // ===== WFO UI Spec Preview chart variants (ForecastOverviewWfo.jsx only) =====
 // Mirror the 5 build*Config functions above but recoloured to the literal
 // tokens documented in workforce-ui-spec-controls-filters-combined.pdf's
-// Data Visualization page (Previous Plan #008FFB, Current Plan #5CC1EE,
-// Actual #0076CE, AOP #5D8C00, Projection #F5CB6F, Plan bars #C0DD78,
-// Availability bars #97DCF4, grid #F0F0F0, axis label #4F4F4F, legend label
-// #525462). Always rendered in this single light styling -- never
-// theme-driven -- since the spec documents only one 1440px light desktop
-// design with no dark-mode tokens. Used exclusively by the WFO Spec Preview
-// duplicate tab; every original build*Config function above is untouched.
-const WFO_AXIS_COLOR = '#4F4F4F';
-const WFO_GRID_COLOR = '#F0F0F0';
-const WFO_LEGEND_COLOR = '#525462';
-const WFO_LABEL_COLOR = '#293B4D';
+// Re-audited against the "CSG Productivity Console" Dell Design System v3
+// reference artifact: axis/grid/legend/label colors and the 4-hue validated
+// categorical data-viz palette (Blue 600 #0672CB / Green 50 #6EA700 /
+// Purple 50 #8A4FD6 / Orange 60 #EF6C00) below are that artifact's literal
+// --dds-color-text-tertiary/--dv-grid/--dds-color-text-secondary/
+// --dds-color-text-primary/--dv-cat-* token values, not the earlier
+// workforce-ui-spec-controls-filters-combined.pdf ones they replace. Always
+// rendered in this single light styling -- never theme-driven -- since
+// neither source spec documents a dark-mode design. Used exclusively by the
+// WFO Spec Preview duplicate tab; every original build*Config function above
+// is untouched.
+const WFO_AXIS_COLOR = '#839DB4';
+const WFO_GRID_COLOR = '#C5D4E3';
+const WFO_LEGEND_COLOR = '#40586D';
+const WFO_LABEL_COLOR = '#1D2C3B';
 const WFO_BG = '#FFFFFF';
 
 function wfoScales() {
@@ -246,20 +250,20 @@ function wfoDataLabelsPercent() {
     formatter: (v) => (v == null ? '' : scaleDisplayValue(`${v}%`)),
   };
 }
-// Spec's Tooltip Specification: white surface, 1px #0000001A border, 4px
-// radius, 8px padding, 10px series label (600) / 10px value text, 8x8
-// colour swatch inline-left of each row (usePointStyle).
+// CSG Productivity Console artifact's .chart-tooltip: dark Slate 70 surface,
+// no border, white text, 4px radius, 8px padding, 8x8 colour swatch
+// inline-left of each row (usePointStyle) -- replaces the earlier PDF
+// spec's white-surface/bordered tooltip.
 function wfoTooltip() {
   return {
     enabled: true,
-    backgroundColor: WFO_BG,
-    borderColor: 'rgba(0,0,0,.1)',
-    borderWidth: 1,
+    backgroundColor: '#1D2C3B',
+    borderWidth: 0,
     cornerRadius: 4,
     padding: 8,
-    titleColor: WFO_LABEL_COLOR,
+    titleColor: '#FFFFFF',
     titleFont: { size: 10, weight: '600' },
-    bodyColor: '#636363',
+    bodyColor: '#FFFFFF',
     bodyFont: { size: 10 },
     usePointStyle: true,
     boxWidth: 8,
@@ -268,8 +272,9 @@ function wfoTooltip() {
   };
 }
 
-// Plan(bars) #C0DD78 / Availability(bars) #97DCF4 / AOP line #5D8C00 -- the
-// spec's own "Plan vs Availability" grouped-bar + AOP-line token trio.
+// Plan / Actual Offered mapped onto the artifact's validated categorical
+// pair (Blue 600 / Green 50); the Offered% line uses Orange 60 so it reads
+// as a distinct overlay rather than a third bar color.
 export function buildPlanOfferedConfigWfo(d) {
   const S = wfoScales();
   const LP = wfoLegend();
@@ -281,9 +286,9 @@ export function buildPlanOfferedConfigWfo(d) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Plan', data: d.forecast, backgroundColor: '#C0DD78', borderRadius: 3, order: 2 },
-        { label: 'Actual Offered', data: d.offered, backgroundColor: '#97DCF4', borderRadius: 3, order: 3 },
-        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#5D8C00', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1, datalabels: PDL },
+        { label: 'Plan', data: d.forecast, backgroundColor: '#0672CB', borderRadius: 3, order: 2 },
+        { label: 'Actual Offered', data: d.offered, backgroundColor: '#6EA700', borderRadius: 3, order: 3 },
+        { label: 'Offered%', data: offeredPct, type: 'line', borderColor: '#EF6C00', borderWidth: 2.5, pointRadius: 4, tension: 0.3, fill: false, yAxisID: 'y1', order: 1, datalabels: PDL },
       ],
     },
     options: {
@@ -294,16 +299,16 @@ export function buildPlanOfferedConfigWfo(d) {
       scales: {
         x: S.x,
         y: { ticks: { color: WFO_AXIS_COLOR, font: { size: 9 }, callback: fK }, grid: { color: WFO_GRID_COLOR } },
-        y1: { position: 'right', ticks: { color: '#5D8C00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
+        y1: { position: 'right', ticks: { color: '#EF6C00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 },
       },
       plugins: { legend: LP, datalabels: DL, tooltip: wfoTooltip() },
     },
   };
 }
 
-// Offered/Handled mapped to the spec's Previous Plan / Current Plan series
-// tokens; Abandonment% (a bad outcome) uses Warning; Offered% attainment (a
-// good outcome) uses Positive/Uptrend.
+// Offered/Handled use the artifact's categorical Blue 600 / Purple 50 pair;
+// Abandonment% (a bad outcome) uses the Warning base (Yellow 60), Offered%
+// attainment (a good outcome) uses the Success text token (Green 70).
 export function buildCallVolumeConfigWfo(d) {
   const S = wfoScales();
   const LP = wfoLegend();
@@ -315,26 +320,25 @@ export function buildCallVolumeConfigWfo(d) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Offered', data: d.offered, borderColor: '#008FFB', fill: true, backgroundColor: 'rgba(0,143,251,.08)', tension: 0.4 },
-        { label: 'Handled', data: d.handled, borderColor: '#5CC1EE', fill: true, backgroundColor: 'rgba(92,193,238,.08)', tension: 0.4 },
-        { label: 'Abandonment%', data: d.abandon, borderColor: '#F5CB6F', borderDash: [5, 3], tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 4, borderWidth: 2.5, datalabels: PDL },
-        { label: 'Offered%', data: att, borderColor: '#4F7D00', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, borderWidth: 2, datalabels: PDL },
+        { label: 'Offered', data: d.offered, borderColor: '#0672CB', fill: true, backgroundColor: 'rgba(6,114,203,.08)', tension: 0.4 },
+        { label: 'Handled', data: d.handled, borderColor: '#8A4FD6', fill: true, backgroundColor: 'rgba(138,79,214,.08)', tension: 0.4 },
+        { label: 'Abandonment%', data: d.abandon, borderColor: '#D99500', borderDash: [5, 3], tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 4, borderWidth: 2.5, datalabels: PDL },
+        { label: 'Offered%', data: att, borderColor: '#4A7600', tension: 0.4, fill: false, yAxisID: 'y1', pointRadius: 3, borderWidth: 2, datalabels: PDL },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       layout: TOP_LABEL_LAYOUT,
-      scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#4F7D00', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
+      scales: { x: S.x, y: S.y, y1: { position: 'right', ticks: { color: '#4A7600', font: { size: 9 }, callback: (v) => v + '%' }, grid: { display: false }, min: 0, max: 100 } },
       plugins: { legend: LP, datalabels: DL, tooltip: wfoTooltip() },
     },
   };
 }
 
-// No direct spec analogue exists for a 5-category stacked mix -- built
-// entirely from the spec's own documented hexes (Interactive Primary,
-// Highlight/link accent, Warning, Positive, Availability bars) rather than
-// inventing new colour outside the palette.
+// The artifact's 4-hue validated categorical set only covers 4 series; this
+// chart needs 5, so Cases (a Voice sub-channel) takes a lighter tint of the
+// same Blue ramp (Blue 40) rather than inventing a color outside it.
 export function buildChannelMixConfigWfo(d) {
   const voiceN = d.voice.map((v) => Math.round((CHANNEL_MIX_REF_TOTAL * v) / 100));
   const casesN = d.cases;
@@ -348,11 +352,11 @@ export function buildChannelMixConfigWfo(d) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Voice', data: voiceN, backgroundColor: '#0D76B2', borderRadius: 2 },
-        { label: 'Cases', data: casesN, backgroundColor: '#3CACFF', borderRadius: 2 },
-        { label: 'Email', data: emailN, backgroundColor: '#F5CB6F', borderRadius: 2 },
-        { label: 'Chat', data: chatN, backgroundColor: '#4F7D00', borderRadius: 2 },
-        { label: 'Social', data: socialN, backgroundColor: '#97DCF4', borderRadius: 2 },
+        { label: 'Voice', data: voiceN, backgroundColor: '#0672CB', borderRadius: 2 },
+        { label: 'Cases', data: casesN, backgroundColor: '#31A2E3', borderRadius: 2 },
+        { label: 'Email', data: emailN, backgroundColor: '#EF6C00', borderRadius: 2 },
+        { label: 'Chat', data: chatN, backgroundColor: '#6EA700', borderRadius: 2 },
+        { label: 'Social', data: socialN, backgroundColor: '#8A4FD6', borderRadius: 2 },
       ],
     },
     options: {
@@ -390,9 +394,9 @@ export function buildChannelMixConfigWfo(d) {
   };
 }
 
-// Unassisted/Augmented/Assisted stacked % remapped to Plan bars / Availability
-// bars / Brand Deep -- the closest self-serve-to-human-handled progression
-// available in the spec's own documented palette.
+// Unassisted/Augmented/Assisted stacked % mapped onto a self-serve-to-
+// human-handled progression built from the artifact's Green 50 / Blue 600 /
+// Blue 80 ramp values.
 export function buildDmsConfigWfo(d) {
   const LP = wfoLegend();
   const segLabel = (color) => ({ display: true, color, font: { size: 9, weight: 'bold' }, anchor: 'center', align: 'center', formatter: (v) => v + '%' });
@@ -401,8 +405,8 @@ export function buildDmsConfigWfo(d) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#C0DD78', datalabels: segLabel('#293B4D') },
-        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#97DCF4', datalabels: segLabel('#293B4D') },
+        { label: 'Unassisted', data: d.dmsUn, backgroundColor: '#6EA700', datalabels: segLabel('#FFFFFF') },
+        { label: 'Augmented', data: d.dmsAu, backgroundColor: '#0672CB', datalabels: segLabel('#FFFFFF') },
         { label: 'Assisted', data: d.dmsAs, backgroundColor: '#00468B', datalabels: segLabel('#fff') },
       ],
     },
@@ -418,10 +422,10 @@ export function buildDmsConfigWfo(d) {
   };
 }
 
-// FY2026 (actual-so-far) / FY2027 (in-progress) / Plan / ML Forecast mapped
-// onto the spec's Actual / Current Plan / Previous Plan / Projection
-// four-token legend -- Historical Trend is this page's closest structural
-// analogue to the spec's PoP + Plan-vs-Required-HC composite chart.
+// FY2026 (actual-so-far) / FY2027 (in-progress) share the Blue ramp (Blue 60
+// / Blue 40, since both are "actual volume" in different years); Plan and
+// ML Forecast use the artifact's remaining two categorical hues (Purple 50 /
+// Orange 60) so they read as clearly distinct overlays.
 export function buildHistTrendConfigWfo(d, curHistPlan) {
   const S = wfoScales();
   const LP = wfoLegend();
@@ -433,10 +437,10 @@ export function buildHistTrendConfigWfo(d, curHistPlan) {
     data: {
       labels: d.labels,
       datasets: [
-        { label: 'FY2026', data: d.fy26, borderColor: '#0076CE', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#0076CE', 'top', 4) },
-        { label: 'FY2027', data: d.fy27act, borderColor: '#5CC1EE', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#5CC1EE', 'top', 16) },
-        { label: planLbl, data: pd, borderColor: '#008FFB', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#008FFB', 'bottom', 4) },
-        { label: 'ML Forecast', data: d.mlfc, borderColor: '#F5CB6F', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#F5CB6F', 'bottom', 16) },
+        { label: 'FY2026', data: d.fy26, borderColor: '#0672CB', tension: 0.3, borderWidth: 2.5, pointRadius: 2, fill: false, datalabels: lineDL('#0672CB', 'top', 4) },
+        { label: 'FY2027', data: d.fy27act, borderColor: '#31A2E3', tension: 0.3, borderWidth: 2.5, pointRadius: 3, fill: false, datalabels: lineDL('#31A2E3', 'top', 16) },
+        { label: planLbl, data: pd, borderColor: '#8A4FD6', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#8A4FD6', 'bottom', 4) },
+        { label: 'ML Forecast', data: d.mlfc, borderColor: '#EF6C00', tension: 0.3, borderWidth: 2, pointRadius: 2, fill: false, datalabels: lineDL('#EF6C00', 'bottom', 16) },
       ],
     },
     options: { responsive: true, maintainAspectRatio: false, layout: TOP_LABEL_LAYOUT, scales: S, plugins: { legend: LP, tooltip: wfoTooltip() } },

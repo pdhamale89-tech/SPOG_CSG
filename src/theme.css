@@ -271,14 +271,15 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
 @media(max-width:640px){.kpi-grid,.kpi-grid.cols-5{grid-template-columns:1fr;}.sidebar{display:none;}.fc-grid{grid-template-columns:1fr;}}
 
 /* ===== WFO UI Specification Preview (ForecastOverviewWfo.jsx, "wfo-page")
-   Scoped re-skin per workforce-ui-spec-controls-filters-combined.pdf. Every
-   value below is a literal hex/px lifted from that spec (not a --token),
-   deliberately ignoring the app's dark/light toggle, since the spec itself
-   documents only one 1440px light-desktop design with no dark-mode tokens.
-   Also audited against Dell_Design_System_v3_Dashboard_Guide.docx: spacing
-   values here now snap to that guide's documented scale (4/8/12/16/24/32...)
-   instead of arbitrary px, and card outer padding follows its 24px/16px
-   outer-padding/internal-gap card spec.
+   Re-skinned twice since the original workforce-ui-spec-controls-filters-
+   combined.pdf pass: once against Dell_Design_System_v3_Dashboard_Guide.docx
+   (spacing tokens, sentence case), and now a third time against the "CSG
+   Productivity Console" Dell Design System v3 reference artifact -- a full
+   working HTML mockup, more precise/complete than either earlier source.
+   Every hex/px below is that artifact's literal --dds-* token value, not a
+   CSS variable, since it's used only on this one scoped page; the app's own
+   dark/light toggle is still deliberately ignored here, as none of the three
+   source specs document a dark-mode design.
    Structure, data and behaviour are unchanged from Forecast Overview -- this
    block only recolours/retypesets/respaces the same markup. Tables that
    already carry their own more-specific selectors (.hv-table/.vbp-tbl/
@@ -290,65 +291,70 @@ table.glossary-table td{white-space:normal;vertical-align:top;line-height:1.5;}
    nth-last-child rules further down). The World Map is rendered pinned to
    "light" (see ForecastOverviewWfo.jsx) rather than re-implemented, since it
    is Chart/SVG-driven, not CSS-driven. */
-.wfo-page{background:#F7F7FC;}
+.wfo-page{background:#EBF1F6;font-family:"Roboto Flex",Roboto,"Segoe UI",Arial,sans-serif;}
 .wfo-page .kpi-grid{gap:16px;}
-.wfo-page .kpi-card{background:#FFFFFF;border:1px solid #E1E1E1;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);color:#293B4D;}
+.wfo-page .kpi-card{background:#FFFFFF;border:1px solid #EBF1F6;border-radius:8px;box-shadow:0 1px 2px rgba(0,42,88,.08),0 1px 1px rgba(0,42,88,.06);color:#1D2C3B;}
 .wfo-page .kpi-card::after{display:none;}
-.wfo-page .kpi-label{font-size:14px;font-weight:600;color:#212B36;opacity:1;text-transform:none;letter-spacing:0;margin-bottom:12px;}
-.wfo-page .kpi-value{font-size:30px;font-weight:600;color:#293B4D;letter-spacing:0;}
-.wfo-page .kpi-sub{font-size:12px;font-weight:400;color:#636363;opacity:1;margin-top:12px;}
-.wfo-page .card{background:#FFFFFF;border:1px solid #C5D4E3;border-radius:8px;box-shadow:0 1px 10px rgba(0,0,0,.12);}
-.wfo-page .card:hover{box-shadow:0 4px 10px rgba(0,0,0,.25);}
-.wfo-page .card-header{height:52px;min-height:52px;padding:0 24px;margin:-12px -12px 12px;border-bottom:.5px solid #0D76B2;background:#FFFFFF;box-sizing:border-box;}
-.wfo-page .card-title{font-size:18px;font-weight:600;color:#222539;}
-.wfo-page .info-btn{border-color:#0D76B2;color:#0D76B2;}
-.wfo-page .info-btn:hover{background:#0D76B2;color:#fff;}
-.wfo-page .card-dd select,.wfo-page .f-sel{height:30px;padding:0 10px;border:1px solid #B6B6B6;border-radius:4px;font-size:14px;font-weight:400;color:#6E6E6E;background:#FFFFFF;min-width:120px;}
-.wfo-page .plan-btn{height:44px;padding:0 20px;border-radius:4px;font-size:14px;font-weight:500;border:1px solid #1C76BC;background:#FFFFFF;color:#335474;}
-.wfo-page .plan-btn.active{background:#1C76BC;border-color:#1C76BC;color:#FFFFFF;}
-.wfo-page .dl-btn{border-color:#0063B8;color:#0063B8;}
-.wfo-page .dl-btn:hover{background:#0063B8;border-color:#0063B8;color:#fff;}
-.wfo-page .btn-a{background:#0672CB;color:#fff;border-radius:2px;font-weight:500;padding:4px 12px;}
+.wfo-page .kpi-label{font-size:13px;font-weight:500;color:#40586D;opacity:1;text-transform:none;letter-spacing:0;margin-bottom:8px;}
+.wfo-page .kpi-value{font-size:28px;line-height:36px;font-weight:300;color:#1D2C3B;letter-spacing:0;}
+.wfo-page .kpi-sub{font-size:12px;font-weight:400;color:#839DB4;opacity:1;margin-top:8px;}
+.wfo-page .card{background:#FFFFFF;border:1px solid #EBF1F6;border-radius:8px;box-shadow:0 1px 2px rgba(0,42,88,.08),0 1px 1px rgba(0,42,88,.06);}
+.wfo-page .card-header{padding:0;margin:0 0 12px;border-bottom:0;background:transparent;box-sizing:border-box;}
+.wfo-page .card-title{font-size:16px;font-weight:500;color:#1D2C3B;}
+.wfo-page .info-btn{border-color:#0672CB;color:#0672CB;}
+.wfo-page .info-btn:hover{background:#0672CB;color:#fff;}
+.wfo-page .card-dd select,.wfo-page .f-sel{
+  height:auto;padding:8px 28px 8px 10px;border:1px solid #C5D4E3;border-radius:4px;font-size:14px;font-weight:400;
+  color:#1D2C3B;background:#FFFFFF;min-width:120px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2340586D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+.wfo-page .card-dd select:hover,.wfo-page .f-sel:hover{border-color:#839DB4;}
+.wfo-page .card-dd select:focus-visible,.wfo-page .f-sel:focus-visible{border-color:#0672CB;}
+.wfo-page .plan-btn{height:auto;padding:6px 12px;border-radius:4px;font-size:14px;font-weight:500;border:1px solid #C5D4E3;background:#FFFFFF;color:#1D2C3B;}
+.wfo-page .plan-btn.active{background:#0672CB;border-color:#0672CB;color:#FFFFFF;}
+.wfo-page .dl-btn{border-color:#0672CB;color:#0672CB;}
+.wfo-page .dl-btn:hover{background:#0672CB;border-color:#0672CB;color:#fff;}
+.wfo-page .btn-a{background:#0672CB;color:#fff;border-radius:4px;font-weight:500;padding:6px 12px;}
 .wfo-page .btn-a:hover{background:#0063B8;opacity:1;}
-.wfo-page .action-badge{color:#4F7D00;}
-.wfo-page .insight-box{background:#EBF1F6;border-left-color:#0D76B2;color:#293B4D;font-size:12px;}
-.wfo-page .drill-bc span{color:#0D76B2;}
-.wfo-page .drill-bc .current{color:#293B4D;}
-.wfo-page .dot-g{background:#4F7D00;}
-.wfo-page .dot-o{background:#F5CB6F;}
-.wfo-page .dot-r{background:#AF0000;}
-/* Dell_Design_System_v3_Dashboard_Guide.docx: "never communicate meaning
-   using color alone" -- the status dot always renders next to its priority
-   text (Low/Medium/High) instead of standing alone. */
-.wfo-page .wfo-status-text{margin-left:4px;font-size:12px;color:#40586D;}
-.wfo-page .tw{border:1px solid #E9E9E9;border-radius:4px;}
+.wfo-page .action-badge{color:#4A7600;}
+.wfo-page .insight-box{background:#D9F5FD;border-left-color:#0672CB;color:#1D2C3B;font-size:12px;}
+.wfo-page .drill-bc span{color:#0672CB;}
+.wfo-page .drill-bc .current{color:#1D2C3B;}
+/* CSG Productivity Console artifact's pill status badge (.badge-success/
+   -warning/-error) replaces the earlier dot+text pairing -- still never
+   color-alone, since the status word is printed inside the pill itself. */
+.wfo-page .wfo-badge{display:inline-flex;align-items:center;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;line-height:22px;}
+.wfo-page .wfo-badge-g{background:#F1F7D6;color:#4A7600;}
+.wfo-page .wfo-badge-o{background:#FFF6CC;color:#8C6200;}
+.wfo-page .wfo-badge-r{background:#FFE6E6;color:#B32020;}
+.wfo-page .tw{border:1px solid #EBF1F6;border-radius:8px;}
 .wfo-page table{font-size:14px;}
-.wfo-page thead th{background:#F9FBFD;color:#293B4D;font-size:14px;font-weight:500;text-transform:none;padding:0 12px;height:44px;border-bottom:1px solid #E9E9E9;white-space:nowrap;vertical-align:middle;text-align:left;}
-.wfo-page tbody td{padding:0 12px;height:46px;font-size:14px;font-weight:400;color:#40586D;border-bottom:1px solid #E9E9E9;vertical-align:middle;}
-.wfo-page tbody tr:nth-child(even){background:#F7F7FC;}
-/* Table alignment: "left-aligned text, right-aligned numbers". .wfo-num
-   marks the Queue Performance table's own numeric columns directly (its
-   JSX lives on this page, so it can carry the class). HistVolTable and
-   VolumeByPeriodTable are shared components this page reuses unmodified --
-   their numeric block is always the last N columns regardless of which
-   Weekly/Monthly/QTR/Yearly period is selected, so :nth-last-child targets
-   it without needing per-column classes. ContactVolumeDetail's own
-   cv-data-cell/cv-yoy-data/cv-cat-label alignment now lives in the base
-   .cv-tbl rules above (line ~146) so every use of that table gets it, not
-   just this page. */
+.wfo-page thead th{background:#EBF1F6;color:#40586D;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;padding:12px 16px;border-bottom:1px solid #C5D4E3;white-space:nowrap;vertical-align:middle;text-align:left;}
+.wfo-page tbody td{padding:12px 16px;font-size:14px;font-weight:400;color:#1D2C3B;border-bottom:1px solid #EBF1F6;vertical-align:middle;}
+.wfo-page tbody tr:hover{background:#EBF1F6;}
+/* Table alignment: "left-aligned text, right-aligned numbers" -- also how
+   the artifact's own .dds-table td.num behaves. .wfo-num marks the Queue
+   Performance table's own numeric columns directly (its JSX lives on this
+   page, so it can carry the class). HistVolTable and VolumeByPeriodTable are
+   shared components this page reuses unmodified -- their numeric block is
+   always the last N columns regardless of which Weekly/Monthly/QTR/Yearly
+   period is selected, so :nth-last-child targets it without needing
+   per-column classes. ContactVolumeDetail's own cv-data-cell/cv-yoy-data/
+   cv-cat-label alignment now lives in the base .cv-tbl rules above (line
+   ~146) so every use of that table gets it, not just this page. */
 .wfo-page .wfo-num{text-align:right;}
 .wfo-page .hv-table td:nth-last-child(-n+6),.wfo-page .hv-table th:nth-last-child(-n+6){text-align:right;}
 .wfo-page .vbp-tbl td:nth-last-child(-n+5),.wfo-page .vbp-tbl th:nth-last-child(-n+5){text-align:right;}
-/* "View table" chart-accessibility fallback (Accessibility Rules: toggle
-   via "View table" button, 14px fill #0D76B2) and the KPI trend row's
-   12px arrow-up-right icon. */
-.wfo-page .wfo-view-table-btn{background:none;border:none;color:#0D76B2;font-size:14px;font-weight:500;cursor:pointer;padding:6px 0 0;text-decoration:underline;}
+/* "View table" chart-accessibility fallback and the KPI trend row's arrow
+   icon. */
+.wfo-page .wfo-view-table-btn{background:none;border:none;color:#0672CB;font-size:14px;font-weight:500;cursor:pointer;padding:6px 0 0;text-decoration:underline;}
 .wfo-page .wfo-view-table-btn:hover{color:#0063B8;}
 .wfo-page .wfo-chart-table .tw{margin-top:6px;}
 .wfo-page .wfo-trend-icon{font-size:12px;font-weight:700;}
-/* Focus ring (Keyboard & Accessibility Notes: "2 px focus ring ... colour
-   #0D76B2"), scoped to this page only. */
-.wfo-page *:focus-visible{outline:2px solid #0D76B2;outline-offset:2px;}
+/* Focus ring: CSG Productivity Console artifact's :focus-visible{outline:2px
+   solid var(--dds-blue-60); outline-offset:2px; border-radius:2px}. */
+.wfo-page *:focus-visible{outline:2px solid #0672CB;outline-offset:2px;border-radius:2px;}
 
 /* ===== 3D icon/logo treatment (app-wide) =====
    .ic3d is a reusable "pop" filter for any bare glyph/emoji icon -- a light
