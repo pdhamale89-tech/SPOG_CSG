@@ -70,10 +70,10 @@ export default function CalendarFiscal() {
               ))}
             </div>
             <div className="fc-legend">
-              <span><span className="fc-leg" style={{ background: '#1a1f36' }}></span>QWKS</span>
-              <span><span className="fc-leg" style={{ background: '#374151' }}></span>WKS</span>
-              <span><span className="fc-leg" style={{ background: '#FEEFCB', border: '1px solid #6D3A00' }}></span><u>SCO</u></span>
-              <span><span className="fc-leg" style={{ background: '#E9F5CE', border: '1px solid #2C5000' }}></span>Holiday</span>
+              <span><span className="fc-leg" style={{ background: '#1D2C3B' }}></span>QWKS</span>
+              <span><span className="fc-leg" style={{ background: '#40586D' }}></span>WKS</span>
+              <span><span className="fc-leg" style={{ background: '#FFF6CC', border: '1px solid #8C6200' }}></span><u>SCO</u></span>
+              <span><span className="fc-leg" style={{ background: '#F1F7D6', border: '1px solid #4A7600' }}></span>Holiday</span>
               <span><span className="fc-leg" style={{ border: '2px solid var(--accent-blue)', background: 'transparent' }}></span>⭕ Pay Date</span>
             </div>
           </div>
